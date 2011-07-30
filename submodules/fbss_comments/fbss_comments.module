@@ -85,19 +85,31 @@ function fbss_comments_menu() {
  * Implements hook_user_cancel().
  */
 function fbss_comments_user_cancel($edit, $account, $method) {
-  if (TRUE) {
-    // TODO Please review the conversion of this statement to the D7 database API syntax.
-    /* db_query("DELETE FROM {fbss_comments} WHERE uid = %d", $account->uid) */
-    db_delete('fbss_comments')
-  ->condition('uid', $account->uid)
-  ->execute();
+  if ($method == 'user_cancel_reassign') {
+    db_update('fbss_comments')
+      ->fields(array('uid' => 0))
+      ->condition('uid' => $account->uid)
+      ->execute();
   }
 }
 
 /**
- * Implements hook_user().
+ * Implements hook_user_delete().
  */
-function fbss_comments_user_OLD($op, &$edit, &$account, $category = NULL) { }
+function fbss_comments_user_delete($account) {
+  db_query("
+    DELETE FROM {fbss_comments} c
+    LEFT JOIN {facebook_status} f
+      ON c.sid = f.sid
+    WHERE
+      f.sender = :sender OR
+      (f.type = 'user' AND f.recipient = :recipient) OR
+      f.sender IS NULL /* we've already deleted the parent status */
+  ", array(':sender' => $account->uid, ':recipient' => $account->uid));
+  db_delete('fbss_comments')
+    ->condition('uid', $account->uid)
+    ->execute();
+}
 
 /**
  * Implements hook_permission().
@@ -105,40 +117,35 @@ function fbss_comments_user_OLD($op, &$edit, &$account, $category = NULL) { }
 function fbss_comments_permission() {
   return array(
     'delete all status comments' => array(
-      'title' => t('delete all status comments'),
-      'description' => t('TODO Add a description for \'delete all status comments\''),
+      'title' => t('Delete all status comments'),
+      'description' => t('Delete status comments created by anyone'),
     ),
     'delete own status comments' => array(
-      'title' => t('delete own status comments'),
-      'description' => t('TODO Add a description for \'delete own status comments\''),
+      'title' => t('Delete status comments you created'),
     ),
     'delete comments on own statuses' => array(
-      'title' => t('delete comments on own statuses'),
-      'description' => t('TODO Add a description for \'delete comments on own statuses\''),
+      'title' => t('Delete comments on statuses you created'),
     ),
     'edit all status comments' => array(
-      'title' => t('edit all status comments'),
-      'description' => t('TODO Add a description for \'edit all status comments\''),
+      'title' => t('Edit all status comments'),
+      'description' => t('Edit status comments created by anyone'),
     ),
     'edit own status comments' => array(
-      'title' => t('edit own status comments'),
-      'description' => t('TODO Add a description for \'edit own status comments\''),
+      'title' => t('Edit status comments you created'),
     ),
     'edit comments on own statuses' => array(
-      'title' => t('edit comments on own statuses'),
-      'description' => t('TODO Add a description for \'edit comments on own statuses\''),
+      'title' => t('Edit comments on statuses you created'),
+      'description' => t('Not recommended.'),
     ),
     'post status comment' => array(
-      'title' => t('post status comment'),
-      'description' => t('TODO Add a description for \'post status comment\''),
+      'title' => t('Post a status comment'),
     ),
     'view all status comments' => array(
-      'title' => t('view all status comments'),
-      'description' => t('TODO Add a description for \'view all status comments\''),
+      'title' => t('View all status comments'),
+      'description' => t('View status comments created by anyone'),
     ),
     'view own status comments' => array(
-      'title' => t('view own status comments'),
-      'description' => t('TODO Add a description for \'view own status comments\''),
+      'title' => t('View status comments you created'),
     ),
   );
 }
@@ -499,11 +506,9 @@ function fbss_comments_delete_comment($cid) {
   if (module_exists('trigger')) {
     module_invoke_all('fbss_comments', 'fbss_comments_deleted', fbss_comments_load($comment));
   }
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
-  /* db_query("DELETE FROM {fbss_comments} WHERE cid = %d", $cid) */
   db_delete('fbss_comments')
-  ->condition('cid', $cid)
-  ->execute();
+    ->condition('cid', $cid)
+    ->execute();
 }
 
 /**
@@ -620,8 +625,6 @@ function _fbss_comments_can_post($status, $account = NULL) {
  *   TRUE if the user can edit the comment; FALSE otherwise.
  */
 function _fbss_comments_can_edit($comment, $account = NULL) {
-  // This is in two separate statements (instead of one big return statement)
-  // so that the SQL in _fbss_comments_get_thread_author() does not usually need to be run.
   if (user_access('edit all status comments', $account) || (user_access('edit own status comments', $account) && $account->uid == $comment->uid)) {
     return TRUE;
   }
@@ -639,8 +642,6 @@ function _fbss_comments_can_edit($comment, $account = NULL) {
  *   TRUE if the user can delete the comment; FALSE otherwise.
  */
 function _fbss_comments_can_delete($comment, $account = NULL) {
-  // This is in two separate statements (instead of one big return statement)
-  // so that the SQL in _fbss_comments_get_thread_author() does not usually need to be run.
   if (user_access('delete all status comments', $account) || (user_access('delete own status comments', $account) && $account->uid == $comment->uid)) {
     return TRUE;
   }
@@ -838,7 +839,6 @@ function fbss_comments_save_js() {
   $new_form['comments']       = $form['comments'];
   $new_form['status-comment'] = $form['status-comment'];
   //$new_form['save']           = $form['save'];
-  // TODO Please change this theme call to use an associative array for the $variables parameter.
   $output = theme('status_messages') . drupal_render($new_form);
   // Return the results.
   drupal_json_output(array('status' => TRUE, 'data' => $output));
@@ -852,11 +852,9 @@ function fbss_comments_save_js() {
  * Implements hook_facebook_status_delete().
  */
 function fbss_comments_facebook_status_delete($status) {
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
-  /* db_query("DELETE FROM {fbss_comments} WHERE sid = %d", $status->sid) */
   db_delete('fbss_comments')
-  ->condition('sid', $status->sid)
-  ->execute();
+    ->condition('sid', $status->sid)
+    ->execute();
 
   if (module_exists('activity')) {
     $result = db_query("SELECT aid FROM {activity} WHERE type = :type AND eid IN (SELECT sid FROM {fbss_comments} WHERE cid = :cid)", array(':type' => 'fbss_comments', ':cid' => $status->sid));

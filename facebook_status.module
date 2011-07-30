@@ -228,52 +228,52 @@ function facebook_status_block_OLD($op = 'list', $delta = 0, $edit = NULL) { }
 function facebook_status_permission() {
   return array(
     'administer Facebook-style Statuses settings' => array(
-      'title' => t('administer Facebook-style Statuses settings'),
-      'description' => t('TODO Add a description for \'administer Facebook-style Statuses settings\''),
+      'title' => t('Administer Facebook-style Statuses settings'),
     ),
     'delete all statuses' => array(
-      'title' => t('delete all statuses'),
-      'description' => t('TODO Add a description for \'delete all statuses\''),
+      'title' => t('Delete all statuses'),
+      'description' => t('Delete statuses created by anyone'),
     ),
     'delete own statuses' => array(
-      'title' => t('delete own statuses'),
-      'description' => t('TODO Add a description for \'delete own statuses\''),
+      'title' => t('Delete own statuses'),
+      'description' => t('Delete statuses you created'),
     ),
     'delete status messages on own profile' => array(
-      'title' => t('delete status messages on own profile'),
-      'description' => t('TODO Add a description for \'delete status messages on own profile\''),
+      'title' => t('Delete status messages on own profile'),
+      'description' => t('Delete status messages sent to you'),
     ),
     'delete status messages on own nodes' => array(
-      'title' => t('delete status messages on own nodes'),
-      'description' => t('TODO Add a description for \'delete status messages on own nodes\''),
+      'title' => t('Delete status messages on own nodes'),
+      'description' => t('Delete status messages left on nodes you created'),
     ),
     'edit all statuses' => array(
-      'title' => t('edit all statuses'),
-      'description' => t('TODO Add a description for \'edit all statuses\''),
+      'title' => t('Edit all statuses'),
+      'description' => t('Edit statuses created by anyone'),
     ),
     'edit own statuses' => array(
-      'title' => t('edit own statuses'),
-      'description' => t('TODO Add a description for \'edit own statuses\''),
+      'title' => t('Edit own statuses'),
+      'description' => t('Edit statuses you created'),
     ),
     'post status messages to other streams' => array(
-      'title' => t('post status messages to other streams'),
-      'description' => t('TODO Add a description for \'post status messages to other streams\''),
+      'title' => t('Post status messages to other streams'),
+      'description' => t('Send status messages to other people, groups, etc.'),
     ),
     'send messages to all users at once' => array(
-      'title' => t('send messages to all users at once'),
-      'description' => t('TODO Add a description for \'send messages to all users at once\''),
+      'title' => t('Send messages to all users at once'),
+      'description' => t('You can do this at /statuses/announce, but be careful! It is very processing-intensive on large sites.'),
     ),
     'update and view own stream' => array(
-      'title' => t('update and view own stream'),
-      'description' => t('TODO Add a description for \'update and view own stream\''),
+      'title' => t('Update and view own stream'),
+      'description' => t('Create and view personal status updates'),
     ),
     'use PHP for context visibility' => array(
-      'title' => t('use PHP for context visibility'),
-      'description' => t('TODO Add a description for \'use PHP for context visibility\''),
+      'title' => t('Use PHP for context visibility'),
+      'description' => t('In the advanced settings for stream contexts, allow using PHP to determine where a context applies.'),
+      'restrict access' => TRUE,
     ),
     'view all statuses' => array(
-      'title' => t('view all statuses'),
-      'description' => t('TODO Add a description for \'view all statuses\''),
+      'title' => t('View all statuses'),
+      'description' => t('View statuses created by anyone'),
     ),
   );
 }
@@ -800,11 +800,9 @@ function facebook_status_delete_status($status, $meta = array()) {
     module_invoke_all('facebook_status', 'fbss_deleted_' . $type, $status);
   }
   module_invoke_all('facebook_status_delete', $status, $meta);
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
-  /* db_query("DELETE FROM {facebook_status} WHERE sid = %d", $status->sid) */
   db_delete('facebook_status')
-  ->condition('sid', $status->sid)
-  ->execute();
+    ->condition('sid', $status->sid)
+    ->execute();
 }
 
 /**
@@ -863,17 +861,13 @@ function facebook_status_save_status($recipient, $type, $message, $sender = NULL
     // FACEBOOK_STATUS_OVERRIDE_TIMER seconds of the old one,
     // we assume the user didn't mean to post the first one.
     if ($time - $status->created < FACEBOOK_STATUS_OVERRIDE_TIMER && $type = 'user' && $sender->uid == $recipient_id && $options['timed override']) {
-      $sql = "UPDATE {facebook_status} SET message = '%s', created = %d WHERE sid = %d ORDER BY sid DESC";
-      // TODO Please review the conversion of this statement to the D7 database API syntax.
-      /* db_query($sql, $message, $time, $status->sid) */
       db_update('facebook_status')
-  ->fields(array(
-        'message' => $message,
-        'created' => $time,
-      ))
-  ->condition('sid', $status->sid)
-  ->condition('DER BY sid DESC', '')
-  ->execute();
+        ->fields(array(
+          'message' => $message,
+          'created' => $time,
+        ))
+        ->condition('sid', $status->sid)
+        ->execute();
       $object->sid = $status->sid;
       $edit = TRUE;
     }
@@ -940,28 +934,22 @@ function facebook_status_edit_status($status, $new_message, $options = array()) 
   // Pretend to have set a new status if the submitted status is exactly the same as the old one.
   if ($new_message != $status->message) {
     if ($options['update timestamp']) {
-      $sql = "UPDATE {facebook_status} SET message = '%s', created = %d WHERE sid = %d";
-      // TODO Please review the conversion of this statement to the D7 database API syntax.
-      /* db_query($sql, $new_message, $time, $status->sid) */
       db_update('facebook_status')
-  ->fields(array(
-        'message' => $new_message,
-        'created' => $time,
-      ))
-  ->condition('sid', $status->sid)
-  ->execute();
+        ->fields(array(
+          'message' => $new_message,
+          'created' => $time,
+        ))
+        ->condition('sid', $status->sid)
+        ->execute();
       $status->created = $time;
     }
     else {
-      $sql = "UPDATE {facebook_status} SET message = '%s' WHERE sid = %d";
-      // TODO Please review the conversion of this statement to the D7 database API syntax.
-      /* db_query($sql, $new_message, $status->sid) */
       db_update('facebook_status')
-  ->fields(array(
-        'message' => $new_message,
-      ))
-  ->condition('sid', $status->sid)
-  ->execute();
+        ->fields(array(
+          'message' => $new_message,
+        ))
+        ->condition('sid', $status->sid)
+        ->execute();
     }
     $status->message = $new_message;
     // Invokes hook_facebook_status_save($status, $context, $edit, $options).
