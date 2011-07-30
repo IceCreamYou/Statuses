@@ -1,0 +1,7 @@
+name = Facebook-style Statuses Activity
+description = "Integrates Activity 2 with Facebook-style Statuses."
+package = Facebook-style Statuses
+dependencies[] = facebook_status
+dependencies[] = activity
+core = 7.x
+files[] = fbss_activity.module

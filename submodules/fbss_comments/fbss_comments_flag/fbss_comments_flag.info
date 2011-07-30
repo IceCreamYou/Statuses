@@ -1,0 +1,9 @@
+name = Facebook-style Statuses Comments Flag Integration
+description = "Integrates Flag with Facebook-style Statuses Comments."
+package = Facebook-style Statuses
+dependencies[] = fbss_comments
+dependencies[] = flag
+core = 7.x
+files[] = fbss_comments_flag.flag.inc
+files[] = fbss_comments_flag.install
+files[] = fbss_comments_flag.module

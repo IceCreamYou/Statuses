@@ -1,0 +1,11 @@
+name = Facebook-style Statuses Twitter
+description = Integrates Twitter with Facebook-style Statuses.
+package = Facebook-style Statuses
+dependencies[] = facebook_status
+dependencies[] = twitter
+dependencies[] = oauth
+core = 7.x
+
+files[] = fbss_twitter.admin.inc
+files[] = fbss_twitter.install
+files[] = fbss_twitter.module

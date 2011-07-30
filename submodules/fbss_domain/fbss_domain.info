@@ -1,0 +1,10 @@
+name = Facebook-style Statuses Domain Access
+description = "Integrates Domain Access with Facebook-style Statuses."
+package = Facebook-style Statuses
+dependencies[] = domain
+dependencies[] = facebook_status
+core = 7.x
+files[] = fbss_domain.module
+files[] = fbss_domain.install
+files[] = fbss_domain.rules.inc
+files[] = fbss_domain.views.inc

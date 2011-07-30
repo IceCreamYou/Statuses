@@ -1,0 +1,10 @@
+name = Facebook-style Statuses Rules
+description = "Integrates Rules with Facebook-style Statuses."
+package = Facebook-style Statuses
+dependencies[] = facebook_status
+dependencies[] = rules
+core = 7.x
+
+files[] = fbss_rules.module
+files[] = fbss_rules.rules.inc
+files[] = fbss_rules.rules_defaults.inc

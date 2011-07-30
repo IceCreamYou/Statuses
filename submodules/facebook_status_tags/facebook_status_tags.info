@@ -1,0 +1,19 @@
+name = Facebook-style Statuses Tags
+description = "Converts @usernames to themed usernames and #hashtags to themed taxonomy terms on Facebook-style Statuses."
+dependencies[] = facebook_status
+package = Facebook-style Statuses
+core = 7.x
+
+files[] = facebook_status_tags.install
+files[] = facebook_status_tags.module
+files[] = facebook_status_tags.rules.inc
+files[] = views/facebook_status_tags.views.inc
+files[] = views/facebook_status_tags.views_default.inc
+files[] = views/facebook_status_tags_views_handler_argument_has_this_tag.inc
+files[] = views/facebook_status_tags_views_handler_argument_has_this_tag_id.inc
+files[] = views/facebook_status_tags_views_handler_field_all_terms.inc
+files[] = views/facebook_status_tags_views_handler_field_message.inc
+files[] = views/facebook_status_tags_views_handler_field_name.inc
+files[] = views/facebook_status_tags_views_handler_filter_has_tag.inc
+files[] = views/facebook_status_tags_views_handler_filter_has_this_tag.inc
+files[] = views/facebook_status_tags_views_handler_filter_string_type.inc

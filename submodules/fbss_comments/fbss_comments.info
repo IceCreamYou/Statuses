@@ -1,0 +1,17 @@
+name = Facebook-style Statuses Comments
+description = "Allows comments on Facebook-style Statuses."
+dependencies[] = facebook_status
+package = Facebook-style Statuses
+core = 7.x
+
+files[] = api.php
+files[] = fbss_comments.generate.inc
+files[] = fbss_comments.install
+files[] = fbss_comments.module
+files[] = fbss_comments.pages.inc
+files[] = fbss_comments.views.inc
+files[] = fbss_comments_views_handler_field_cc.inc
+files[] = fbss_comments_views_handler_field_cc2.inc
+files[] = fbss_comments_views_handler_field_comment_box.inc
+files[] = fbss_comments_views_handler_field_delete.inc
+files[] = fbss_comments_views_handler_field_edit.inc
