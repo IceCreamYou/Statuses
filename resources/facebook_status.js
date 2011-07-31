@@ -1,6 +1,9 @@
 var fbss_allowClickRefresh = true;
 var fbss_refreshIDs;
-Drupal.behaviors.facebookStatus = function (context) {
+
+(function($) {
+Drupal.behaviors.facebookStatus = {
+attach: function (context) {
   var initialLoad = false;
   // Drupal passes document as context on page load.
   if (context == document) {
@@ -134,6 +137,7 @@ Drupal.behaviors.facebookStatus = function (context) {
     });
   }
 }
+}
 // Change remaining character count.
 function fbss_print_remaining(fbss_remaining, where) {
   if (fbss_remaining >= 0) {
@@ -205,6 +209,7 @@ function fbss_refresh() {
                   var el = $(element[j]);
                   // Don't bother replacing anything if the replacement region hasn't changed.
                   if (v.get() != el.get()) {
+                    Drupal.detachBehaviors(element[j]);
                     el.replaceWith(v);
                     Drupal.attachBehaviors(v);
                   }
@@ -222,3 +227,4 @@ function fbss_refresh() {
     $('.fbss-remove-me').remove();
   }
 }
+})(jQuery);

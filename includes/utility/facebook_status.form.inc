@@ -36,7 +36,7 @@ function theme_facebook_status_form_display($variables) {
   $context = $variables['recipient'];
   $type = $variables['type'];
   $view = $variables['view'];
-  // TODO Number of parameters in this theme funcion does not match number of parameters found in hook_theme.
+  $display = $variables['display'];
   global $user;
   // $context is NULL, so find everything.
   if (empty($context)) {
@@ -143,7 +143,7 @@ function facebook_status_box($form, &$form_state, $recipient, $type = 'user') {
   elseif (isset($_GET['share-status'])) {
     $default = $_GET['share-status'];
   }
-  // @todo: Replace with a "true" re-posting system.
+  // TODO: Replace with a "true" re-posting system.
   if (isset($_GET['sid']) && is_numeric($_GET['sid'])) {
     $rs = facebook_status_load($_GET['sid']);
     $sender = _facebook_status_user_load($rs->sender);
@@ -180,7 +180,6 @@ function facebook_status_box($form, &$form_state, $recipient, $type = 'user') {
   }
   drupal_add_js($path . '/facebook_status_ahah.js', array('scope' => 'footer'));
   drupal_add_css($path . '/facebook_status.css');
-  $form = array('#cache' => TRUE);
   // Form elements between ['opendiv'] and ['closediv'] will be refreshed via AHAH on form submission.
   $form['opendiv'] = array(
     '#value' => '<div id="facebook-status-replace">',
@@ -216,11 +215,10 @@ function facebook_status_box($form, &$form_state, $recipient, $type = 'user') {
     '#weight' => -25,
   );
   if (variable_get('facebook_status_ahah', 1)) {
-    $form['fbss-submit']['#ahah'] = array(
-      'path' => 'facebook_status/js',
+    $form['fbss-submit']['#ajax'] = array(
+      'callback' => 'facebook_status_save_js',
       'wrapper' => 'facebook-status-replace',
-      'effect' => 'fade',
-      'method' => 'replace',
+      'keypress' => TRUE,
     );
   }
   $form['sdefault'] = array(
@@ -290,6 +288,29 @@ function facebook_status_box_submit($form, &$form_state) {
     $form_state['redirect'] = array($_GET['q']);
     $form_state['rebuild'] = FALSE;
   }
+}
+
+/**
+ * Saves statuses via AHAH.
+ */
+function facebook_status_save_js($form, $form_state) {
+  // Make sure we have form stuff available.
+  module_load_include('inc', 'facebook_status', 'includes/utility/facebook_status.form');
+  $new_form = array();
+  // Get HTML for the replacement form. Only these elements will be AHAH-refreshed.
+  $new_form['slider']      = $form['slider'];
+  $new_form['fbss-status'] = $form['fbss-status'];
+  $new_form['chars']       = $form['chars'];
+  $new_form['fbss-submit'] = $form['fbss-submit'];
+  $new_form['sdefault']    = $form['sdefault'];
+  // Clear the status form after it's already been submitted once to prevent confusion.
+  unset($new_form['status']['#default_value']);
+  // Calls hook_facebook_status_form_ahah_alter(&$new_form, $form).
+  drupal_alter('facebook_status_form_ahah', $new_form, $form);
+  // If the $form['fbss-submit']['#ahah']['wrapper'] div was found in a #prefix or #suffix of a form element that we re-rendered here,
+  // then we would have to unset() it to prevent duplicate wrappers. However, we have a somewhat unique implementation in which the wrappers
+  // are actually their own elements, so this is not an issue.
+  return theme('status_messages') . drupal_render($new_form);
 }
 
 /**

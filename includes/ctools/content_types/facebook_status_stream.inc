@@ -28,7 +28,6 @@ function facebook_status_facebook_status_stream_content_type_render($subtype, $c
   $block->content = t('User information is currently unavailable.');
   if ($account) {
     $block->title = t("Stream");
-    // TODO Please change this theme call to use an associative array for the $variables parameter.
     $block->content = theme('facebook_status_form_display');
   }
   return $block;

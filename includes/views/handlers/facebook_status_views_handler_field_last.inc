@@ -12,9 +12,17 @@ class facebook_status_views_handler_field_last extends views_handler_field {
   function render($values) {
     global $user;
     $uid = $values->{$this->field_alias};
-    $message = db_query_range("SELECT message FROM {facebook_status} WHERE type = :type AND message <> :message AND
-      ((sender = :((sender AND recipient = :recipient) OR (sender = :(sender AND recipient = :recipient))
-    ORDER BY sid DESC", array(':type' => 'user', ':message' => '', ':((sender' => $user->uid, ':recipient' => $uid, ':(sender' => $uid, ':recipient' => $user->uid))->fetchField();
+    $message = db_query_range("
+      SELECT message
+      FROM {facebook_status}
+      WHERE
+        type = 'user' AND
+        message <> '' AND (
+          (sender = :sender AND recipient = :recipient) OR
+          (sender = :recipient AND recipient = :sender)
+        )
+      ORDER BY sid DESC
+    ", 0, 1, array(':sender' => $user->uid, ':recipient' => $uid))->fetchField();
     $message = _facebook_status_run_filter($message);
     if (variable_get('facebook_status_nl2br', 0)) {
       $message = nl2br($message);

@@ -26,7 +26,7 @@ class facebook_status_views_plugin_row_rss extends views_plugin_row {
     if (empty($status)) {
       return;
     }
-    $sender = _facebook_status_user_load($status->sender);
+    $sender = user_load($status->sender);
     $context = facebook_status_determine_context($status->type);
     $recipient = $context['handler']->load_recipient($status->recipient);
     $message = _facebook_status_run_filter($status->message);

@@ -158,7 +158,7 @@ function facebook_status_generate_status($time, $types, $tags, &$context) {
     while ($rid == 0 || $rid == $uid) {
       $rid = $uids[array_rand($uids)];
     }
-    $person = _facebook_status_user_load($rid);
+    $person = user_load($rid);
     $text .= '@' . $person->name . ' ';
     if (preg_match('/.+\b.+/', $person->name)) {
       $text .= '[@' . $person->name . '] ';
@@ -185,7 +185,7 @@ function facebook_status_generate_status($time, $types, $tags, &$context) {
     'timed override' => FALSE,
     'discard blank statuses' => FALSE,
   );
-  facebook_status_save_status($recipient, $type, $text, _facebook_status_user_load($uid), $options);
+  facebook_status_save_status($recipient, $type, $text, user_load($uid), $options);
   $context['results']['num']++;
 }
 

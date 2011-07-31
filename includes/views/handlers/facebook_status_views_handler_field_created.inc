@@ -28,7 +28,6 @@ class facebook_status_views_handler_field_created extends views_handler_field_da
       $custom_format = $this->options['custom_date_format'];
     }
     if (!$value) {
-      // TODO Please change this theme call to use an associative array for the $variables parameter.
       $output .= theme('views_nodate');
     }
     else {

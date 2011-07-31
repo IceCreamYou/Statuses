@@ -160,26 +160,26 @@ function _facebook_status_get_edit_intro($status, $context) {
     }
     elseif ($user->uid == $status->sender) {
       $intro = '<strong>' . t('Original message from you to !recipient: !status', array(
-        '!recipient' => theme('username', array('account' => _facebook_status_user_load($status->recipient))),
+        '!recipient' => theme('username', array('account' => user_load($status->recipient))),
         '!status' => $orig,
       )) . '</strong>';
     }
     elseif ($user->uid == $status->recipient) {
       $intro = '<strong>' . t('Original message from !sender to you: !status', array(
-        '!sender' => theme('username', array('account' => _facebook_status_user_load($status->sender))),
+        '!sender' => theme('username', array('account' => user_load($status->sender))),
         '!status' => $orig,
       )) . '</strong>';
     }
     elseif ($status->sender == $status->recipient) {
       $intro = '<strong>' . t('Original status by !creator: !status', array(
-        '!creator' => theme('username', array('account' => _facebook_status_user_load($status->sender))),
+        '!creator' => theme('username', array('account' => user_load($status->sender))),
         '!status' => $orig,
       )) . '</strong>';
     }
     else {
       $intro = '<strong>' . t('Original message from !sender to !recipient: !status', array(
-        '!sender' => theme('username', array('account' => _facebook_status_user_load($status->sender))),
-        '!recipient' => theme('username', array('account' => _facebook_status_user_load($status->recipient))),
+        '!sender' => theme('username', array('account' => user_load($status->sender))),
+        '!recipient' => theme('username', array('account' => user_load($status->recipient))),
         '!status' => $orig,
       )) . '</strong>';
     }
@@ -193,7 +193,7 @@ function _facebook_status_get_edit_intro($status, $context) {
     }
     else {
       $intro = '<strong>' . t('Original message from !sender to !recipient: !status', array(
-        '!sender' => theme('username', array('account' => _facebook_status_user_load($status->sender))),
+        '!sender' => theme('username', array('account' => user_load($status->sender))),
         '!recipient' => $context['handler']->recipient_link($context['handler']->load_recipient($status->recipient)),
         '!status' => $orig,
       )) . '</strong>';

@@ -14,14 +14,14 @@ function _facebook_status_conversation_title() {
   $count = count($args);
   if (is_numeric($args[0]) && $count == 2 || ($count == 1 && $args[0] != $user->uid)) {
     if (empty($args[1])) {
-      $recipient = _facebook_status_user_load($args[0]);
+      $recipient = user_load($args[0]);
       if (!empty($recipient->uid)) {
         return t('Conversation between you and @recipient', array('@recipient' => $recipient->name));
       }
     }
     elseif (is_numeric($args[1])) {
-      $account1 = _facebook_status_user_load($args[0]);
-      $account2 = _facebook_status_user_load($args[1]);
+      $account1 = user_load($args[0]);
+      $account2 = user_load($args[1]);
       if (!empty($account1->uid) && !empty($account2->uid)) {
         return t('Conversation between @sender and @recipient', array('@sender' => $account1->name, '@recipient' => $account2->name));
       }
@@ -52,7 +52,7 @@ function _facebook_status_conversation() {
     return views_embed_view('facebook_status_conversation', 'default', $arg, $arg);
   }
   $key = $key ? 0 : 1; //The recipient is not the current user.
-  $recipient = _facebook_status_user_load($args[$key]);
+  $recipient = user_load($args[$key]);
   if (facebook_status_user_access('converse') && !empty($recipient->uid)) {
     return theme('facebook_status_form_display', array('recipient' => $recipient, 'type' => 'user'));
   }

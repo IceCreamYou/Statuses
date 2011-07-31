@@ -3,24 +3,17 @@
 /**
  * @file
  *   Provides implementations of contexts (stream types).
- * @todo
- *   - Contexts should have the ability to add dependencies.
- *   - There should be permissions for "view all [context type] streams"
  */
 
 /**
  * The parent context class.
- * If we could require PHP 5, this would be an abstract class, and type() and
- * is_applicable() would be static.
  */
-class facebook_status_context {
+abstract class facebook_status_context {
 
   /**
    * The context type.
    */
-  function type() {
-    return '';
-  }
+  abstract function type();
 
   /**
    * Determines whether the current context actually applies.
@@ -48,9 +41,7 @@ class facebook_status_context {
    * Used with the Devel Generate module to send generated messages to random
    * recipients.
    */
-  function load_random_recipient() {
-    return new stdClass();
-  }
+  abstract function load_random_recipient();
 
   /**
    * Returns the recipient's ID given an object representing the recipient.
@@ -141,27 +132,23 @@ class facebook_status_user_context extends facebook_status_context {
       $args = explode(',', arg(2));
       $count = count($args);
       if ($count === 1) {
-        return is_numeric($args[0]) ? _facebook_status_user_load($args[0]) : $user;
+        return is_numeric($args[0]) ? user_load($args[0]) : $user;
       }
       elseif ($count == 2) {
         if ($args[0] == $user->uid) {
-          return is_numeric($args[1]) ? _facebook_status_user_load($args[1]) : $user;
+          return is_numeric($args[1]) ? user_load($args[1]) : $user;
         }
         elseif ($args[1] == $user->uid) {
-          return is_numeric($args[0]) ? _facebook_status_user_load($args[0]) : $user;
+          return is_numeric($args[0]) ? user_load($args[0]) : $user;
         }
       }
       return $user;
     }
-    return arg(0) == 'user' && is_numeric(arg(1)) ? /* menu_get_object('user') */ _facebook_status_user_load(arg(1)) : $GLOBALS['user'];
-  }
-  function load_recipient($id) {
-    // FBSS has its own user_load() with extra caching for efficiency.
-    return _facebook_status_user_load($id);
+    return arg(0) == 'user' && is_numeric(arg(1)) ? /* menu_get_object('user') */ user_load(arg(1)) : $GLOBALS['user'];
   }
   function load_random_recipient() {
-    $uid = db_query_range("SELECT uid FROM {users} WHERE status = :status ORDER BY RAND() ASC", array(':status' => 1))->fetchField();
-    return $this->load_recipient($uid);
+    $uid = db_query_range("SELECT uid FROM {users} WHERE status = 1 ORDER BY RAND() ASC", 0, 1)->fetchField();
+    return user_load($uid);
   }
   function recipient_link($recipient) {
     return theme('username', array('account' => $recipient));
@@ -194,7 +181,7 @@ class facebook_status_node_context extends facebook_status_context {
     return isset($recipient->nid) ? $recipient->nid : 0;
   }
   function load_random_recipient() {
-    $nid = db_query_range("SELECT nid FROM {node} ORDER BY RAND() ASC")->fetchField();
+    $nid = db_query_range("SELECT nid FROM {node} ORDER BY RAND() ASC", 0, 1)->fetchField();
     return node_load($nid);
   }
   function access_add($recipient, $sender) {
@@ -271,7 +258,7 @@ class facebook_status_term_context extends facebook_status_context {
     return taxonomy_term_load($id);
   }
   function load_random_recipient() {
-    $tid = db_query_range("SELECT tid FROM {taxonomy_term_data} ORDER BY RAND() ASC")->fetchField();
+    $tid = db_query_range("SELECT tid FROM {taxonomy_term_data} ORDER BY RAND() ASC", 0, 1)->fetchField();
     return taxonomy_term_load($tid);
   }
   function recipient_id($recipient) {
@@ -279,9 +266,6 @@ class facebook_status_term_context extends facebook_status_context {
   }
   function recipient_url($recipient) {
     return 'taxonomy/term/' . $this->recipient_id($recipient);
-  }
-  function recipient_name($recipient) {
-    return isset($recipient->name) ? $recipient->name : '';
   }
   function access_view($status, $account) {
     return parent::access_view($status, $account) || user_access('administer taxonomy', $account);

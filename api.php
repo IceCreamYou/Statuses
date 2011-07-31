@@ -38,6 +38,14 @@ function hook_facebook_status_save($status, $context, $edit, $options) {
 /**
  * React to a status being deleted.
  *
+ * Note that this hook is not invoked when the sender or recipient of a status
+ * is deleted. Your module must implement e.g. hook_user_delete() on its own
+ * in order to delete data associated with statuses related to the deleted
+ * user. This is because users could have thousands of statuses associated with
+ * them, and deleting them one-by-one (in order to invoke this hook) would risk
+ * hitting the memory limit, hitting the timeout limit, or overloading the
+ * database.
+ *
  * @param $status
  *   The status object to delete.
  * @param $meta
@@ -50,7 +58,7 @@ function hook_facebook_status_save($status, $context, $edit, $options) {
  */
 function hook_facebook_status_delete($status, $meta = array()) {
   if (module_exists('facebook_status_tags')) {
-    db_query("DELETE FROM {facebook_status_tags} WHERE sid = %d", $status->sid);
+    db_query("DELETE FROM {facebook_status_tags} WHERE sid = :sid", array(':sid' => $status->sid));
   }
 }
 
@@ -94,16 +102,16 @@ function hook_facebook_status_delete($status, $meta = array()) {
  * @see facebook_status_all_contexts()
  */
 function hook_facebook_status_context_info() {
-  $path = drupal_get_path('module', 'facebook_status');
+  $path = drupal_get_path('module', 'facebook_status') . '/includes/utility/facebook_status.contexts.inc';
   return array(
     'user' => array(
       'title' => t('User profiles'),
-      'description' => t('If a profile is currently being viewed, then the stream belongs to the owner of that profile.') .' '.
+      'description' => t('If a profile is currently being viewed, then the stream belongs to the owner of that profile.') . ' ' .
         t('Otherwise, the stream belongs to the current user.'),
       'handler' => 'facebook_status_user_context',
       'view' => 'facebook_status_user_stream',
       'weight' => 9999,
-      'file' => $path .'/includes/utility/facebook_status.contexts.inc',
+      'file' => $path,
     ),
     'node' => array(
       'title' => t('Nodes'),
@@ -111,7 +119,7 @@ function hook_facebook_status_context_info() {
       'handler' => 'facebook_status_node_context',
       'view' => 'facebook_status_node_stream',
       'weight' => 0,
-      'file' => $path .'/includes/utility/facebook_status.contexts.inc',
+      'file' => $path,
     ),
   );
 }
@@ -131,14 +139,14 @@ function hook_facebook_status_context_info() {
  * @see hook_facebook_status_refresh_selectors_alter()
  */
 function hook_facebook_status_refresh_selectors($recipient, $type) {
-  //Automatically update all instances of the view that is displayed for this context.
+  // Automatically update all instances of the view that is displayed for this context.
   $context = facebook_status_determine_context($type);
-  return array('.view-id-'. $context['view']);
+  return array('.view-id-' . $context['view']);
 }
 
 /**
  * hook_link() is invoked with parameters 'facebook_status' and $status.
- * Implement it just like you would implement hook_link() with nodes.
+ * Implement it just like you would implement hook_link() with nodes in D6.
  *
  * @param $type
  *   The type of link being processed.
@@ -174,7 +182,7 @@ if (!function_exists('hook_link')) {
  * @see _facebook_status_show()
  */
 function hook_facebook_status_link_alter(&$links, $status) {
-  //Capitalize the first letter of every link.
+  // Capitalize the first letter of every link.
   foreach ($links as $type => $data) {
     $links[$type]['title'] = drupal_ucfirst($links[$type]['title']);
   }
@@ -195,9 +203,9 @@ function hook_facebook_status_link_alter(&$links, $status) {
  * @see facebook_status_save_status()
  */
 function hook_facebook_status_save_options_alter(&$options, $edit) {
-  //If we allow saving attachments with statuses, then we could have different
-  //attachments with the same message, so we need to allow saving statuses with
-  //duplicate messages.
+  // If we allow saving attachments with statuses, then we could have different
+  // attachments with the same message, so we need to allow saving statuses
+  // with duplicate messages.
   if (module_exists('fbsmp')) {
     $options['discard duplicates'] = FALSE;
   }
@@ -224,7 +232,7 @@ function hook_facebook_status_user_access_alter(&$allow, $op, $args) {
       $type = isset($args[1]) ? $args[1] : 'user';
       $sender = isset($args[2]) ? $args[2] : $user;
       $context = facebook_status_determine_context($type);
-      //Updating one's own status should ALWAYS be allowed.
+      // Updating one's own status should ALWAYS be allowed.
       if ($type == 'user' && $context['handler']->recipient_id($recipient) == $sender->uid) {
         $allow = TRUE;
       }

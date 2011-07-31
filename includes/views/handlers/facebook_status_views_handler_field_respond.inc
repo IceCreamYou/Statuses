@@ -17,8 +17,8 @@ class facebook_status_views_handler_field_respond extends views_handler_field {
   }
   function render($values) {
     global $user;
-    $recipient = _facebook_status_user_load($values->{$this->aliases['recipient']});
-    $sender = _facebook_status_user_load($values->{$this->field_alias});
+    $recipient = user_load($values->{$this->aliases['recipient']});
+    $sender = user_load($values->{$this->field_alias});
     $type = $values->{$this->aliases['type']};
     drupal_add_css(drupal_get_path('module', 'facebook_status') . '/resources/facebook_status.css');
     $options = array('attributes' => array('class' => 'facebook-status-respond'));

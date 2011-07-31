@@ -36,7 +36,7 @@ function template_preprocess_facebook_status_item(&$vars) {
     }
     $vars['recipient_picture'] = theme('user_picture', array('account' => $vars['recipient']));
   }
-  $vars['sender'] = _facebook_status_user_load($status->sender);
+  $vars['sender'] = user_load($status->sender);
   if (isset($preset)) {
     $vars['sender']->imagecache_preset = $preset;
   }
@@ -88,7 +88,7 @@ function _facebook_status_show($status, $options) {
       drupal_not_found();
       return;
     }
-    $sender = _facebook_status_user_load($status->sender);
+    $sender = user_load($status->sender);
     if ($status->type == 'user' && $status->sender == $status->recipient) {
       $title = t('@sender: @message', array('@sender' => $sender->name, '@message' => $message));
     }
@@ -96,13 +96,13 @@ function _facebook_status_show($status, $options) {
       $context = facebook_status_determine_context($status->type);
       $recipient = $context['handler']->load_recipient($status->recipient);
       $recipient_name = $context['handler']->recipient_name($recipient);
-      //"\xC2\xBB" is the unicode escape sequence for the HTML entity &raquo; (a double right angle bracket)
+      // "\xC2\xBB" is the unicode escape sequence for the HTML entity &raquo; (a double right angle bracket)
       $title = t("@sender \xC2\xBB @recipient: @message",
         array('@sender' => $sender->name, '@recipient' => $recipient_name, '@message' => $message)
       );
     }
     if (drupal_strlen($title) > 80) {
-      //"\xE2\x80\xA6" is the unicode escape sequence for the HTML entity &hellip; (an ellipsis)
+      // "\xE2\x80\xA6" is the unicode escape sequence for the HTML entity &hellip; (an ellipsis)
       $title = drupal_substr($title, 0, 79) . "\xE2\x80\xA6";
     }
     drupal_set_title($title);

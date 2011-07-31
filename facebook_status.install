@@ -2,7 +2,7 @@
 
 /**
  * @file
- *   (Un)installs the Facebook-style Statuses module.
+ *   Install, update, and uninstall functions for the Facebook-style Statuses module.
  */
 
 /**

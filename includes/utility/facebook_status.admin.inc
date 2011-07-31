@@ -19,8 +19,7 @@ function facebook_status_admin($form_state) {
     '#required' => TRUE,
     '#weight' => -40,
   );
-  global $user;
-  $formats = filter_formats($user);
+  $formats = filter_formats($GLOBALS['user']);
   $options = array('none' => t('None (HTML escaped)'));
   foreach ($formats as $format) {
     $options[$format->format] = check_plain($format->name);
@@ -410,12 +409,12 @@ function facebook_status_admin_context_settings($form_state, $context) {
     );
     $options = array(
       -1 => t('Use module default settings.'),
-      0 => t('Show on every page except the listed pages.'),
-      1 => t('Show on only the listed pages.'),
+      BLOCK_VISIBILITY_NOTLISTED => t('Show on every page except the listed pages.'),
+      BLOCK_VISIBILITY_LISTED => t('Show on only the listed pages.'),
     );
     $description = t("Enter one page per line as Drupal paths. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", array('%blog' => 'blog', '%blog-wildcard' => 'blog/*', '%front' => '<front>'));
     if ($access) {
-      $options[2] = t('Show if the following PHP code returns <code>TRUE</code> (PHP-mode, experts only).');
+      $options[BLOCK_VISIBILITY_PHP] = t('Show if the following PHP code returns <code>TRUE</code> (PHP-mode, experts only).');
       $description .= ' ' . t('If the PHP-mode is chosen, enter PHP code between %php. Note that executing incorrect PHP-code can break your Drupal site.', array('%php' => '<?php ?>'));
     }
     if (module_exists('context')) {
@@ -435,6 +434,11 @@ function facebook_status_admin_context_settings($form_state, $context) {
         '#description' => t('Choose a context provided by the Context module whose conditions should be evaluated to determine whether the stream context applies.'),
         '#default_value' => isset($context['context']) ? $context['context'] : '',
         '#options' => drupal_map_assoc(array_keys(context_enabled_contexts())),
+        '#states' => array(
+          'visible' => array(
+            'input:radio[name="visibility"]' => array('value' => 3),
+          ),
+        ),
       );
     }
     else {
@@ -448,6 +452,11 @@ function facebook_status_admin_context_settings($form_state, $context) {
       '#title' => t('Pages'),
       '#default_value' => isset($context['pages']) ? $context['pages'] : '',
       '#description' => $description,
+      '#states' => array(
+        'invisible' => array(
+          'input:radio[name="visibility"]' => array('value' => 3),
+        ),
+      ),
     );
   }
 

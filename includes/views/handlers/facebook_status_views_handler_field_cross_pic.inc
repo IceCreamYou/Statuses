@@ -46,7 +46,7 @@ class facebook_status_views_handler_field_cross_pic extends views_handler_field 
   function render($values) {
     $recipient_id = $values->{$this->aliases['recipient']};
     $sender_id = $values->{$this->field_alias};
-    $sender = _facebook_status_user_load($sender_id);
+    $sender = user_load($sender_id);
     $type = $values->{$this->aliases['type']};
     $options = $this->options;
     if ($sender_id == $recipient_id && $type == 'user') {
@@ -59,7 +59,7 @@ class facebook_status_views_handler_field_cross_pic extends views_handler_field 
       ));
     }
     elseif ($type == 'user') {
-      $recipient = _facebook_status_user_load($recipient_id);
+      $recipient = user_load($recipient_id);
       if (isset($options['imagecache_preset']) && $options['imagecache_preset']) {
         $sender->imagecache_preset = $options['imagecache_preset'];
         $recipient->imagecache_preset = $options['imagecache_preset'];
