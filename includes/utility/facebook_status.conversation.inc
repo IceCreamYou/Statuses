@@ -40,8 +40,7 @@ function _facebook_status_conversation() {
   $args = explode(',', arg(2));
   $count = count($args);
   if ($count > 2 || $count < 1 || ($count == 1 && $args[0] == $user->uid) || !is_numeric($args[0]) || ($count == 2 && !is_numeric($args[1]))) {
-    drupal_not_found();
-    return;
+    return MENU_NOT_FOUND;
   }
   $key = array_search($user->uid, $args);
   if ($key === FALSE) {
@@ -56,5 +55,5 @@ function _facebook_status_conversation() {
   if (facebook_status_user_access('converse') && !empty($recipient->uid)) {
     return theme('facebook_status_form_display', array('recipient' => $recipient, 'type' => 'user'));
   }
-  drupal_not_found();
+  return MENU_NOT_FOUND;
 }

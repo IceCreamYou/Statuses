@@ -146,7 +146,7 @@ function facebook_status_box($form, &$form_state, $recipient, $type = 'user') {
   // TODO: Replace with a "true" re-posting system.
   if (isset($_GET['sid']) && is_numeric($_GET['sid'])) {
     $rs = facebook_status_load($_GET['sid']);
-    $sender = _facebook_status_user_load($rs->sender);
+    $sender = user_load($rs->sender);
     if ($sender->uid != $user->uid && $rs->message) {
       $name = '@' . $sender->name;
       // Properly reference tags with word-break characters in them.
@@ -182,18 +182,18 @@ function facebook_status_box($form, &$form_state, $recipient, $type = 'user') {
   drupal_add_css($path . '/facebook_status.css');
   // Form elements between ['opendiv'] and ['closediv'] will be refreshed via AHAH on form submission.
   $form['opendiv'] = array(
-    '#value' => '<div id="facebook-status-replace">',
+    '#markup' => '<div id="facebook-status-replace">',
     '#weight' => -50,
   );
   if (!empty($intro)) {
     $form['intro'] = array(
-      '#value' => '<span class="facebook-status-intro">' . $intro . '</span>',
+      '#markup' => '<span class="facebook-status-intro">' . $intro . '</span>',
       '#weight' => -45,
     );
   }
   if (variable_get('facebook_status_length', 140) > 0) {
     $form['chars'] = array(
-      '#value' => '<span class="facebook-status-chars">' . t('%chars characters allowed', array('%chars' => variable_get('facebook_status_length', 140))) . '</span>',
+      '#markup' => '<span class="facebook-status-chars">' . t('%chars characters allowed', array('%chars' => variable_get('facebook_status_length', 140))) . '</span>',
       '#weight' => module_exists('fbss_privacy') ? -41 : -24,
     );
   }
@@ -228,7 +228,7 @@ function facebook_status_box($form, &$form_state, $recipient, $type = 'user') {
   );
   // Form elements between ['opendiv'] and ['closediv'] will be refreshed via AHAH on form submission.
   $form['closediv'] = array(
-    '#value' => '</div>',
+    '#markup' => '</div>',
     '#weight' => -1,
   );
   $form['recipient'] = array(
@@ -243,7 +243,7 @@ function facebook_status_box($form, &$form_state, $recipient, $type = 'user') {
   );
   if (arg(0) == 'statuses' && arg(1) == 'share' && !empty($_GET['destination']) && $_GET['destination'] != $_GET['q']) {
     $form['back'] = array(
-      '#value' => l(t('Back'), $_GET['destination'], array('attributes' => array('class' => 'facebook-status-back'))),
+      '#markup' => l(t('Back'), $_GET['destination'], array('attributes' => array('class' => 'facebook-status-back'))),
       '#weight' => 20,
     );
   }
@@ -259,7 +259,9 @@ function facebook_status_box_validate($form, &$form_state) {
   if ($len > $maxlen && $maxlen != 0) {
     form_set_error('status',
       t('You may use a maximum of %maxchars characters, but you are using %chars characters.',
-      array('%maxchars' => $maxlen, '%chars' => $len)));
+        array('%maxchars' => $maxlen, '%chars' => $len)
+      )
+    );
   }
 }
 

@@ -8,7 +8,7 @@
 /**
  * Settings form.
  */
-function facebook_status_admin($form_state) {
+function facebook_status_admin($form, $form_state) {
   $form['facebook_status_length'] = array(
     '#type' => 'textfield',
     '#title' => t('Maximum status length'),
@@ -71,7 +71,7 @@ function facebook_status_admin_validate($form, &$form_state) {
 /**
  * Advanced settings form.
  */
-function facebook_status_admin_advanced($form_state) {
+function facebook_status_admin_advanced($form, $form_state) {
   $form['facebook_status_box_rows'] = array(
     '#type' => 'textfield',
     '#title' => t('Status update box rows'),
@@ -197,7 +197,7 @@ function facebook_status_admin_advanced_validate($form, &$form_state) {
 /**
  * The draggable-table stream context configuration form.
  */
-function facebook_status_admin_contexts(&$form_state) {
+function facebook_status_admin_contexts($form, &$form_state) {
   $data = facebook_status_all_contexts();
   $form = array();
   $form['components'] = array();
@@ -213,7 +213,7 @@ function facebook_status_admin_contexts(&$form_state) {
   foreach ($data as $type => $values) {
     $form['components'][$type]['title'] = array(
       '#prefix' => '<div title="' . (isset($values['description']) ? $values['description'] : '') . '">',
-      '#value' => $values['title'],
+      '#markup' => $values['title'],
       '#suffix' => '</div>',
     );
     $form['components'][$type]['view'] = array(
@@ -222,7 +222,7 @@ function facebook_status_admin_contexts(&$form_state) {
       '#options' => $options,
     );
     $form['components'][$type]['link'] = array(
-      '#value' => l(
+      '#markup' => l(
         t('Configure'),
         'admin/config/facebook_status/contexts/' . $type,
         array('query' => array('destination' => 'admin/config/facebook_status/contexts'))
@@ -247,7 +247,7 @@ function facebook_status_admin_contexts(&$form_state) {
   $other = variable_get('facebook_status_user_other_view', 'facebook_status_stream');
   if ($self != $other) {
     $form['components']['user']['view'] = array(
-      '#value' => t('%self and %other - view configuration to change', array(
+      '#markup' => t('%self and %other - view configuration to change', array(
         '%self' => $self,
         '%other' => $other,
       )),
@@ -304,12 +304,12 @@ function theme_facebook_status_admin_contexts($variables) {
   $rows = array();
   foreach (element_children($form['components']) as $key) {
     $element = &$form['components'][$key];
-    $element['title']['#attributes']['class']         = 'title-group';
-    $element['view']['#attributes']['class']          = 'view-group';
-    $element['link']['#attributes']['class']          = 'link-group';
-    $element['weight']['#attributes']['class']        = 'weight-group';
-    $element['type']['#attributes']['class']          = 'type';
-    $element['already_saved']['#attributes']['class'] = 'already-saved';
+    $element['title']['#attributes']['class']         = array('title-group');
+    $element['view']['#attributes']['class']          = array('view-group');
+    $element['link']['#attributes']['class']          = array('link-group');
+    $element['weight']['#attributes']['class']        = array('weight-group');
+    $element['type']['#attributes']['class']          = array('type');
+    $element['already_saved']['#attributes']['class'] = array('already-saved');
     $row = array();
     $row[] = drupal_render($element['title']);
     $row[] = drupal_render($element['view']);
@@ -319,7 +319,7 @@ function theme_facebook_status_admin_contexts($variables) {
     $row[] = drupal_render($element['already_saved']);
     $rows[] = array(
       'data' => $row,
-      'class' => 'draggable',
+      'class' => array('draggable'),
     );
   }
   $output = '<p>' . t('The view assigned to the "User profiles" context does not affect the view shown on conversation pages.') . '</p>';
@@ -331,14 +331,14 @@ function theme_facebook_status_admin_contexts($variables) {
 /**
  * The individual context settings form.
  */
-function facebook_status_admin_context_settings($form_state, $context) {
+function facebook_status_admin_context_settings($form, $form_state, $context) {
   drupal_set_title(t('Context settings: !type', array('!type' => $context['title'])));
   $type = $context['handler']->type();
   $form = array();
 
   if ($type == 'user') {
     $form['notice'] = array(
-      '#value' => '<p>' . t('The view assigned to the "User profiles" context does not affect the view shown on conversation pages.') . '</p>',
+      '#markup' => '<p>' . t('The view assigned to the "User profiles" context does not affect the view shown on conversation pages.') . '</p>',
     );
   }
 
@@ -402,7 +402,7 @@ function facebook_status_admin_context_settings($form_state, $context) {
   }
   else {
     $form['page_vis_settings']['warning'] = array(
-      '#value' => '<p><strong>' . t('Changing these values could break your site. Only change these settings if you know what you are doing.') . '</strong></p>
+      '#markup' => '<p><strong>' . t('Changing these values could break your site. Only change these settings if you know what you are doing.') . '</strong></p>
         <p>' . t('Specifically, most contexts make assumptions about what pages they are enabled on in order to identify the correct recipient of status messages.') . ' ' .
           t('Enabling a context on an unsupported page will cause that context to fail.') . ' ' .
           t('Additionally, the User context should apply on all pages as a fallback. If no context applies on a given page, errors will occur.') . '</p>',

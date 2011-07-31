@@ -8,7 +8,7 @@
 /**
  * The edit status form.
  */
-function facebook_status_edit(&$form_state, $status) {
+function facebook_status_edit($form, &$form_state, $status) {
   $context = facebook_status_determine_context($status->type);
   $maxlength = variable_get('facebook_status_length', 140);
   $path = drupal_get_path('module', 'facebook_status') . '/resources';
@@ -22,9 +22,8 @@ function facebook_status_edit(&$form_state, $status) {
   if ($status->type == 'user' && $status->sender == $status->recipient) {
     $self = ' facebook-status-form-self-update';
   }
-  $form = array('#cache' => TRUE);
   $form['intro'] = array(
-    '#value' => '<div class="clear-block facebook-status-update facebook-status-form-type-' . $status->type . $self . '">' .
+    '#markup' => '<div class="clear-block facebook-status-update facebook-status-form-type-' . $status->type . $self . '">' .
       '<span class="facebook-status-intro">' . $intro . '</span>',
     '#weight' => -45,
   );
@@ -38,7 +37,7 @@ function facebook_status_edit(&$form_state, $status) {
   );
   if ($maxlength > 0) {
     $form['chars'] = array(
-      '#value' => '<span class="facebook-status-chars">' . t('%chars characters allowed', array('%chars' => $maxlength)) . '</span>',
+      '#markup' => '<span class="facebook-status-chars">' . t('%chars characters allowed', array('%chars' => $maxlength)) . '</span>',
       '#weight' => -38,
     );
   }
@@ -89,7 +88,7 @@ function _facebook_status_delete($form, &$form_state, $status) {
   if (module_exists('modalframe')) {
     modalframe_child_js();
   }
-  $form['infotext'] = array('#value' => '<p>' . t('Are you sure you want to permanently delete the status %status?', array('%status' => $status->message)) . '</p>');
+  $form['infotext'] = array('#markup' => '<p>' . t('Are you sure you want to permanently delete the status %status?', array('%status' => $status->message)) . '</p>');
   $form['confirm'] = array(
     '#type' => 'submit',
     '#value' => t('Confirm'),
