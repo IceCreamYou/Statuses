@@ -60,6 +60,7 @@ function template_preprocess_facebook_status_item(&$vars) {
       $vars['links'] = !empty($status->links) ? theme('links', array('links' => $status->links, 'attributes' => array('class' => 'links inline'))) : '';
     }
   }
+  $vars['status_url'] = url('statuses/'. $status->sid, array('absolute' => TRUE));
 }
 
 /**
