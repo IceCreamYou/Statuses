@@ -853,7 +853,8 @@ function facebook_status_save_status($recipient, $type, $message, $sender = NULL
     'discard blank statuses' => TRUE,
   );
   // Calls hook_facebook_status_save_options_alter(&$options, $edit).
-  drupal_alter('facebook_status_save_options', $options, FALSE);
+  $edit= FALSE;
+  drupal_alter('facebook_status_save_options', $options, $edit);
   // Pretend to have set a new status if the submitted status is exactly the same as the old one.
   $status = _facebook_status_get_status_fast($sender->uid);
   // The status object to be saved.
@@ -937,7 +938,8 @@ function facebook_status_edit_status($status, $new_message, $options = array()) 
     'update timestamp' => FALSE,
   );
   // Calls hook_facebook_status_save_options_alter(&$options, $edit).
-  drupal_alter('facebook_status_save_options', $options, TRUE);
+  $edit = TRUE;
+  drupal_alter('facebook_status_save_options', $options, $edit);
   $time = REQUEST_TIME;
   global $user;
   // Pretend to have set a new status if the submitted status is exactly the same as the old one.
