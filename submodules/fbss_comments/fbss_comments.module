@@ -88,7 +88,7 @@ function fbss_comments_user_cancel($edit, $account, $method) {
   if ($method == 'user_cancel_reassign') {
     db_update('fbss_comments')
       ->fields(array('uid' => 0))
-      ->condition('uid' => $account->uid)
+      ->condition('uid', $account->uid)
       ->execute();
   }
 }
