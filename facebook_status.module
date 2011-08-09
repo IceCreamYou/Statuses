@@ -271,21 +271,21 @@ function facebook_status_user_cancel($edit, $account, $method) {
     db_update('facebook_status')
       ->fields(array('private' => 1))
       ->condition(db_or()
-        ->condition('sender' => $account->uid)
-        ->condition('recipient' => $account->uid)
+        ->condition('sender', $account->uid)
+        ->condition('recipient', $account->uid)
       )
       ->execute();
   }
   elseif ($method == 'user_cancel_reassign') {
     db_update('facebook_status')
       ->fields(array('sender' => 0))
-      ->condition('sender' => $account->uid)
+      ->condition('sender', $account->uid)
       ->execute();
     db_update('facebook_status')
       ->fields(array('recipient' => 0))
       ->condition(db_and()
-        ->condition('recipient' => $account->uid)
-        ->condition('type' => 'user')
+        ->condition('recipient', $account->uid)
+        ->condition('type', 'user')
       )
       ->execute();
   }
@@ -298,10 +298,10 @@ function facebook_status_user_delete($account) {
   // Remove abandoned statuses from the database on user account deletion.
   db_delete('facebook_status')
     ->condition(db_or()
-      ->condition('sender' => $account->uid)
+      ->condition('sender', $account->uid)
       ->condition(db_and()
-        ->condition('recipient' => $account->uid)
-        ->condition('type' => 'user')
+        ->condition('recipient', $account->uid)
+        ->condition('type', 'user')
       )
     )
     ->execute();
