@@ -759,7 +759,7 @@ function facebook_status_all_contexts() {
   }
   $result = db_query("SELECT * FROM {facebook_status_contexts}");
   $contexts = module_invoke_all('facebook_status_context_info');
-  while ($c = db_fetch_array($result)) {
+  foreach ($result as $c) {
     $contexts[$c['type']]['in_db'] = TRUE;
     $contexts[$c['type']]['weight'] = $c['weight'];
     $contexts[$c['type']]['view'] = $c['view'];
