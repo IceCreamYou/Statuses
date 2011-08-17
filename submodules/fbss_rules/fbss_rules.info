@@ -1,0 +1,10 @@
+name = Statuses Rules
+description = "Integrates Rules with Statuses."
+package = Statuses
+dependencies[] = statuses
+dependencies[] = rules
+core = 7.x
+
+files[] = fbss_rules.module
+files[] = fbss_rules.rules.inc
+files[] = fbss_rules.rules_defaults.inc

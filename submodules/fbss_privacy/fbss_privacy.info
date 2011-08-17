@@ -1,0 +1,13 @@
+name = Statuses Private Statuses
+description = "Allows statuses between two users to be designated as private."
+dependencies[] = statuses
+package = Statuses
+core = 7.x
+
+files[] = fbss_privacy.install
+files[] = fbss_privacy.module
+files[] = fbss_privacy.views.inc
+files[] = fbss_privacy.views_default.inc
+files[] = fbss_privacy_views_handler_argument.inc
+files[] = fbss_privacy_views_handler_field.inc
+files[] = fbss_privacy_views_handler_filter.inc

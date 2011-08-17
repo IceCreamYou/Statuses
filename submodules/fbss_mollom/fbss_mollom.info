@@ -1,0 +1,8 @@
+name = Statuses Mollom
+description = "Integrates Mollom with Statuses."
+package = Statuses
+dependencies[] = statuses
+dependencies[] = mollom
+core = 7.x
+
+files[] = fbss_mollom.module

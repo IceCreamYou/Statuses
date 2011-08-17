@@ -1,0 +1,11 @@
+name = Statuses Twitter
+description = Integrates Twitter with Statuses.
+package = Statuses
+dependencies[] = statuses
+dependencies[] = twitter
+dependencies[] = oauth
+core = 7.x
+
+files[] = fbss_twitter.admin.inc
+files[] = fbss_twitter.install
+files[] = fbss_twitter.module

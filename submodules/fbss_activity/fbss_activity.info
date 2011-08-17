@@ -1,0 +1,7 @@
+name = Statuses Activity
+description = "Integrates Activity 2 with Statuses."
+package = Statuses
+dependencies[] = statuses
+dependencies[] = activity
+core = 7.x
+files[] = fbss_activity.module

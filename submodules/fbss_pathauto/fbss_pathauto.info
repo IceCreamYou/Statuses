@@ -1,0 +1,7 @@
+name = Statuses Pathauto
+description = "Integrates Pathauto with Statuses."
+package = Statuses
+dependencies[] = statuses
+dependencies[] = pathauto
+core = 7.x
+files[] = fbss_pathauto.module

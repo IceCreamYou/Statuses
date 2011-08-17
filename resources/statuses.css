@@ -1,0 +1,60 @@
+.statuses-negative {
+  color: #800000;
+}
+
+.statuses-chars {
+  float: right;
+}
+
+#statuses-edit .statuses-chars {
+  float: none;
+}
+
+.statuses-profile-category .profile {
+  clear: none;
+}
+
+.statuses-update {
+  margin-bottom: 1em;
+}
+
+.statuses-update form#statuses-box {
+  margin-bottom: 0;
+}
+
+.statuses-edit,
+.statuses-delete,
+.statuses-respond,
+.statuses-repost,
+.statuses-share,
+.statuses-details .flag-wrapper {
+  font-size: 90%;
+  margin-left: 0.5em;
+}
+
+.statuses-text {
+  width: 100%;
+}
+
+.statuses-faded {
+  color: #999999;
+}
+
+input.statuses-submit {
+  float: right;
+  margin-top: 0;
+  margin-left: 1em;
+}
+
+.statuses-back {
+  float: right;
+  margin: 0.5em;
+}
+
+/* Fix weird picture formatting from Garland and other themes. */
+.view .picture {
+  clear: none;
+  display: inline;
+  float: none;
+  padding-left: 0;
+}

@@ -1,0 +1,13 @@
+name = Statuses Flags
+description = "Integrates Flag with Statuses."
+package = Statuses
+dependencies[] = statuses
+dependencies[] = flag
+core = 7.x
+files[] = fbss_flag.flag.inc
+files[] = fbss_flag.install
+files[] = fbss_flag.module
+files[] = views/statuses_views_handler_argument_flagged_user.inc
+files[] = views/statuses_views_handler_filter_flagged_user.inc
+files[] = views/fbss_flag.views.inc
+files[] = views/fbss_flag.views_default.inc

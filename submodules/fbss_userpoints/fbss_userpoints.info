@@ -1,0 +1,9 @@
+name = Statuses Userpoints
+description = "Integrates Userpoints with Statuses."
+package = Statuses
+dependencies[] = statuses
+dependencies[] = userpoints
+core = 7.x
+
+files[] = fbss_userpoints.install
+files[] = fbss_userpoints.module
