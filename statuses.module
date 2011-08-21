@@ -901,7 +901,7 @@ function statuses_save_status($recipient, $type, $message, $sender = NULL, $opti
       module_invoke_all('statuses', 'fbss_submitted', $object, $context);
     }
   }
-  elseif ($message == $status->status) {
+  elseif ($message == $status->message) {
     $object->sid = $status->sid;
   }
   return $object;
