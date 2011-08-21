@@ -127,6 +127,15 @@ function statuses_menu() {
     'access arguments' => array('view', 1),
     'type' => MENU_CALLBACK,
   );
+  $items['statuses/ajax'] = array(
+    'title' => 'AHAH callback', 
+    'page callback' => 'statuses_ajax_form_callback', 
+    'delivery callback' => 'ajax_deliver', 
+    'access callback' => TRUE, 
+    'theme callback' => 'ajax_base_page_theme', 
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/utility/statuses.form.inc',
+  );
   if (module_exists('devel_generate')) {
     $items['admin/generate/statuses'] = array(
       'title' => 'Generate statuses',
@@ -1016,7 +1025,7 @@ function _statuses_run_filter($status) {
  *   A status object.
  */
 function _statuses_get_status_fast($uid) {
-  $status = db_query("
+  return db_query("
     SELECT *
     FROM {statuses}
     WHERE
@@ -1029,16 +1038,6 @@ function _statuses_get_status_fast($uid) {
     ':recipient' => $uid,
     ':type' => 'user'
   ))->fetchObject();
-  if (!$status) {
-    $status = (object) array(
-      'sender' => $uid,
-      'recipient' => $uid,
-      'message' => '',
-      'created' => 0,
-      'type' => 'user',
-    );
-  }
-  return $status;
 }
 
 /**

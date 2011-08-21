@@ -216,7 +216,7 @@ function statuses_box($form, &$form_state, $recipient, $type = 'user') {
   );
   if (variable_get('statuses_ahah', 1)) {
     $form['fbss-submit']['#ajax'] = array(
-      'callback' => 'statuses_save_js',
+      'path' => 'statuses/ajax',
       'wrapper' => 'statuses-replace',
       'keypress' => TRUE,
     );
@@ -296,8 +296,6 @@ function statuses_box_submit($form, &$form_state) {
  * Saves statuses via AHAH.
  */
 function statuses_save_js($form, $form_state) {
-  // Make sure we have form stuff available.
-  module_load_include('inc', 'statuses', 'includes/utility/statuses.form');
   $new_form = array();
   // Get HTML for the replacement form. Only these elements will be AHAH-refreshed.
   $new_form['slider']      = $form['slider'];
@@ -305,14 +303,21 @@ function statuses_save_js($form, $form_state) {
   $new_form['chars']       = $form['chars'];
   $new_form['fbss-submit'] = $form['fbss-submit'];
   $new_form['sdefault']    = $form['sdefault'];
-  // Clear the status form after it's already been submitted once to prevent confusion.
-  unset($new_form['status']['#default_value']);
   // Calls hook_statuses_form_ahah_alter(&$new_form, $form).
   drupal_alter('statuses_form_ahah', $new_form, $form);
-  // If the $form['fbss-submit']['#ahah']['wrapper'] div was found in a #prefix or #suffix of a form element that we re-rendered here,
-  // then we would have to unset() it to prevent duplicate wrappers. However, we have a somewhat unique implementation in which the wrappers
-  // are actually their own elements, so this is not an issue.
-  return theme('status_messages') . drupal_render($new_form);
+  return $new_form;
+}
+
+/**
+ * Executes the AJAX process.
+ *
+ * This is required because we want all the form-related functions to be in
+ * this file, and to do that we have to implement a custom AJAX path instead
+ * of using the default (system/ajax).
+ */
+function statuses_ajax_form_callback() {
+  require_once DRUPAL_ROOT . '/includes/form.inc';
+  return ajax_form_callback();
 }
 
 /**
