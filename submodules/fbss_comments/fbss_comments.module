@@ -526,7 +526,7 @@ function fbss_comments_count_comments($sid, $filter_view_access = FALSE) {
   if ($filter_view_access) {
     $result = db_query("SELECT * FROM {fbss_comments} WHERE sid = :sid", array(':sid' => $sid));
     $count = 0;
-    while ($comment = db_fetch_object($result)) {
+    foreach ($result as $comment) {
       if (fbss_comments_can('view', $comment)) {
         $count++;
       }

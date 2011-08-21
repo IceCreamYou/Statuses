@@ -321,7 +321,9 @@ function statuses_save_js($form, $form_state) {
 function _statuses_use_autogrow() {
   $path = cache_get('fbss:autogrow');
   if (!empty($path)) {
-    drupal_add_js($path->data);
+    if (drupal_strlen($path->data) > 3) {
+      drupal_add_js($path->data);
+    }
     return;
   }
   if (module_exists('libraries')) {
@@ -341,10 +343,13 @@ function _statuses_use_autogrow() {
     cache_set('fbss:autogrow', 'libraries/jquery.autogrow.js');
   }
   else {
-    $path = drupal_get_path('profile', $GLOBALS['profile']) . '/libraries/jquery.autogrow.js';
+    $path = drupal_get_path('profile', drupal_get_profile()) . '/libraries/jquery.autogrow.js';
     if (file_exists($path)) {
       drupal_add_js($path);
       cache_set('fbss:autogrow', $path);
+    }
+    else {
+      cache_set('fbss:autogrow', 'n/a');
     }
   }
 }

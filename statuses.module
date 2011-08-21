@@ -337,7 +337,7 @@ function statuses_user_view($account, $view_mode) {
     $account->content['statuses']['status'] = array(
       '#type' => 'user_profile_item',
       '#title' => '',
-      '#value' => $value,
+      '#markup' => $value,
       '#attributes' => array('class' => array('statuses profile')),
     );
   }

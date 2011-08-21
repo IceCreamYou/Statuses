@@ -422,20 +422,6 @@ function statuses_views_handlers() {
  */
 function statuses_views_plugins() {
   return array(
-    'row' => array(
-      'statuses_rss' => array(
-        'title' => t('RSS items'),
-        'help' => t('Displays statuses as RSS items.'),
-        'handler' => 'statuses_views_plugin_row_rss',
-        'parent' => 'fields',
-        'path' => drupal_get_path('module', 'statuses') . '/includes/views/handlers',
-        'theme' => 'views_view_row_rss',
-        'base' => array('statuses'),
-        'uses fields' => FALSE,
-        'uses options' => FALSE,
-        'type' => 'feed',
-      ),
-    ),
     'argument validator' => array(
       'status' => array(
         'title' => t('Status'),

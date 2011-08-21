@@ -44,18 +44,18 @@
  */
 ?>
 <div id="statuses-item-<?php echo $sid; ?>" class="statuses-item facebook-status-type-<?php echo $type; ?><?php if ($self): ?> facebook-status-self-update<?php endif; ?><?php if ($page): ?> facebook-status-page<?php endif; ?><?php if ($private): ?> facebook-status-private<?php endif; ?>">
-  <?php if ($sender_picture): ?>
+  <?php if (!empty($sender_picture)): ?>
     <div class="statuses-sender-picture"><?php echo $sender_picture; ?></div>
   <?php endif; ?>
   <span class="statuses-sender"><?php echo $sender_link; ?></span>
   <?php if ($type == 'user' && !$self): ?>
     &raquo; <span class="statuses-recipient"><?php echo $recipient_link; ?></span>
   <?php endif; ?>
-  <?php if ($private): ?>
+  <?php if (!empty($private)): ?>
     <span class="statuses-private-text"><?php echo $private_text; ?></span>
   <?php endif; ?>
   <span class="statuses-content"><?php echo $message; ?></span>
-  <?php if ($attachment): ?>
+  <?php if (!empty($attachment)): ?>
     <div class="fbsmp clearfix"><?php echo $attachment; ?></div>
   <?php endif; ?>
   <div class="statuses-details">
@@ -68,10 +68,10 @@
         </a>
       <?php endif; ?>
     </span>
-    <?php if ($meta): ?>
+    <?php if (!empty($meta)): ?>
       <span class="statuses-meta"><?php echo $meta; ?></span>
     <?php endif; ?>
-    <?php if ($links): ?>
+    <?php if (!empty($links)): ?>
       <span class="statuses-links"><?php echo $links; ?></span>
     <?php endif; ?>
   </div>
