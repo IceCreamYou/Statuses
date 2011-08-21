@@ -731,7 +731,7 @@ function fbss_comments_forms($form_id, $args) {
  *   thread page. If FALSE the "comment" link with delayed comment form loading
  *   will not be used.
  */
-function fbss_comments_box(&$form_state, $sid, $delay_load = TRUE, $hide_submit = TRUE) {
+function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_submit = TRUE) {
   $path = drupal_get_path('module', 'fbss_comments');
   drupal_add_css($path . '/fbss_comments.css');
   drupal_add_js($path . '/fbss_comments.js');
