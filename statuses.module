@@ -212,7 +212,7 @@ function statuses_block_configure($delta) {
  */
 function statuses_block_save($delta, $edit) {
   if ($delta == 'statuses' && isset($edit['statuses'])) {
-    variable_set('statuses_block_view', $edit['statuses']['facebook_status_block_view']);
+    variable_set('statuses_block_view', $edit['statuses']['statuses_block_view']);
   }
 }
 
