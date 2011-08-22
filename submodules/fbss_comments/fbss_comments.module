@@ -458,7 +458,7 @@ function fbss_comments_load($cids) {
 function fbss_comments_get_comments($sid, $filter_view_access = FALSE) {
   $result = db_query("SELECT * FROM {fbss_comments} WHERE sid = :sid ORDER BY created ASC, cid ASC", array(':sid' => $sid));
   $results = array();
-  while ($comment = db_fetch_object($result)) {
+  foreach ($result as $comment) {
     if (!$filter_view_access || fbss_comments_can('view', $comment)) {
       $results[] = $comment;
     }
