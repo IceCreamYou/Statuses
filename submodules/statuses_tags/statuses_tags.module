@@ -42,7 +42,6 @@ function statuses_tags_block_info() {
 function statuses_tags_block_view($delta) {
   if (TRUE && $delta == 'statuses_popular_tags') {
     $block['subject'] = t('Popular tags');
-    // TODO Please change this theme call to use an associative array for the $variables parameter.
     $block['content'] = theme('statuses_popular_tags');
     return $block;
   }
@@ -52,7 +51,7 @@ function statuses_tags_block_view($delta) {
  * Implements hook_block_configure().
  */
 function statuses_tags_block_configure($delta) {
-  if (TRUE && $delta == 'statuses_popular_tags') {
+  if ($delta == 'statuses_popular_tags') {
     $form['statuses'] = array(
       '#type' => 'fieldset',
       '#title' => t('Statuses Settings'),
@@ -84,16 +83,11 @@ function statuses_tags_block_configure($delta) {
  * Implements hook_block_save().
  */
 function statuses_tags_block_save($delta, $edit) {
-  if (TRUE && $delta == 'statuses_popular_tags') {
-    variable_set('statuses_tags_count', $edit['statuses']['facebook_status_tags_count']);
-    variable_set('statuses_tags_time', $edit['statuses']['facebook_status_tags_time']);
+  if ($delta == 'statuses_popular_tags') {
+    variable_set('statuses_tags_count', $edit['statuses']['statuses_tags_count']);
+    variable_set('statuses_tags_time', $edit['statuses']['statuses_tags_time']);
   }
 }
-
-/**
- * Implements hook_block().
- */
-function statuses_tags_block_OLD($op = 'list', $delta = 0, $edit = NULL) { }
 
 /**
  * The validate function for the settings on the block form.
@@ -119,13 +113,11 @@ function statuses_tags_form_statuses_admin_alter(&$form, &$form_state) {
     $options = array('-1' => t('None'));
     $vocabularies = taxonomy_get_vocabularies();
     foreach ($vocabularies as $vocabulary) {
-      if ($vocabulary->tags) {
-        $options[$vocabulary->vid] = check_plain($vocabulary->name);
-      }
+      $options[$vocabulary->vid] = check_plain($vocabulary->name);
     }
     if (count($options) < 2) {
       drupal_set_message(
-        t('You must <a href="!vocab">create a free-tagging vocabulary</a> for use with #hashtags in order to take advantage of that feature.',
+        t('You must <a href="!vocab">create a vocabulary</a> for use with #hashtags in order to take advantage of that feature.',
           array('!vocab' => url('admin/structure/taxonomy/add/vocabulary'))),
         'error');
     }
@@ -334,7 +326,7 @@ function statuses_tags_get_status_tags($sid, $type = 'term') {
       $rids[] = taxonomy_term_load($rid->rid);
     }
     elseif ($type == 'user') {
-      $rids[] = _statuses_user_load($rid->rid);
+      $rids[] = user_load($rid->rid);
     }
   }
   return $rids;
@@ -513,7 +505,7 @@ function _statuses_tags_filter($subject, $new = FALSE) {
     if (($op == '@' || $op == '#') && $match) {
       $link = '';
       if ($op == '@') {
-        $account = _statuses_user_load_by_name($match);
+        $account = user_load_by_name($match);
         if ($account->uid) {
           $link = $op . theme('username', array('account' => $account));
           $items['@'][] = $account;
@@ -523,11 +515,11 @@ function _statuses_tags_filter($subject, $new = FALSE) {
         $term = _statuses_tags_get_term($match);
         // If the term does not exist, create it.
         if (empty($term)) {
-          $term = array(
+          $term = (object) array(
             'vid' => variable_get('statuses_tags_vid', -1),
             'name' => $match,
           );
-          taxonomy_term_save($term /* TODO Term object replaces array $term */);
+          taxonomy_term_save($term);
         }
         $dest = _statuses_tags_resolve($term);
         $link = $op . l($term->name, $dest);
@@ -582,21 +574,23 @@ function _statuses_tags_resolve($term) {
   if (!trim($url)) {
     return;
   }
-  $phpversion = drupal_substr(phpversion(), 0, 1);
-  // str_ireplace() is not defined in PHP4 so we use the case-sensitive version.
-  if ($phpversion == 5) {
-    return str_ireplace(array('[term-id]', '[term-name]'), array($term->tid, $term->name), $url);
-  }
-  else {
-    return str_replace(array('[term-id]', '[term-name]'), array($term->tid, $term->name), $url);
-  }
+  return str_replace(array('[term-id]', '[term-name]'), array($term->tid, $term->name), $url);
 }
 
 /**
  * Gets a taxonomy term by name.
  */
 function _statuses_tags_get_term($name) {
-  return db_fetch_object(db_query("SELECT tid, name FROM {taxonomy_term_data} WHERE LOWER(name) = :LOWER(name) AND vid = :vid", array(':LOWER(name)' => LOWER('%s'), ':vid' => $name, '' => variable_get('statuses_tags_vid', - 1))));
+  return db_query("
+    SELECT tid, name
+    FROM {taxonomy_term_data}
+    WHERE
+      LOWER(name) = LOWER(:name)
+      AND vid = :vid
+  ", array(
+    ':name' => $name,
+    ':vid' => variable_get('statuses_tags_vid', -1)
+  ));
 }
 
 //===================
@@ -620,11 +614,9 @@ function statuses_tags_preprocess_statuses_item(&$vars) {
 function statuses_tags_statuses_save($status, $edit = FALSE) {
   // If the status was just edited, the tags could have changed, so we flush them.
   if ($edit) {
-    // TODO Please review the conversion of this statement to the D7 database API syntax.
-    /* db_query("DELETE FROM {statuses_tags} WHERE sid = %d", $status->sid) */
     db_delete('statuses_tags')
-  ->condition('sid', $status->sid)
-  ->execute();
+      ->condition('sid', $status->sid)
+      ->execute();
   }
   $matches = _statuses_tags_filter($status->message, TRUE);
   // Users.
@@ -673,11 +665,9 @@ function statuses_tags_statuses_save($status, $edit = FALSE) {
  * Implements hook_statuses_delete().
  */
 function statuses_tags_statuses_delete($status) {
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
-  /* db_query("DELETE FROM {statuses_tags} WHERE sid = %d", $status->sid) */
   db_delete('statuses_tags')
-  ->condition('sid', $status->sid)
-  ->execute();
+    ->condition('sid', $status->sid)
+    ->execute();
 
   if (module_exists('activity')) {
     $result = db_query("SELECT aid FROM {activity} WHERE type = :type AND eid = :eid", array(':type' => 'statuses_tags', ':eid' => $status->sid));
@@ -722,21 +712,17 @@ function statuses_tags_taxonomy($op, $type, $array = NULL) {
     return;
   }
   if ($type == 'term') {
-    // TODO Please review the conversion of this statement to the D7 database API syntax.
-    /* db_query("DELETE FROM {statuses_tags} WHERE rid = %d AND type = 'term'", $array['tid']) */
     db_delete('statuses_tags')
-  ->condition('rid', $array['tid'])
-  ->condition('type', 'term')
-  ->execute();
+      ->condition('rid', $array['tid'])
+      ->condition('type', 'term')
+      ->execute();
   }
   elseif ($type == 'taxonomy_vocabulary') {
     if ($array['vid'] === variable_get('statuses_tags_vid', -1)) {
       // If the vocabulary is deleted, all the tags will no longer exist, so the references are invalid.
-      // TODO Please review the conversion of this statement to the D7 database API syntax.
-      /* db_query("DELETE FROM {statuses_tags} WHERE type = 'term'") */
       db_delete('statuses_tags')
-  ->condition('type', 'term')
-  ->execute();
+        ->condition('type', 'term')
+        ->execute();
       variable_set('statuses_tags_vid', -1);
     }
   }
@@ -746,19 +732,12 @@ function statuses_tags_taxonomy($op, $type, $array = NULL) {
  * Implements hook_user_cancel().
  */
 function statuses_tags_user_cancel($edit, $account, $method) {
-  if (TRUE) {
-    // TODO Please review the conversion of this statement to the D7 database API syntax.
-    /* db_query("DELETE FROM {statuses_tags} WHERE rid = %d and type = 'user'", $account->uid) */
-    db_delete('statuses_tags')
-  ->condition('rid', $account->uid)
-  ->execute();
-  }
+  // TODO: take the method into account, and implement hook_user_delete()
+  db_delete('statuses_tags')
+    ->condition('rid', $account->uid)
+    ->condition('type', 'user')
+    ->execute();
 }
-
-/**
- * Implements hook_user().
- */
-function statuses_tags_user_OLD($op, &$edit, &$account, $category = NULL) { }
 
 /**
  * Implements hook_trigger_info().
@@ -818,7 +797,7 @@ function statuses_tags_activity_grants($activity) {
   $realms = array();
   if ($activity->type == 'statuses_tags') {
     $result = db_query("SELECT rid FROM {statuses_tags} WHERE type = :type AND sid = :sid", array(':type' => 'user', ':sid' => $activity->eid));
-    while ($account = db_fetch_object($result)) {
+    foreach ($result as $account) {
       $realms['statuses_tags_mentioned'][] = $account->rid;
     }
   }
@@ -846,9 +825,13 @@ function statuses_tags_list_activity_actions($hook, $op, $max_age) {
     $min_time = 0;
   }
 
-  $result = db_query("SELECT f.sid as id, f.created, t.rid as actor FROM {statuses_tags} t INNER JOIN {statuses} f ON t.sid = f.sid WHERE t.type = :t.type AND created > :created", array(':t.type' => 'user', ':created' => $min_time));
-  while ($row = db_fetch_array($result)) {
-    $actions[] = $row;
+  $result = db_query("
+    SELECT f.sid as id, f.created, t.rid as actor
+    FROM {statuses_tags} t INNER JOIN {statuses} f ON t.sid = f.sid
+    WHERE t.type = :type AND created > :created
+  ", array(':type' => 'user', ':created' => $min_time));
+  foreach ($result as $row) {
+    $actions[] = (array) $row;
   }
 
   return $actions;
