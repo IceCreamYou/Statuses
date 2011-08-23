@@ -413,7 +413,7 @@ function theme_fbss_comments_form_display($variables) {
         . '</span>';
       return $output . '<div class="fbss-comments-hide fbss-comments-form">' . drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments) . '</div>';
     }
-    return '<div class="fbss-comments-form">' . drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments, $delay_load_form) . '</div>';
+    return '<div class="fbss-comments-form">' . drupal_render(drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments, $delay_load_form)) . '</div>';
   }
   else if (user_access('view all status comments')) {
     return theme('fbss_comments_items', array('comments' => fbss_comments_get_comments($sid, TRUE), 'delay_load' => $delay_load_comments, 'destination' => $_GET['q']));
