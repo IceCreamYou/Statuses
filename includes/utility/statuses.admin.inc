@@ -43,7 +43,7 @@ function statuses_admin($form, $form_state) {
   $views = views_get_all_views();
   $list = array('' => t('None'));
   foreach ($views as $name => $view) {
-    if ($view->disabled == 0) {
+    if (empty($view->disabled)) {
       $list[$name] = $name;
     }
   }
