@@ -33,7 +33,6 @@ function fbss_comments_menu() {
     'page arguments' => array('fbss_comments_admin'),
     'access arguments' => array('administer Statuses settings'),
     'description' => 'Allows administrators to adjust settings for Statuses Comments.',
-    'type' => MENU_LOCAL_TASK,
     'file' => 'fbss_comments.pages.inc',
   );
   $items['statuses/comment/%fbss_comments/edit'] = array(

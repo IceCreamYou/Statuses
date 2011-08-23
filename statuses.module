@@ -37,19 +37,27 @@ function statuses_menu() {
   $items = array();
   $items['admin/config/statuses'] = array(
     'title' => 'Statuses',
+    'description' => 'Settings for statuses.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/statuses/settings'] = array(
+    'title' => 'Statuses',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('statuses_admin'),
     'access arguments' => array('administer Statuses settings'),
     'description' => 'Allows administrators to adjust settings for Statuses.',
     'file' => 'includes/utility/statuses.admin.inc',
   );
-  $items['admin/config/statuses/basic'] = array(
+  $items['admin/config/statuses/settings/basic'] = array(
     'title' => 'Basic',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'access arguments' => array('administer Statuses settings'),
     'weight' => -1,
   );
-  $items['admin/config/statuses/advanced'] = array(
+  $items['admin/config/statuses/settings/advanced'] = array(
     'title' => 'Advanced',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('statuses_admin_advanced'),
@@ -64,7 +72,6 @@ function statuses_menu() {
     'page arguments' => array('statuses_admin_contexts'),
     'access arguments' => array('administer Statuses settings'),
     'description' => 'Allows administrators to adjust context stream settings for Statuses.',
-    'type' => MENU_LOCAL_TASK,
     'file' => 'includes/utility/statuses.admin.inc',
   );
   $items['admin/config/statuses/contexts/%statuses_context'] = array(
@@ -73,7 +80,6 @@ function statuses_menu() {
     'page arguments' => array('statuses_admin_context_settings', 4),
     'access arguments' => array('administer Statuses settings'),
     'description' => 'Allows administrators to adjust context stream settings for Statuses.',
-    'type' => MENU_LOCAL_TASK,
     'file' => 'includes/utility/statuses.admin.inc',
   );
   $items['statuses/announce'] = array(
