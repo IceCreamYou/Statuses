@@ -49,7 +49,7 @@ function statuses_edit($form, &$form_state, $status) {
   $form['fbss-submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
-    '#attributes' => array('class' => array('statuses-submit')),
+    '#attributes' => array('class' => array('statuses-submit', 'button', 'primary')),
     '#suffix' => '</div>',
     '#weight' => -25,
   );

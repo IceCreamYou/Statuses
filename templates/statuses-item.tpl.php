@@ -43,39 +43,47 @@
  * Other modules may add additional variables.
  */
 ?>
-<div id="statuses-item-<?php echo $sid; ?>" class="statuses-item facebook-status-type-<?php echo $type; ?><?php if ($self): ?> facebook-status-self-update<?php endif; ?><?php if ($page): ?> facebook-status-page<?php endif; ?><?php if ($private): ?> facebook-status-private<?php endif; ?>">
-  <?php if (!empty($sender_picture)): ?>
-    <div class="statuses-sender-picture"><?php echo $sender_picture; ?></div>
+<div id="statuses-item-<?php echo $sid; ?>" class="statuses-item statuses-media statuses-type-<?php echo $type; ?><?php if ($self): ?> statuses-self-update<?php endif; ?><?php if ($page): ?> statuses-page<?php endif; ?><?php if ($private): ?> statuses-private<?php endif; ?>">
+  <?php if (!empty($sender_picture)) : ?>
+    <div class="statuses-sender-picture user-picture"><?php echo $sender_picture; ?></div>
   <?php endif; ?>
-  <span class="statuses-sender"><?php echo $sender_link; ?></span>
-  <?php if ($type == 'user' && !$self): ?>
-    &raquo; <span class="statuses-recipient"><?php echo $recipient_link; ?></span>
-  <?php endif; ?>
-  <?php if (!empty($private)): ?>
-    <span class="statuses-private-text"><?php echo $private_text; ?></span>
-  <?php endif; ?>
-  <span class="statuses-content"><?php echo $message; ?></span>
-  <?php if (!empty($attachment)): ?>
-    <div class="fbsmp clearfix"><?php echo $attachment; ?></div>
-  <?php endif; ?>
-  <div class="statuses-details">
-    <span class="statuses-time">
-      <?php if (!$page): ?>
-        <a href="<?php echo $status_url; ?>">
-      <?php endif; ?>
-      <?php echo $created; ?>
-      <?php if (!$page): ?>
-        </a>
-      <?php endif; ?>
-    </span>
-    <?php if (!empty($meta)): ?>
-      <span class="statuses-meta"><?php echo $meta; ?></span>
+  <div class="content">
+    <?php if (!empty($sender_link)) : ?>
+      <div class="statuses-sender"><?php echo $sender_link; ?></div>
     <?php endif; ?>
-    <?php if (!empty($links)): ?>
-      <span class="statuses-links"><?php echo $links; ?></span>
+    <?php if ($type == 'user' && !$self): ?>
+      &raquo; <span class="statuses-recipient"><?php echo $recipient_link; ?></span>
+    <?php endif; ?>
+    <?php if (!empty($private)) : ?>
+      <div class="statuses-private-text"><?php echo $private_text; ?></div>
+    <?php endif; ?>
+    <div class="statuses-content"><?php echo $message; ?></div>
+    <?php if (!empty($attachment)) : ?>
+      <div class="fbsmp clearfix"><?php echo $attachment; ?></div>
+    <?php endif; ?>
+    <?php if (!empty($created) || !empty($meta) || !empty($links)) : ?>
+      <div class="statuses-details">
+        <?php if (!empty($links)) : ?>
+          <div class="statuses-links"><?php echo $links; ?></div>
+        <?php endif; ?>
+        <?php if (!empty($created)) : ?>
+          <div class="statuses-time">
+            <?php if (!$page): ?>
+              <a href="<?php echo $status_url; ?>">
+            <?php endif; ?>
+            <?php echo $created; ?>
+            <?php if (!$page): ?>
+              </a>
+            <?php endif; ?>
+          </div>
+        <?php endif; ?>
+        <?php if (!empty($meta)) : ?>
+          <div class="statuses-meta"><?php echo $meta; ?></div>
+        <?php endif; ?>
+      </div>
+    <?php endif; ?>
+    <?php if (!empty($comments)) : ?>
+      <div class="statuses-comments"><?php echo $comments; ?></div>
     <?php endif; ?>
   </div>
-  <?php if (!empty($comments)): ?>
-    <div class="statuses-comments"><?php echo $comments; ?></div>
-  <?php endif; ?>
 </div>

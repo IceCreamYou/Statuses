@@ -296,11 +296,14 @@ class statuses_domain_context extends statuses_context {
     }
     return 0;
   }
+  function load_recipient($id) {
+    return module_exists('fbss_domain') ? domain_load($id) : 0;
+  }
   function load_random_recipient() {
     return 0;
   }
   function recipient_id($recipient) {
-    return isset($recipient['domain_id']) ? $recipient['domain_id'] : 0;
+    return is_array($recipient) && isset($recipient['domain_id']) ? $recipient['domain_id'] : 0;
   }
   function recipient_url($recipient) {
     if (module_exists('fbss_domain')) {

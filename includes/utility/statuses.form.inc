@@ -182,7 +182,7 @@ function statuses_box($form, &$form_state, $recipient, $type = 'user') {
   drupal_add_css($path . '/statuses.css');
   // Form elements between ['opendiv'] and ['closediv'] will be refreshed via AHAH on form submission.
   $form['opendiv'] = array(
-    '#markup' => '<div id="statuses-replace">',
+    '#markup' => '<div id="statuses-replace" class="statuses-form">',
     '#weight' => -50,
   );
   if (!empty($intro)) {
@@ -203,15 +203,15 @@ function statuses_box($form, &$form_state, $recipient, $type = 'user') {
     '#default_value' => $default,
     '#attributes' => array('class' => array('statuses-text', 'statuses-text-main')),
     '#resizable' => FALSE,
-    '#weight' => -40,
-    '#prefix' => '<div style="clear: both;">',
+    '#prefix' => '<div class="statuses-textarea-wrapper">',
     '#suffix' => '</div>',
+    '#weight' => -40,
   );
   $form['fbss-submit'] = array(
     '#type' => 'submit',
     '#value' => t('Share'),
     '#submit' => array('statuses_box_submit'),
-    '#attributes' => array('class' => array('statuses-submit')),
+    '#attributes' => array('class' => array('statuses-submit', 'button', 'primary')),
     '#weight' => -25,
   );
   if (variable_get('statuses_ahah', 1)) {
@@ -278,7 +278,7 @@ function statuses_box_submit($form, &$form_state) {
   $form_state['statuses'] = array();
   // Don't save the status if it wasn't changed from the default.
   if ($new_status != $default) {
-    $new_status_obj = statuses_save_status($recipient, $type, $new_status);
+    $new_status_obj = statuses_save_status($recipient, $type, $new_status, $GLOBALS['user'], array('form_state' => $form_state));
     if (isset($new_status_obj->sid)) {
       $form_state['statuses']['sid'] = $new_status_obj->sid;
     }

@@ -18,10 +18,11 @@
   margin-bottom: 1em;
 }
 
-.statuses-update form#statuses-box {
+.statuses-update #statuses-box {
   margin-bottom: 0;
 }
 
+/* Views fields. */
 .statuses-edit,
 .statuses-delete,
 .statuses-respond,
@@ -32,7 +33,27 @@
   margin-left: 0.5em;
 }
 
-.statuses-text {
+/* @group Textareas
+ * 
+ * Make textareas fit in their boxes by bubbling borders and padding up
+ * to a wrapper element.
+ */
+
+.statuses-textarea-wrapper {
+  border-style: solid;
+  border-width: 1px;
+  padding: 4px 2px 2px 4px;
+}
+
+.statuses-textarea-wrapper .form-item {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.statuses-textarea-wrapper textarea {
+  border: 0 none;
+  display: block;
+  line-height: 1.5em;
   width: 100%;
 }
 
@@ -40,10 +61,36 @@
   color: #999999;
 }
 
-input.statuses-submit {
+/* @end */
+
+/* @group Buttons */
+
+.statuses-update .button {
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+}
+
+.statuses-update .fbsmp-plugin-icon:first-child .button,
+.statuses-submit {
+  border-left-width: 1px;
+}
+
+form input.fbsmp-plugin-icon-button,
+form input.statuses-submit { /* Forced by Fusion */
+  padding: 7px 14px;
+}
+
+form input.fbsmp-plugin-icon-button { /* Forced by Fusion */
+  padding-left: 34px;
+}
+
+.statuses-submit {
+  background-color: transparent;
+  border-style: solid;
+  border-width: 0 1px 1px 1px;
   float: right;
-  margin-top: 0;
-  margin-left: 1em;
+  margin: 0;
+  padding: 0;
 }
 
 .statuses-back {
@@ -51,10 +98,55 @@ input.statuses-submit {
   margin: 0.5em;
 }
 
-/* Fix weird picture formatting from Garland and other themes. */
-.view .picture {
-  clear: none;
-  display: inline;
-  float: none;
-  padding-left: 0;
+/* @end */
+
+/* @group Entry items
+ *
+ * Media is a generic class for any presentation that includes a user image to one side
+ * and content to the other.
+ */
+
+.statuses-media > .user-picture {
+  float: left; /* LTR */
+  margin-right: 10px; /* LTR */
 }
+
+.statuses-media > .content {
+  overflow: hidden;
+}
+
+.statuses-media > .content > * {
+  margin-top: 0.25em;
+}
+
+.statuses-media > .content > :first-child {
+  margin-top: 0;
+}
+
+.statuses-media .links {
+  float: right;
+}
+
+.statuses-media .links li {
+  padding: 0;
+}
+
+.statuses-media .links li + li {
+  margin: 0 0 0 0.5em;
+}
+
+/* @group Comments */
+
+.statuses-media > .content .statuses-comments {
+  margin-top: 1em;
+}
+
+/* @end */
+
+/* @group Links */
+
+.statuses-item .links {
+  margin-bottom: 0;
+}
+
+/* @end */

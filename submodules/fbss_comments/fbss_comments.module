@@ -230,7 +230,7 @@ function theme_fbss_comments_items_email($variables) {
     $comment_text = nl2br($comment_text);
     $output .= $comment_text;
     $output .= '</div><div>';
-    $output .= '<span style="color: #666666">'. format_date($comment->created) .'</span>';
+    $output .= '<span>'. format_date($comment->created) .'</span>';
     $output .= l(t('Reply'), $destination) .'</div>';
     if (variable_get('fbss_comments_user_pictures', 0)) {
       $output .= '</td></tr></tbody></table>';
@@ -264,12 +264,13 @@ function theme_fbss_comments_item($variables) {
   }
   drupal_add_css(drupal_get_path('module', 'fbss_comments') . '/fbss_comments.css');
   $author = _statuses_user_load($comment->uid);
-  array_unshift($classes, 'fbss-comments-comment');
+  array_unshift($classes, 'fbss-comments-comment', 'statuses-media', 'statuses-subitem');
   $classes = implode(' ', $classes);
   $output = '<div class="' . $classes . '">';
   if (variable_get('fbss_comments_user_pictures', 0)) {
-    $output .= '<div class="fbss-comments-author-picture">' . _fbss_comments_user_picture($author) . '</div>';
+    $output .= '<div class="fbss-comments-author-picture user-picture">' . _fbss_comments_user_picture($author) . '</div>';
   }
+  $output .= '<div class="content">';
   $output .= '<div class="fbss-comments-author">' . theme('username', array('account' => $author)) . '</div>';
   $comment_text = _statuses_run_filter($comment->comment);
   $comment_text = nl2br($comment_text);
@@ -283,24 +284,27 @@ function theme_fbss_comments_item($variables) {
   elseif (strpos($q, 'fbss_comments/js/refresh') !== FALSE) {
     $q = '<front>';
   }
+  // The following links output should ideally be created with theme_links. But since the query property
+  // is not supported by theme_links, we have to build the output structure by hand at the moment.
+  $output .= '<ul class="links inline">';
   if (fbss_comments_can('edit', $comment)) {
-    $output .= '<span class="fbss-comments-edit-delete">' .
-      l(t('Edit'), 'statuses/comment/' . $comment->cid . '/edit', array('query' => array('destination' => $q)))
-      . '</span>';
+    $output .= '<li class="fbss-comments-edit-delete">'.
+      l(t('Edit'), 'statuses/comment/'. $comment->cid .'/edit', array('query' => array('destination' => $q)))
+      .'</li>';
   }
   if (fbss_comments_can('delete', $comment)) {
-    $output .= '<span class="fbss-comments-edit-delete">' .
-      l(t('Delete'), 'statuses/comment/' . $comment->cid . '/delete', array('query' => array('destination' => $q)))
-      . '</span>';
+    $output .= '<li class="fbss-comments-edit-delete">'.
+      l(t('Delete'), 'statuses/comment/'. $comment->cid .'/delete', array('query' => array('destination' => $q)))
+      .'</li>';
   }
   if (module_exists('fbss_comments_flag')) {
     foreach (flag_get_flags() as $name => $info) {
       if ($info->content_type == 'fbss_comment') {
-        $output .= flag_create_link($name, $comment->cid);
+        $output .= '<li>' . flag_create_link($name, $comment->cid) . '</li>';
       }
     }
   }
-  $output .= '</div></div>';
+  $output .= '</ul></div></div></div>';
   if (module_exists('modalframe')) {
     modalframe_parent_js();
   }
@@ -343,6 +347,7 @@ function theme_fbss_comments_items($variables) {
     if ($count >= variable_get('fbss_comments_show_all', 10)) {
       $options['attributes']['class'] = 'fbss-comments-show-comments-link';
     }
+    $options['attributes']['class'] .= ' statuses-subitem';
     $output .= l(t('Show all @count comments', array('@count' => $count)), 'statuses/' . $comments[0]->sid, $options);
   }
   $rendered = 0;
@@ -407,10 +412,10 @@ function theme_fbss_comments_form_display($variables) {
   if (fbss_comments_can('post', statuses_load($sid))) {
     $output = '';
     if ($delay_load_form && !fbss_comments_count_comments($sid, TRUE)) {
-      $output = '<span class="fbss-comments-show-comment-form" id="fbss-comments-toggle-' . $sid . '">' .
+      $output = '<div class="fbss-comments-show-comment-form" id="fbss-comments-toggle-' . $sid . '">' .
         l(t('Comment'), 'statuses/' . $sid, array('attributes' => array('class' => array('fbss-comments-show-comment-form-link'))))
-        . '</span>';
-      return $output . '<div class="fbss-comments-hide fbss-comments-form">' . drupal_render(drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments)) . '</div>';
+        . '</div>';
+      return $output . '<div class="fbss-comments-hide fbss-comments-form statuses-subitem">' . drupal_render(drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments)) . '</div>';
     }
     return '<div class="fbss-comments-form">' . drupal_render(drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments, $delay_load_form)) . '</div>';
   }
@@ -664,8 +669,8 @@ function _fbss_comments_get_thread_author($sid) {
  * Adds the Autogrow jQuery extension.
  */
 function _fbss_comments_use_autogrow() {
-  module_load_include('inc', 'statuses', 'includes/utility/statuses.form');
-  _statuses_use_autogrow();
+  //module_load_include('inc', 'statuses', 'includes/utility/statuses.form');
+  //_statuses_use_autogrow();
 }
 
 /**
@@ -730,6 +735,8 @@ function fbss_comments_forms($form_id, $args) {
  *   enabled. Users with JavaScript disabled will be redirected to the status
  *   thread page. If FALSE the "comment" link with delayed comment form loading
  *   will not be used.
+ * @param $hide_submit
+ *   Legacy; not used.
  */
 function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_submit = TRUE) {
   $path = drupal_get_path('module', 'fbss_comments');
@@ -758,27 +765,23 @@ function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_
   $comments = fbss_comments_get_comments($sid, TRUE);
   $form['before'] = array('#markup' => '<div id="fbss-comments-replace-' . $sid . '">');
   $form['comments'] = array('#markup' => theme('fbss_comments_items', array('comments' => $comments, 'delay_load' => $delay_load, 'destination' => $form['#qu'])));
-  if (count($comments) && $hide_submit) {
-    $form['start-hide'] = array('#markup' => '<div class="fbss-comments-show-comment-form-inner" id="fbss-comments-inner-toggle-' . $sid . '">' .
-      l(t('Comment'), 'statuses/' . $sid, array('attributes' => array('class' => array('fbss-comments-show-comment-inner-form-link'))))
-      . '</div><div class="fbss-comments-hide fbss-comments-replace-' . $sid . '-inner">');
-  }
+  $form['comment-entry-wrapper'] = array('#markup' => '<div class="statuses-subitem">',);
   $form['status-comment'] = array(
     '#type' => 'textarea',
-    '#rows' => 1,
+    '#rows' => 2,
+    '#prefix' => '<div class="statuses-textarea-wrapper">',
+    '#suffix' => '</div>',
     '#attributes' => array('class' => array('fbss-comments-textarea')),
     '#resizable' => FALSE,
   );
-  if (count($comments) && $hide_submit) {
-    $form['end-hide'] = array('#markup' => '</div>');
-  }
+  $form['end-comment-entry-wrapper'] = array('#markup' => '</div>',);
   $form['after'] = array('#markup' => '</div>');
   $form['save-' . $sid] = array(
     '#type' => 'submit',
     '#value' => t('Comment'),
-    '#attributes' => array('class' => array('fbss-comments-submit')),
-    '#prefix' => '<div class="' . ($hide_submit ? 'fbss-comments-hide' : '') . ' fbss-comments-replace-' . $sid . '-inner clearfix">',
-    '#suffix' => '<div class="clearfix"></div></div>',
+    '#attributes' => array('class' => array('fbss-comments-submit', 'button', 'primary')),
+    '#prefix' => '<div class="statuses-subitem form-piece fbss-comments-replace-' . $sid . '-inner clearfix">',
+    '#suffix' => '</div>',
     '#submit' => array('fbss_comments_box_submit'),
   );
   if (variable_get('fbss_comments_ahah', 1)) {
@@ -815,33 +818,13 @@ function fbss_comments_box_submit($form, &$form_state) {
 /**
  * Saves status comments via AHAH.
  */
-function fbss_comments_save_js() {
-  $form_state = array(
-    'storage' => NULL,
-    'submitted' => FALSE,
-  );
-  $form_build_id = $_POST['form_build_id'];
-  $form = form_get_cache($form_build_id, $form_state);
-  $form_state['post'] = $form['#post'] = $_POST;
-  $form['#programmed'] = $form_state['#redirect'] = FALSE;
-  $args = $form['#parameters'];
-  // This happens if someone goes directly to the JS processing page.
-  if (!is_array($args) && !$args) {
-    drupal_goto('user');
-    watchdog('statuses',
-      'Someone tried to access the JavaScript processing page for Statuses Comments directly.', array(), WATCHDOG_DEBUG);
-    return;
-  }
-  $form_id = array_shift($args);
-  drupal_process_form($form_id, $form, $form_state);
-  $form = drupal_rebuild_form($form_id, $form_state, $args, $form_build_id);
+function fbss_comments_save_js($form, $form_state) {
   // Get HTML for the replacement form. Only these elements will be AHAH-refreshed.
-  $new_form['comments']       = $form['comments'];
-  $new_form['status-comment'] = $form['status-comment'];
-  //$new_form['save']           = $form['save'];
-  $output = theme('status_messages') . drupal_render($new_form);
-  // Return the results.
-  drupal_json_output(array('status' => TRUE, 'data' => $output));
+  $new_form['comment-entry-wrapper']     = $form['comment-entry-wrapper'];
+  $new_form['comments']                  = $form['comments'];
+  $new_form['end-comment-entry-wrapper'] = $form['end-comment-entry-wrapper'];
+  $new_form['status-comment']            = $form['status-comment'];
+  return $new_form;
 }
 
 //===============
