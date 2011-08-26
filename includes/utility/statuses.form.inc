@@ -178,7 +178,7 @@ function statuses_box($form, &$form_state, $recipient, $type = 'user') {
   if (variable_get('statuses_enter', 0)) {
     drupal_add_js($path .'/statuses_enter.js');
   }
-  drupal_add_js($path . '/statuses_ahah.js', array('scope' => 'footer'));
+  drupal_add_js($path . '/statuses_ahah.js', array('scope' => 'footer', 'defer' => TRUE));
   drupal_add_css($path . '/statuses.css');
   // Form elements between ['opendiv'] and ['closediv'] will be refreshed via AHAH on form submission.
   $form['opendiv'] = array(
@@ -194,7 +194,7 @@ function statuses_box($form, &$form_state, $recipient, $type = 'user') {
   if (variable_get('statuses_length', 140) > 0) {
     $form['chars'] = array(
       '#markup' => '<span class="statuses-chars">' . t('%chars characters allowed', array('%chars' => variable_get('statuses_length', 140))) . '</span>',
-      '#weight' => module_exists('fbss_privacy') ? -41 : -24,
+      '#weight' => -41,
     );
   }
   $form['fbss-status'] = array(
@@ -217,6 +217,7 @@ function statuses_box($form, &$form_state, $recipient, $type = 'user') {
   if (variable_get('statuses_ahah', 1)) {
     $form['fbss-submit']['#ajax'] = array(
       'path' => 'statuses/ajax',
+      'callback' => 'statuses_save_js',
       'wrapper' => 'statuses-replace',
       'keypress' => TRUE,
     );
@@ -298,11 +299,14 @@ function statuses_box_submit($form, &$form_state) {
 function statuses_save_js($form, $form_state) {
   $new_form = array();
   // Get HTML for the replacement form. Only these elements will be AHAH-refreshed.
-  $new_form['slider']      = $form['slider'];
+  $new_form['opendiv']     = $form['opendiv'];
+  $new_form['intro']       = $form['intro'];
   $new_form['fbss-status'] = $form['fbss-status'];
   $new_form['chars']       = $form['chars'];
   $new_form['fbss-submit'] = $form['fbss-submit'];
   $new_form['sdefault']    = $form['sdefault'];
+  $new_form['closediv']    = $form['closediv'];
+  unset($new_form['fbss-status']['#value']);
   // Calls hook_statuses_form_ahah_alter(&$new_form, $form).
   drupal_alter('statuses_form_ahah', $new_form, $form);
   return $new_form;

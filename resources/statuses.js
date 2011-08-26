@@ -82,10 +82,8 @@ attach: function (context) {
       Drupal.modalFrame.open({url: $(this).attr('href'), onSubmit: fbss_refresh});
     });
   }
-  // Don't show multiple loading symbols if a status is submitted via AHAH after an attached view changes pages via AJAX.
-  ctxt.find('#statuses-replace').unbind('ahah_success');
   // React when a status is submitted.
-  ctxt.find('#statuses-replace').bind('ahah_success', function(context) {
+  ctxt.find('#statuses-box').bind('ajax_complete', function(context) {
     if ($(context.target).html() != $(this).html()) {
       return;
     }
@@ -187,13 +185,7 @@ function fbss_refresh() {
     $.get(location +"ts="+ (new Date()).getTime(), function(data, textStatus) {
       // From load() in jQuery source. We already have the scripts we need.
       var new_data = data.replace(/<script(.|\s)*?\/script>/g, "");
-      if (Drupal.settings.fbss_comments && Drupal.settings.fbss_comments.ahah_enabled) {
-        // EVIL BLACK MAGIC - updates Drupal.settings.ahah to reflect AHAH forms that are about to be loaded
-        var settings_script = data.match(/(<script[\s\S]*?Drupal\.settings\,\s)((.|\s)*?)\/script>/)[2];
-        eval('Drupal.settings2 = '+ settings_script.substring(0, settings_script.length-15));
-        $.extend(Drupal.settings.ahah, Drupal.settings2.ahah);
-      }
-      // From ahah.js. Apparently Safari crashes with just $().
+      // Apparently Safari crashes with just $().
       var new_content = $('<div></div>').html(new_data);
       if (textStatus != 'error' && new_content) {
         // Replace relevant content in the viewport with the updated version.
