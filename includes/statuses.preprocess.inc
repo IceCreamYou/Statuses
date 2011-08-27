@@ -85,10 +85,6 @@ function _statuses_show($status, $options) {
   $message = trim($status->message);
   if ($options['page']) {
     $title = '';
-    if (empty($message)) {
-      drupal_not_found();
-      return;
-    }
     $sender = user_load($status->sender);
     if ($status->type == 'user' && $status->sender == $status->recipient) {
       $title = t('@sender: @message', array('@sender' => $sender->name, '@message' => $message));
