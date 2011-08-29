@@ -325,15 +325,17 @@ function statuses_views_data() {
     ),
   );
 
-  // Expose data from a user's friends AND that user.
-  $data['user_relationships']['rels_and_me'] = array(
-    'title' => t('Requestee or Requester or Argument user'),
-    'help' => t('Filters results to show content for the requestee, requester, or argument user.'),
-    'argument' => array(
-      'field' => 'requestee_id',
-      'handler' => 'statuses_views_handler_argument_rels_and_me',
-    ),
-  );
+  if (module_exists('user_relationships_api')) {
+    // Expose data from a user's friends AND that user.
+    $data['user_relationships']['rels_and_me'] = array(
+      'title' => t('Requestee or Requester or Argument user'),
+      'help' => t('Filters results to show content for the requestee, requester, or argument user.'),
+      'argument' => array(
+        'field' => 'requestee_id',
+        'handler' => 'statuses_views_handler_argument_rels_and_me',
+      ),
+    );
+  }
 
   return $data;
 }
