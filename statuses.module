@@ -1160,7 +1160,7 @@ function statuses_statuses_context_info() {
       'description' => t('The stream belongs to the currently viewed Organic Group, if applicable.'),
       'handler' => 'statuses_og_context',
       'parent' => 'node',
-      'dependencies' => array('og'),
+      'dependencies' => array('og', 'og_context'),
       'view' => module_exists('activity_log') ? 'activity_log_stream' : 'statuses_stream',
       'weight' => -50,
       'file' => $path,

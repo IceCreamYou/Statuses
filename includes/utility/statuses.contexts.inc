@@ -208,7 +208,7 @@ class statuses_og_context extends statuses_node_context {
     return 'og';
   }
   function is_applicable() {
-    $g_ctx = og_get_group_context();
+    $g_ctx = og_context();
     return !(empty($g_ctx));
   }
   function find_recipient() {
@@ -223,21 +223,21 @@ class statuses_og_context extends statuses_node_context {
   function access_add($recipient, $sender) {
     // Only group members can add content of any kind.
     return parent::access_add($recipient, $sender) &&
-      og_is_group_member($recipient->nid, FALSE, $sender->uid);
+      og_is_member($recipient->nid, 'user', $sender);
   }
   function access_delete($status, $account) {
     return parent::access_delete($status, $account) ||
-      og_is_group_admin($this->load_recipient($status->recipient), $account);
+      in_array(OG_ADMINISTRATOR_ROLE, og_get_user_roles($status->recipient, $account->uid, FALSE));
   }
   function access_view($status, $account) {
     // Only group members can view group statuses if the group is private.
     return parent::access_view($status, $account) &&
-      (og_is_group_member($status->recipient, FALSE, $account->uid) || empty($this->load_recipient($status->recipient)->og_private));
+      (og_is_member($status->recipient, 'user', $account->uid) || empty($this->load_recipient($status->recipient)->og_private));
   }
   function access_stream($recipient, $account) {
     // Only group members can view group statuses if the group is private.
     return parent::access_stream($recipient, $account) &&
-      (og_is_group_member($recipient->nid, FALSE, $account->uid) || empty($recipient->og_private));
+      (og_is_member($recipient->nid, 'user', $account->uid) || empty($recipient->og_private));
   }
 }
 
