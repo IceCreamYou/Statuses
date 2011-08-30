@@ -62,7 +62,7 @@ function fbss_twitter_statuses_box_submit(&$form, &$form_state) {
       if (isset($form_state['statuses']['sid'])) {
         $sid = $form_state['statuses']['sid'];
       }
-      fbss_twitter_post_to_twitter($GLOBALS['user'], $new_status, $sid);
+      fbss_twitter_post_to_twitter($GLOBALS['user'], $new_status, array('sid' => $sid));
     }
   }
 }
@@ -167,7 +167,7 @@ function fbss_twitter_post_to_twitter($account, $message, $options = array()) {
   if (is_numeric($options)) {
     $options = array('sid' => $options);
   }
-  $options += array('add URL' => FALSE);
+  $options += array('add URL' => FALSE, 'sid' => NULL);
   // Try to fit the message into a tweet.
   $message_length = drupal_strlen($message);
   if ((!empty($options['sid']) && $message_length > 140) || $options['add URL']) {
