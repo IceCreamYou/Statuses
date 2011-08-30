@@ -804,10 +804,12 @@ function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_
  * The submit handler for the status comment form.
  */
 function fbss_comments_box_submit($form, &$form_state) {
+  static $executed = FALSE;
   $form_state['fbss_comments']['q'] = $form['#qu'];
   $form_state['fbss_comments']['sid'] = $form['#sid'];
   // Don't save empty comments, but fail silently instead of using the default "required" handling.
-  if (!empty($form_state['values']['status-comment'])) {
+  if (!empty($form_state['values']['status-comment']) && empty($executed)) {
+    $executed = TRUE;
     fbss_comments_save_comment($form['#sid'], $form_state['values']['status-comment']);
   }
   if (variable_get('fbss_comments_ahah', 1)) {
