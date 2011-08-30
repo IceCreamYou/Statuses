@@ -63,12 +63,8 @@ attach: function (context) {
       th.html(newMsgText);
       th.find('.statuses-readmore').hide();
       th.find('.statuses-readmore-toggle').click(function(e) {
-        var thi = $(this);
         e.preventDefault();
-        var pa = thi.parents('.statuses-content');
-        thi.hide();
-        pa.find('.statuses-hellip').hide();
-        pa.find('.statuses-readmore').show();
+        th.html(oldMsgText);
       });
     }
   }
