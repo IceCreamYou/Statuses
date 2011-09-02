@@ -300,7 +300,9 @@ function statuses_save_js($form, $form_state) {
   $new_form = array();
   // Get HTML for the replacement form. Only these elements will be AHAH-refreshed.
   $new_form['opendiv']     = $form['opendiv'];
-  $new_form['intro']       = $form['intro'];
+  if (!empty($form['intro'])) {
+    $new_form['intro']       = $form['intro'];
+  }
   $new_form['fbss-status'] = $form['fbss-status'];
   $new_form['chars']       = $form['chars'];
   $new_form['fbss-submit'] = $form['fbss-submit'];
