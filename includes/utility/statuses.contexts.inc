@@ -26,7 +26,11 @@ abstract class statuses_context {
    * Returns an object representing the recipient, determined automatically.
    */
   function find_recipient() {
-    return $this->is_applicable() ? menu_get_object($this->type()) : new stdClass();
+    $obj = menu_get_object($this->type());
+    if (empty($obj) && is_numeric(arg(1)) && function_exists($this->type() .'_load')) {
+      $obj = call_user_func($this->type() .'_load', arg(1));
+    }
+    return $this->is_applicable() ? $obj : new stdClass();
   }
 
   /**
