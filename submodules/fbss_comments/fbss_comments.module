@@ -437,14 +437,8 @@ function theme_fbss_comments_form_display($variables) {
  *   A full status comment object.
  */
 function fbss_comments_load($cids) {
-  foreach ($cids as $nid => &$cid) {
-    if (!is_numeric($cid)) {
-      return;
-    }
-    $node_additions = db_fetch_object(db_query("SELECT * FROM {fbss_comments} WHERE cid = :cid", array(':cid' => $cid)));
-    foreach ($node_additions as $property => &$value) {
-      $cid->$property = $value;
-    }
+  if (is_numeric($cid)) {
+    return db_query("SELECT * FROM {fbss_comments} WHERE cid = :cid", array(':cid' => $cid))->fetchObject();
   }
 }
 
@@ -460,14 +454,21 @@ function fbss_comments_load($cids) {
  *   An array of comment objects for the relative thread.
  */
 function fbss_comments_get_comments($sid, $filter_view_access = FALSE) {
-  $result = db_query("SELECT * FROM {fbss_comments} WHERE sid = :sid ORDER BY created ASC, cid ASC", array(':sid' => $sid));
-  $results = array();
-  foreach ($result as $comment) {
-    if (!$filter_view_access || fbss_comments_can('view', $comment)) {
-      $results[] = $comment;
+  $comments = &drupal_static(__FUNCTION__);
+  if (!isset($comments)) {
+    $comments = array();
+  }
+  $cache_id = $sid . '-' . (int)$filter_view_access;
+  if (!isset($comments[$cache_id])) {
+    $result = db_query("SELECT * FROM {fbss_comments} WHERE sid = :sid ORDER BY cid ASC", array(':sid' => $sid));
+    $comments[$cache_id] = array();
+    foreach ($result as $comment) {
+      if (!$filter_view_access || fbss_comments_can('view', $comment)) {
+        $comments[$cache_id][] = $comment;
+      }
     }
   }
-  return $results;
+  return $comments[$cache_id];
 }
 
 /**
@@ -509,7 +510,7 @@ function fbss_comments_save_comment($sid, $comment, $uid = NULL) {
 function fbss_comments_delete_comment($cid) {
   module_invoke_all('fbss_comments_delete', $cid);
   if (module_exists('trigger')) {
-    module_invoke_all('fbss_comments', 'fbss_comments_deleted', fbss_comments_load($comment));
+    module_invoke_all('fbss_comments', 'fbss_comments_deleted', fbss_comments_load($cid));
   }
   db_delete('fbss_comments')
     ->condition('cid', $cid)

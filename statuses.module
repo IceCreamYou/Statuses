@@ -656,7 +656,14 @@ function statuses_has_status($recipient_id = NULL, $type = 'user', $sender_id = 
  *   "private" property.
  */
 function statuses_load($sid) {
-  return db_query("SELECT * FROM {statuses} WHERE sid = :sid", array(':sid' => $sid))->fetchObject();
+  $statuses = &drupal_static(__FUNCTION__);
+  if (!isset($statuses)) {
+    $statuses = array();
+  }
+  if (!isset($statuses[$sid])) {
+    $statuses[$sid] = db_query("SELECT * FROM {statuses} WHERE sid = :sid", array(':sid' => $sid))->fetchObject();
+  }
+  return $statuses[$sid];
 }
 
 /**
