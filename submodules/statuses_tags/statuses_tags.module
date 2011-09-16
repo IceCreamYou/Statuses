@@ -27,6 +27,22 @@ function statuses_tags_help($path, $arg) {
 }
 
 /**
+ * Implementation of hook_menu().
+ */
+function statuses_tags_menu() {
+  $items = array();
+  $items['admin/config/statuses/tags'] = array(
+    'title' => 'Tags',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('statuses_tags_admin'),
+    'access arguments' => array('administer Statuses settings'),
+    'description' => 'Allows administrators to adjust settings for Statuses Tags.',
+    'file' => 'statuses_tags.admin.inc',
+  );
+  return $items;
+}
+
+/**
  * Implements hook_block_info().
  */
 function statuses_tags_block_info() {
@@ -96,47 +112,6 @@ function statuses_tags_block_validate($form, &$form_state) {
   $count = $form_state['values']['statuses']['statuses_tags_count'];
   if (!is_numeric($count) || $count != round($count) || $count < 1) {
     form_set_error('statuses][statuses_tags_count', t('The number of items to display must be a positive integer.'));
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function statuses_tags_form_statuses_admin_alter(&$form, &$form_state) {
-  if (module_exists('taxonomy')) {
-    if (variable_get('statuses_tags_vid', -1) == -1) {
-      drupal_set_message(
-        t('You have the Taxonomy and Statuses Tags modules enabled, but you have not set them up to work together!') . ' ' .
-        t('You must set a vocabulary for #hashtags below in order for the #hashtags feature to work.'),
-        'error');
-    }
-    $options = array('-1' => t('None'));
-    $vocabularies = taxonomy_get_vocabularies();
-    foreach ($vocabularies as $vocabulary) {
-      $options[$vocabulary->vid] = check_plain($vocabulary->name);
-    }
-    if (count($options) < 2) {
-      drupal_set_message(
-        t('You must <a href="!vocab">create a vocabulary</a> for use with #hashtags in order to take advantage of that feature.',
-          array('!vocab' => url('admin/structure/taxonomy/add/vocabulary'))),
-        'error');
-    }
-    $form['statuses_tags_vid'] = array(
-      '#type' => 'select',
-      '#title' => t('Vocabulary for #hashtags'),
-      '#default_value' => variable_get('statuses_tags_vid', -1),
-      '#options' => $options,
-      '#weight' => -10,
-    );
-    return $form;
-  }
-  elseif (!module_exists('taxonomy')) {
-    drupal_set_message(
-      t('You have the Statuses Tags module enabled.') . ' ' .
-      t('However, you will not be able to use #hashtags unless you <a href="!enable">enable</a> the core Taxonomy module.',
-        array('!enable' => url('admin/modules'))) . ' ' .
-      t('Return here after enabling the Taxonomy module to configure it to accept #hashtags.')
-    );
   }
 }
 
@@ -570,11 +545,11 @@ function _statuses_tags_sort($a1, $a2) {
  *   The resolved URL.
  */
 function _statuses_tags_resolve($term) {
-  $url = variable_get('statuses_tags_url', 'statuses/term/[term-name]');
-  if (!trim($url)) {
-    return;
+  $url = variable_get('statuses_tags_url', 'statuses/term');
+  if (strpos($url, '%') === FALSE) {
+    $url .= '/%';
   }
-  return str_replace(array('[term-id]', '[term-name]'), array($term->tid, $term->name), $url);
+  return str_replace('%', $term->name, $url);
 }
 
 /**

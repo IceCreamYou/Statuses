@@ -2,8 +2,32 @@
 
 /**
  * @file
- * Provide views data and handlers for the Statuses Tags module.
+ *   Provide views data and handlers for the Statuses Tags module.
  */
+
+/**
+ * Implementation of hook_views_default_views_alter().
+ */
+function statuses_tags_views_default_views_alter(&$views) {
+  // Use the #hashtag URL from the administrative settings in the view.
+  $url = variable_get('statuses_tags_url', 'statuses/term');
+  $views['statuses_tags']->display['page_1']->display_options['path'] = $url;
+  if (strpos($url, '%') === FALSE) {
+    $url .= '/%';
+  }
+  $url .= '/feed';
+  $views['statuses_tags']->display['feed_1']->display_options['path'] = $url;
+
+  // Use the correct #hashtag vocabulary ID.
+  $vid = variable_get('statuses_tags_vid', -1);
+  if ($vid != -1) {
+    foreach ($views['statuses_tags']->display as $id => $display) {
+      if (isset($views['statuses_tags']->display[$id]->display_options['arguments']['has-specific-tag'])) {
+        $views['statuses_tags']->display[$id]->display_options['arguments']['has-specific-tag']['validate_argument_vocabulary'] = array($vid => $vid);
+      }
+    }
+  }
+}
 
 /**
  * Implements hook_views_data().
