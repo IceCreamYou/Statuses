@@ -736,7 +736,7 @@ function statuses_tags_statuses_tags($op, $status, $account) {
   if ($op != 'fbsst_user_tagged') {
     return;
   }
-  $aids = _trigger_get_hook_aids('statuses_tags', $op);
+  $aids = trigger_get_assigned_actions('statuses_tags_fbsst_user_tagged');
   $context = array(
     'hook' => 'statuses_tags',
     'op' => $op,
