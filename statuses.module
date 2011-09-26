@@ -1150,7 +1150,7 @@ function statuses_statuses_context_info() {
       'description' => t('If a profile is currently being viewed, then the stream belongs to the owner of that profile.') . ' ' .
         t('Otherwise, the stream belongs to the current user.'),
       'handler' => 'statuses_user_context',
-      'view' => module_exists('activity_log') ? 'activity_log_stream' : (module_exists('user_relationships_api') ? 'fbss_ur_stream' : 'statuses_stream'),
+      'view' => module_exists('activity_log') ? 'activity_log_stream' : (module_exists('user_relationship_views') ? 'fbss_ur_stream' : 'statuses_stream'),
       'weight' => 999,
       'file' => $path,
     ),
