@@ -1006,7 +1006,7 @@ function fbss_comments_fbss_comments($op, $comment, $account = NULL) {
   if (strpos($op, 'fbss_comments_') !== 0) {
     return;
   }
-  $aids = _trigger_get_hook_aids('fbss_comments', $op);
+  $aids = trigger_get_assigned_actions('fbss_comments', $op);
   $account = empty($account) ? $GLOBALS['user'] : $account;
   $context = array(
     'hook' => 'fbss_comments',
