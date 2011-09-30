@@ -216,7 +216,11 @@ class statuses_og_context extends statuses_node_context {
     return !(empty($g_ctx));
   }
   function find_recipient() {
-    return $this->is_applicable() ? menu_get_object() : new stdClass();
+    $obj = menu_get_object();
+    if (empty($obj) && is_numeric(arg(1))) {
+      $obj = node_load(arg(1));
+    }
+    return $this->is_applicable() ? $obj : new stdClass();
   }
   function load_recipient($id) {
     return node_load($id);
@@ -227,21 +231,21 @@ class statuses_og_context extends statuses_node_context {
   function access_add($recipient, $sender) {
     // Only group members can add content of any kind.
     return parent::access_add($recipient, $sender) &&
-      og_is_member($recipient->nid, 'user', $sender);
+      og_is_member(current(og_get_group_ids('node', array($recipient->nid))), 'user', $sender);
   }
   function access_delete($status, $account) {
     return parent::access_delete($status, $account) ||
-      in_array(OG_ADMINISTRATOR_ROLE, og_get_user_roles($status->recipient, $account->uid, FALSE));
+      in_array(OG_ADMINISTRATOR_ROLE, og_get_user_roles(current(og_get_group_ids('node', array($status->recipient))), $account->uid, FALSE));
   }
   function access_view($status, $account) {
     // Only group members can view group statuses if the group is private.
     return parent::access_view($status, $account) &&
-      (og_is_member($status->recipient, 'user', $account->uid) || empty($this->load_recipient($status->recipient)->og_private));
+      (og_is_member(current(og_get_group_ids('node', array($status->recipient))), 'user', $account->uid) || empty($this->load_recipient($status->recipient)->og_private));
   }
   function access_stream($recipient, $account) {
     // Only group members can view group statuses if the group is private.
     return parent::access_stream($recipient, $account) &&
-      (og_is_member($recipient->nid, 'user', $account->uid) || empty($recipient->og_private));
+      (og_is_member(current(og_get_group_ids('node', array($recipient->nid))), 'user', $account->uid) || empty($recipient->og_private));
   }
 }
 
