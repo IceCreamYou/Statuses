@@ -719,7 +719,7 @@ function statuses_determine_context($type = NULL) {
   if (empty($type)) {
     $context = array();
     // The user context is our base case, so we never end up with no context.
-    foreach ($contexts as $context) {
+    foreach ($contexts as $type => $context) {
       if (!empty($context['file']) && file_exists($context['file'])) {
         require_once DRUPAL_ROOT . '/' . $context['file'];
       }
@@ -732,6 +732,7 @@ function statuses_determine_context($type = NULL) {
       }
       $context['handler'] = new $context['handler']();
       if (_statuses_context_applies($context)) {
+        $context['type'] = $type;
         break;
       }
     }
@@ -749,6 +750,7 @@ function statuses_determine_context($type = NULL) {
       statuses_determine_context($context['parent']);
     }
     $context['handler'] = new $context['handler']();
+    $context['type'] = $type;
   }
   else {
     // We can't find the requested context, so abort.
