@@ -24,25 +24,22 @@ function template_preprocess_statuses_item(&$vars) {
     'meta' => '',
     'links' => '',
   );
+  $image_vars = array();
   if (module_exists('imagecache_profiles')) {
-    $preset = variable_get('statuses_imagecache_preset', variable_get('user_picture_imagecache_profiles_default', ''));
+    $image_vars['user_picture_style'] = variable_get('statuses_imagecache_preset', variable_get('user_picture_imagecache_profiles_default', ''));
   }
   $vars['recipient'] = $context['handler']->load_recipient($status->recipient);
   $vars['recipient_name'] = check_plain($context['handler']->recipient_name($vars['recipient']));
   $vars['recipient_link'] = $context['handler']->recipient_link($vars['recipient']);
   if ($status->type == 'user') {
-    if (isset($preset)) {
-      $vars['recipient']->imagecache_preset = $preset;
-    }
-    $vars['recipient_picture'] = theme('user_picture', array('account' => $vars['recipient']));
+    $image_vars['account'] = $vars['recipient'];
+    $vars['recipient_picture'] = theme('user_picture', $image_vars);
   }
   $vars['sender'] = user_load($status->sender);
-  if (isset($preset)) {
-    $vars['sender']->imagecache_preset = $preset;
-  }
   $vars['sender_name'] = check_plain($vars['sender']->name);
   $vars['sender_link'] = theme('username', array('account' => $vars['sender']));
-  $vars['sender_picture'] = theme('user_picture', array('account' => $vars['sender']));
+  $image_vars['account'] = $vars['sender'];
+  $vars['sender_picture'] = theme('user_picture', $image_vars);
   if ($options['cacheable']) {
     $vars['created'] = format_date($status->created, 'short');
   }

@@ -1391,9 +1391,13 @@ function statuses_views_api() {
  * Displays the user picture with fixes for unfortunate magic found in Garland
  * and other themes.
  */
-function statuses_display_user_picture($account) {
+function statuses_display_user_picture($account, $preset = NULL) {
   drupal_add_css(drupal_get_path('module', 'statuses') . '/resources/statuses.css');
-  return theme('user_picture', array('account' => $account));
+  $image_vars = array('account' => $account);
+  if (!empty($preset) && module_exists('imagecache_profiles')) {
+    $image_vars['user_picture_style'] = $preset;
+  }
+  return theme('user_picture', $image_vars);
 }
 
 /**

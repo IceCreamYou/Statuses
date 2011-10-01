@@ -156,14 +156,14 @@ function statuses_admin_advanced($form, $form_state) {
     '#weight' => -20,
   );
   if (module_exists('imagecache_profiles')) {
-    $presets = imagecache_presets();
+    $presets = image_styles();
     $opt = array('' => t('Default (let Imagecache Profiles choose)'));
-    foreach ($presets as $preset) {
-      $opt[$preset['presetname']] = check_plain($preset['presetname']);
+    foreach ($presets as $name => $preset) {
+      $opt[$name] = check_plain($name);
     }
     $form['statuses_imagecache_preset'] = array(
       '#type' => 'select',
-      '#title' => t('Default Imagecache preset for user pictures'),
+      '#title' => t('Default image style for user pictures'),
       '#default_value' => variable_get('statuses_imagecache_preset', variable_get('user_picture_imagecache_profiles_default', '')),
       '#options' => $opt,
       '#weight' => -15,

@@ -22,14 +22,14 @@ class statuses_views_handler_field_recipient_pic extends views_handler_field {
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     if (module_exists('imagecache_profiles')) {
-      $presets = imagecache_presets();
+      $presets = image_styles();
       $opt = array('' => '');
-      foreach ($presets as $preset) {
-        $opt[$preset['presetname']] = check_plain($preset['presetname']);
+      foreach ($presets as $name => $preset) {
+        $opt[$name] = check_plain($name);
       }
       $options = $this->options;
       $form['imagecache_preset'] = array(
-        '#title' => t('Imagecache preset'),
+        '#title' => t('Image style'),
         '#type' => 'select',
         '#options' => $opt,
         '#default_value' => $options['imagecache_preset'],
@@ -45,10 +45,11 @@ class statuses_views_handler_field_recipient_pic extends views_handler_field {
     if ($type == 'user') {
       $account = user_load($values->{$this->field_alias});
       $options = $this->options;
+      $preset = NULL;
       if (isset($options['imagecache_preset']) && $options['imagecache_preset']) {
-        $account->imagecache_preset = $options['imagecache_preset'];
+        $preset = $options['imagecache_preset'];
       }
-      return '<span class="statuses-recipient-picture">' . statuses_display_user_picture($account) . '</span>';
+      return '<span class="statuses-recipient-picture">' . statuses_display_user_picture($account, $preset) . '</span>';
     }
   }
 }

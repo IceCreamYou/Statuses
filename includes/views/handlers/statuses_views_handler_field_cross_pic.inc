@@ -24,14 +24,14 @@ class statuses_views_handler_field_cross_pic extends views_handler_field {
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     if (module_exists('imagecache_profiles')) {
-      $presets = imagecache_presets();
+      $presets = image_styles();
       $opt = array('' => '');
-      foreach ($presets as $preset) {
-        $opt[$preset['presetname']] = check_plain($preset['presetname']);
+      foreach ($presets as $name => $preset) {
+        $opt[$name] = check_plain($name);
       }
       $options = $this->options;
       $form['imagecache_preset'] = array(
-        '#title' => t('Imagecache preset'),
+        '#title' => t('Image style'),
         '#type' => 'select',
         '#options' => $opt,
         '#default_value' => $options['imagecache_preset'],
@@ -49,40 +49,33 @@ class statuses_views_handler_field_cross_pic extends views_handler_field {
     $sender = user_load($sender_id);
     $type = $values->{$this->aliases['type']};
     $options = $this->options;
+    $preset = NULL;
+    if (isset($options['imagecache_preset']) && $options['imagecache_preset']) {
+      $preset = $options['imagecache_preset'];
+    }
     if ($sender_id == $recipient_id && $type == 'user') {
-      if (isset($options['imagecache_preset']) && $options['imagecache_preset']) {
-        $sender->imagecache_preset = $options['imagecache_preset'];
-      }
       return t('!picture !user', array(
-        '!picture' => '<span class="statuses-sender-picture">' . statuses_display_user_picture($sender) . '</span>',
+        '!picture' => '<span class="statuses-sender-picture">' . statuses_display_user_picture($sender, $preset) . '</span>',
         '!user' => '<span class="statuses-sender">' . theme('username', array('account' => $sender)) . '</span>',
       ));
     }
     elseif ($type == 'user') {
       $recipient = user_load($recipient_id);
-      if (isset($options['imagecache_preset']) && $options['imagecache_preset']) {
-        $sender->imagecache_preset = $options['imagecache_preset'];
-        $recipient->imagecache_preset = $options['imagecache_preset'];
-      }
       $args = array(
         '!sender' => '<span class="statuses-sender">' . theme('username', array('account' => $sender)) . '</span>',
         '!recipient' => '<span class="statuses-recipient">' . theme('username', array('account' => $recipient)) . '</span>',
-        '!sender-picture' => '<span class="statuses-sender-picture">' . statuses_display_user_picture($sender) . '</span>',
-        '!recipient-picture' => '<span class="statuses-recipient-picture">' . statuses_display_user_picture($recipient) . '</span>',
+        '!sender-picture' => '<span class="statuses-sender-picture">' . statuses_display_user_picture($sender, $preset) . '</span>',
+        '!recipient-picture' => '<span class="statuses-recipient-picture">' . statuses_display_user_picture($recipient, $preset) . '</span>',
       );
       return t('!sender-picture !sender &raquo; !recipient-picture !recipient', $args);
     }
     else {
       $context = statuses_determine_context($type);
       $recipient = $context['handler']->load_recipient($recipient_id);
-      if (isset($options['imagecache_preset']) && $options['imagecache_preset']) {
-        $sender->imagecache_preset = $options['imagecache_preset'];
-        $recipient->imagecache_preset = $options['imagecache_preset'];
-      }
       $args = array(
         '!sender' => '<span class="statuses-sender">' . theme('username', array('account' => $sender)) . '</span>',
         '!recipient' => '<span class="statuses-recipient">' . $context['handler']->recipient_link($recipient) . '</span>',
-        '!sender-picture' => '<span class="statuses-sender-picture">' . statuses_display_user_picture($sender) . '</span>',
+        '!sender-picture' => '<span class="statuses-sender-picture">' . statuses_display_user_picture($sender, $preset) . '</span>',
       );
       return t('!sender-picture !sender &raquo; !recipient', $args);
     }
