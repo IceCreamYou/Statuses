@@ -26,18 +26,16 @@ function fbss_flag_link($type, $status) {
  * Implements hook_statuses_delete().
  */
 function fbss_flag_statuses_delete($status) {
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
-  /* db_query("DELETE FROM {flag_content} WHERE content_type = 'statuses' AND content_id = %d", $status->sid) */
-  db_delete('flag_content')
-  ->condition('content_type', 'statuses')
-  ->condition('content_id', $status->sid)
-  ->execute();
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
-  /* db_query("DELETE FROM {flag_counts} WHERE content_type = 'statuses' AND content_id = %d", $status->sid) */
-  db_delete('flag_counts')
-  ->condition('content_type', 'statuses')
-  ->condition('content_id', $status->sid)
-  ->execute();
+  foreach (flag_get_flags('statuses') as $flag) {
+    db_delete('flag_content')
+      ->condition('fid', $flag->fid)
+      ->condition('content_id', $status->sid)
+      ->execute();
+    db_delete('flag_counts')
+      ->condition('fid', $flag->fid)
+      ->condition('content_id', $status->sid)
+      ->execute();
+  }
 }
 
 /**
