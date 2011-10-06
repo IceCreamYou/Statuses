@@ -288,19 +288,19 @@ function theme_fbss_comments_item($variables) {
   // is not supported by theme_links, we have to build the output structure by hand at the moment.
   $output .= '<ul class="links inline">';
   if (fbss_comments_can('edit', $comment)) {
-    $output .= '<li class="fbss-comments-edit-delete">'.
+    $output .= '<li class="fbss-comments-edit-delete fbss-comments-edit-link">'.
       l(t('Edit'), 'statuses/comment/'. $comment->cid .'/edit', array('query' => array('destination' => $q)))
       .'</li>';
   }
   if (fbss_comments_can('delete', $comment)) {
-    $output .= '<li class="fbss-comments-edit-delete">'.
+    $output .= '<li class="fbss-comments-edit-delete fbss-comments-delete-link">'.
       l(t('Delete'), 'statuses/comment/'. $comment->cid .'/delete', array('query' => array('destination' => $q)))
       .'</li>';
   }
   if (module_exists('fbss_comments_flag')) {
     foreach (flag_get_flags() as $name => $info) {
       if ($info->content_type == 'fbss_comment') {
-        $output .= '<li>' . flag_create_link($name, $comment->cid) . '</li>';
+        $output .= '<li class="fbss-comments-flag-'. check_plain($name) .'-link">' . flag_create_link($name, $comment->cid) . '</li>';
       }
     }
   }
