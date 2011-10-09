@@ -389,7 +389,7 @@ function statuses_admin_context_settings($form, $form_state, $context) {
     '#collapsed' => TRUE,
   );
   $access = user_access('use PHP for context visibility');
-  if ($edit['visibility'] == 2 && !$access) {
+  if ($context['visibility'] == 2 && !$access) {
     $form['page_vis_settings'] = array();
     $form['page_vis_settings']['visibility'] = array(
       '#type' => 'value',
@@ -397,7 +397,7 @@ function statuses_admin_context_settings($form, $form_state, $context) {
     );
     $form['page_vis_settings']['pages'] = array(
       '#type' => 'value',
-      '#value' => $edit['pages'],
+      '#value' => $context['pages'],
     );
   }
   else {
