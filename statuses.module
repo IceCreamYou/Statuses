@@ -781,7 +781,7 @@ function statuses_all_contexts() {
   if (isset($contexts)) {
     return $contexts;
   }
-  $result = db_query("SELECT * FROM {statuses_contexts}");
+  $result = db_query("SELECT * FROM {statuses_contexts}", array(), array('fetch' => PDO::FETCH_ASSOC));
   $contexts = module_invoke_all('statuses_context_info');
   foreach ($result as $c) {
     $contexts[$c['type']]['in_db'] = TRUE;
