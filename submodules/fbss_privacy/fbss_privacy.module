@@ -44,6 +44,7 @@ function fbss_privacy_form_statuses_box_alter(&$form, &$form_state) {
     return;
   }
   drupal_add_css(drupal_get_path('module', 'fbss_privacy') . '/fbss_privacy.css');
+  // This value gets saved in statuses_save_status() so we don't need a separate submit handler.
   $form['private'] = array(
     '#type' => 'checkbox',
     '#title' => t('Private'),
@@ -52,23 +53,6 @@ function fbss_privacy_form_statuses_box_alter(&$form, &$form_state) {
     '#prefix' => '<div class="statuses-private-box">',
     '#suffix' => '</div>',
   );
-  $form['fbss-submit']['#submit'][] = 'fbss_privacy_statuses_box_submit';
-}
-
-/**
- * Submit callback for the Privacy checkbox.
- */
-function fbss_privacy_statuses_box_submit($form, $form_state) {
-  if (!empty($form_state['values']['private']) && user_access('send private status messages')) {
-    // TODO Please review the conversion of this statement to the D7 database API syntax.
-    /* db_query("UPDATE {statuses} SET private = %d WHERE sid = %d", $form_state['values']['private'], $form_state['statuses']['sid']) */
-    db_update('statuses')
-  ->fields(array(
-    'private' => $form_state['values']['private'],
-  ))
-  ->condition('sid', $form_state['statuses']['sid'])
-  ->execute();
-  }
 }
 
 /**
