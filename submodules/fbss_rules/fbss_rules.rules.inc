@@ -13,8 +13,8 @@ function fbss_rules_rules_event_info() {
   return array(
     'statuses_delete' => array(
       'label' => t('User deletes a status'),
-      'module' => 'Statuses',
-      'arguments' => array(
+      'group' => t('Statuses'),
+      'variables' => array(
         'status' => array(
           'type' => 'statuses',
           'label' => t('The status.'),
@@ -23,8 +23,8 @@ function fbss_rules_rules_event_info() {
     ),
     'statuses_edit' => array(
       'label' => t('User edits a status'),
-      'module' => 'Statuses',
-      'arguments' => array(
+      'group' => t('Statuses'),
+      'variables' => array(
         'status' => array(
           'type' => 'statuses',
           'label' => t('The status.'),
@@ -34,8 +34,8 @@ function fbss_rules_rules_event_info() {
     ),
     'statuses_save' => array(
       'label' => t('User saves a status'),
-      'module' => 'Statuses',
-      'arguments' => array(
+      'group' => t('Statuses'),
+      'variables' => array(
         'status' => array(
           'type' => 'statuses',
           'label' => t('The status.'),
