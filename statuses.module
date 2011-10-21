@@ -1366,8 +1366,8 @@ function statuses_token_values($type, $data = NULL, $options = array()) {
     'status-url' => $url,
     'status-edit' => $edit,
     'status-delete' => $delete,
-    'status-comment-count' => (module_exists('fbss_comments')) ? fbss_comments_count_comments($status->sid) : 0,
-    'comments-email' => theme('fbss_comments_items_email', fbss_comments_get_comments($sid, TRUE), $url),
+    'status-comment-count' => module_exists('fbss_comments') ? fbss_comments_count_comments($status->sid) : 0,
+    'comments-email' => module_exists('fbss_comments') ? theme('fbss_comments_items_email', fbss_comments_get_comments($status->sid, TRUE), $url) : '',
     'created' => format_date($status->created, 'short'),
   );
   $values += token_get_date_token_values($status->created, 'created-');
