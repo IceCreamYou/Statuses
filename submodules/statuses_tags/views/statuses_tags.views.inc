@@ -9,6 +9,12 @@
  * Implementation of hook_views_default_views_alter().
  */
 function statuses_tags_views_default_views_alter(&$views) {
+  // We can't assume that $views always contains the full set of Views;
+  // one case where it doesn't is when evaluating Features.
+  if (!isset($views['facebook_status_tags'])) {
+    return;
+  }
+
   // Use the #hashtag URL from the administrative settings in the view.
   $url = variable_get('statuses_tags_url', 'statuses/term');
   $views['statuses_tags']->display['page_1']->display_options['path'] = $url;
