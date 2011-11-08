@@ -143,7 +143,7 @@ function statuses_menu() {
     'file' => 'includes/utility/statuses.form.inc',
   );
   if (module_exists('devel_generate')) {
-    $items['admin/generate/statuses'] = array(
+    $items['admin/config/development/generate/statuses'] = array(
       'title' => 'Generate statuses',
       'description' => 'Generate a given number of statuses. Optionally delete current items.',
       'page callback' => 'drupal_get_form',
