@@ -415,9 +415,11 @@ function theme_fbss_comments_form_display($variables) {
       $output = '<div class="fbss-comments-show-comment-form" id="fbss-comments-toggle-' . $sid . '">' .
         l(t('Comment'), 'statuses/' . $sid, array('attributes' => array('class' => array('fbss-comments-show-comment-form-link'))))
         . '</div>';
-      return $output . '<div class="fbss-comments-hide fbss-comments-form statuses-subitem">' . drupal_render(drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments)) . '</div>';
+      $form = drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments);
+      return $output . '<div class="fbss-comments-hide fbss-comments-form statuses-subitem">' . drupal_render($form) . '</div>';
     }
-    return '<div class="fbss-comments-form">' . drupal_render(drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments, $delay_load_form)) . '</div>';
+    $form = drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments, $delay_load_form);
+    return '<div class="fbss-comments-form">' . drupal_render($form) . '</div>';
   }
   else if (user_access('view all status comments')) {
     return theme('fbss_comments_items', array('comments' => fbss_comments_get_comments($sid, TRUE), 'delay_load' => $delay_load_comments, 'destination' => $_GET['q']));
