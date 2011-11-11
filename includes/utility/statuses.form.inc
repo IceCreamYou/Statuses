@@ -73,8 +73,9 @@ function theme_statuses_form_display($variables) {
     if ($conversation) {
       $converse = ' statuses-conversation-form';
     }
+    $form = drupal_get_form('statuses_box', $recipient, $type);
     $output .= '<div class="clear-block statuses-update statuses-update-main facebook-status-form-type-' . $type . $self . $converse . '">' .
-      drupal_render(drupal_get_form('statuses_box', $recipient, $type)) . '</div>';
+      drupal_render($form) . '</div>';
   }
   if ($conversation) {
     $args = explode(',', arg(2));
