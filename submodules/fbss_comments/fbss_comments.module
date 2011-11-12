@@ -438,9 +438,12 @@ function theme_fbss_comments_form_display($variables) {
  * @return
  *   A full status comment object.
  */
-function fbss_comments_load($cids) {
+function fbss_comments_load($cid) {
   if (is_numeric($cid)) {
     return db_query("SELECT * FROM {fbss_comments} WHERE cid = :cid", array(':cid' => $cid))->fetchObject();
+  }
+  elseif (is_array($cid)) {
+    return db_query("SELECT * FROM {fbss_comments} WHERE cid IN (:cids)", array(':cids' => $cid))->fetchAll();
   }
 }
 
