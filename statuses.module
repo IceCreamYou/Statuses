@@ -525,6 +525,9 @@ function theme_statuses_time($variables) {
   if (!$time) {
     return FALSE;
   }
+  if (module_exists('timeago')) {
+    return timeago_format_date($time);
+  }
   if (REQUEST_TIME - $time < 60) {
     return t('a moment ago');
   }
