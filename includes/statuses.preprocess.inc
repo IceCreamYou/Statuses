@@ -58,6 +58,33 @@ function template_preprocess_statuses_item(&$vars) {
     }
   }
   $vars['status_url'] = url('statuses/'. $status->sid, array('absolute' => TRUE));
+  
+  // Try to determine if the recipient should be obvious based on the context.
+  if ($vars['self']) {
+    $vars['in_context'] = TRUE;
+  }
+  elseif ($vars['page']) {
+    $vars['in_context'] = FALSE;
+  }
+  // If the status is between users, we're out of context if we're not on a
+  // page where we could write a message to another user. This avoids
+  // situations off of user pages where the recipient is the current user, but
+  // not all statuses on that page are "to" the current user (for example,
+  // on /statuses/all).
+  elseif ($status->type == 'user' && arg(0) != 'user' && (arg(0) != 'statuses' || arg(1) != 'conversation')) {
+    $vars['in_context'] = FALSE;
+  }
+  // In the generic situation, we're "in context" if the status recipient and
+  // the current context recipient are the same. The context recipient should
+  // be the entity we're "looking at" on the current page, so the implication
+  // is that if we're looking at an entity we assume that statuses on the page
+  // are "to" that entity.
+  else {
+    $current_context = facebook_status_determine_context();
+    $handler = $current_context['handler'];
+    $current_recipient_id = $handler->recipient_id($handler->find_recipient());
+    $vars['in_context'] = $status->type == $handler->type() && $status->recipient == $current_recipient_id;
+  }
 }
 
 /**

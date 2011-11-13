@@ -412,7 +412,7 @@ function statuses_link($type, $status) {
     );
   }
   // If not self update by current user (because if it is a self update by the current user, there is no need for a response)
-  if ($status->type == 'user' && ($status->recipient != $status->sender || $status->sender != $user->uid)) {
+  if (!module_exists('fbss_comments') && $status->type == 'user' && ($status->recipient != $status->sender || $status->sender != $user->uid)) {
     // If permission to respond
     if (statuses_user_access('add', _statuses_user_load($status->sender), 'user', $user)) {
       $second_uid = $user->uid;
