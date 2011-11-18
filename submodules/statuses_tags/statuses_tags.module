@@ -565,7 +565,7 @@ function _statuses_tags_get_term($name) {
   ", array(
     ':name' => $name,
     ':vid' => variable_get('statuses_tags_vid', -1)
-  ));
+  ))->fetchObject();
 }
 
 //===================
