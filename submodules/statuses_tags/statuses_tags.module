@@ -177,51 +177,32 @@ function theme_statuses_popular_tags($variables) {
  *   The number of statuses to retrieve, starting with the most recent one. If
  *   zero, all relevant statuses are returned.
  * @param $sender
- *   If zero, has no effect. If a positive integer, restricts results to
- *   status messages created by the user with that UID. If an array of positive
+ *   If null, has no effect. If a positive integer, restricts results to status
+ *   messages created by the user with that UID. If an array of positive
  *   integers, restricts results to status messages created by users with a UID
  *   in the array.
  * @return
  *   An array of status objects.
  */
-function statuses_tags_get_statuses($tag, $type = 'term', $count = 1, $sender = 0) {
-  $params = array($tag, $type);
-  if (is_int($tag)) {
-    $rid = 'rid = %d';
+function statuses_tags_get_statuses($tag, $type = 'term', $count = 1, $sender = NULL) {
+  $query = db_select('statuses_tags', 'st')
+    ->condition(is_int($tag) ? 'st.rid' : 'st.name', $tag)
+    ->condition('st.type', $type);
+  $alias = $query->innerJoin('statuses', 's', 'st.sid = s.sid');
+  $query->fields($alias);
+  if (!empty($sender)) {
+    if (is_numeric($sender)) {
+      $query->condition($alias . '.sender', $sender);
+    }
+    elseif(is_array($sender)) {
+      $query->condition($alias . '.sender', $sender, 'IN');
+    }
   }
-  elseif (is_string($tag)) {
-    $rid = "name = '%s'";
-  }
-  $sql = "SELECT fbst.sid FROM {statuses_tags} fbst INNER JOIN {statuses} fb ON fbst.sid = fb.sid WHERE fbst." . $rid . " AND fbst.type = '%s' AND ";
-  if ($sender == 0) {
-    $sql = "SELECT sid FROM {statuses_tags} WHERE " . $rid . " AND type = '%s'";
-  }
-  elseif (is_numeric($sender)) {
-    $params[] = $sender;
-    $sql .= 'fb.sender = %d';
-  }
-  elseif (is_array($sender)) {
-    $params = array_merge($params, $sender);
-    $sql .= 'fb.sender IN (' . db_placeholders($sender) . ')';
-  }
-  else {
-    // Something unexpected happened; abort.
-    return array();
-  }
-
   if ($count) {
-    // TODO Please convert this statement to the D7 database API syntax.
-    $result = db_query_range($sql, $params);
+    $query->range(0, $count);
   }
-  else {
-    // TODO Please convert this statement to the D7 database API syntax.
-    $result = db_query($sql, $params);
-  }
-  $statuses = array();
-  while ($sid = db_fetch_object($result)) {
-    $statuses[] = statuses_load($sid->sid);
-  }
-  return $statuses;
+  $result = $query->execute();
+  return $result->fetchAll();
 }
 
 /**
@@ -235,20 +216,18 @@ function statuses_tags_get_statuses($tag, $type = 'term', $count = 1, $sender = 
  *   The number of tags of the given type the relevant status has.
  */
 function statuses_tags_has_tags($sid, $type = NULL) {
-  $sql = "SELECT COUNT(rid) FROM {statuses_tags} WHERE sid = %d";
-  $args = array($sid);
+  $query = db_select('statuses_tags');
+  $query->addExpression('COUNT(rid)', 'count');
+  $query->condition('sid', $sid);
   if (!empty($type)) {
     if (is_string($type)) {
-      $sql .= " AND type = '%s'";
-      $args[] = $type;
+      $query->condition('type', $type);
     }
     elseif (is_array($type)) {
-      $sql .= " AND TYPE IN (" . db_placeholders($type, 'text') . ")";
-      $args = array_merge($args, $type);
+      $query->condition('type', $type, 'IN');
     }
   }
-  // TODO Please convert this statement to the D7 database API syntax.
-  return db_query($sql, $args)->fetchField();
+  return $query->execute()->fetchField();
 }
 
 /**
@@ -362,16 +341,14 @@ function statuses_tags_popular($type = 'term', $count = 5, $time = 'all', $optio
   }
   else {
     $times = array(
-      'day' => $now -    86400,
-      'week' => $now -   604800,
-      'month' => $now -  2592000,
-      'year' => $now - 31449600,
+      'day' => 86400,
+      'week' => 604800,
+      'month' => 2592000,
+      'year' => 31449600,
       'all' => 0,
     );
-    $time = $times[$time];
+    $time = $now - $times[$time];
   }
-  $restrict = '';
-  $args = array();
   $options += array(
     'include self updates' => TRUE,
     'include messages to others' => TRUE,
@@ -386,29 +363,34 @@ function statuses_tags_popular($type = 'term', $count = 5, $time = 'all', $optio
       'current user only' => FALSE,
     );
   }
+  $query = db_select('statuses_tags', 't');
+  $alias = $query->innerJoin('statuses', 's', 't.sid = s.sid');
+  $count_alias = $query->addExpression('COUNT(t.sid)', 'count');
+  $query->addField('t', 'rid');
   if (!$options['include messages to others']) {
-    $restrict .= "f.sender = f.recipient AND f.type = 'user' AND ";
+    $query->where("$alias.sender = $alias.recipient AND $alias.type = 'user'");
   }
   if (!$options['include self updates']) {
-    $restrict .= "(f.sender <> f.recipient OR f.type <> 'user') AND ";
+    $query->where("($alias.sender <> $alias.recipient OR $alias.type <> 'user')");
   }
   if ($options['current user only']) {
-    $restrict .= "f.sender = %d AND ";
-    $args[] = $GLOBALS['user']->uid;
+    $query->condition("$alias.sender", $GLOBALS['user']->uid);
   }
-  $args[] = $type;
-  $args[] = $time;
-  // TODO Please convert this statement to the D7 database API syntax.
-  $result = db_query_range("SELECT COUNT(t.sid) count, t.rid FROM {statuses_tags} t INNER JOIN {statuses} f ON t.sid = f.sid
-    WHERE " . $restrict . "t.type = '%s' AND f.created > %d GROUP BY t.rid ORDER BY count DESC, t.sid DESC", $args);
+  $query->condition('t.type', $type);
+  $query->condition("$alias.created", $time, '>');
+  $query->groupBy('t.rid');
+  $query->orderBy($count_alias, 'DESC');
+  $query->orderBy('t.sid', 'DESC');
+  $query->range(0, $count);
+  $result = $query->execute();
   $tags = array();
-  while ($tag = db_fetch_object($result)) {
+  foreach ($result as $tag) {
     $c = $tag->count;
     if ($type == 'term') {
       $tag = taxonomy_term_load($tag->rid);
     }
     elseif ($type == 'user') {
-      $tag = _statuses_user_load($tag->rid);
+      $tag = user_load($tag->rid);
     }
     $tag->popularity = $c;
     $tags[] = $tag;
@@ -707,7 +689,18 @@ function statuses_tags_taxonomy($op, $type, $array = NULL) {
  * Implements hook_user_cancel().
  */
 function statuses_tags_user_cancel($edit, $account, $method) {
-  // TODO: take the method into account, and implement hook_user_delete()
+  if ($method == 'user_cancel_reassign') {
+    db_delete('statuses_tags')
+      ->condition('rid', $account->uid)
+      ->condition('type', 'user')
+      ->execute();
+  }
+}
+
+/**
+ * Implements hook_user_delete().
+ */
+function statuses_tags_user_delete($account) {
   db_delete('statuses_tags')
     ->condition('rid', $account->uid)
     ->condition('type', 'user')
