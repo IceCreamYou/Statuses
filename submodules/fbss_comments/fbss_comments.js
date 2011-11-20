@@ -1,5 +1,10 @@
 Drupal.behaviors.fbss_comments = function (context) {
   var ctxt = $(context);
+  if ($.fn.autogrow) {
+    // jQuery Autogrow plugin integration.
+    ctxt.find('.fbss-comments-textarea').autogrow({expandTolerance: 2});
+    ctxt.find('.fbss-comments-textarea').css('resize', 'none');
+  }
   // Mark the comments wrapper with no-comments class if no comments exist for this entry
   ctxt.find('.facebook-status-comments').each(function (index, item) {
     var $this = $(this);
@@ -74,9 +79,5 @@ Drupal.behaviors.fbss_comments = function (context) {
       };
       Drupal.modalFrame.open({url: $(this).attr('href'), onSubmit: handle});
     });
-  }
-  if ($.fn.autogrow) {
-    // jQuery Autogrow plugin integration.
-    $('.fbss-comments-textarea').autogrow({expandTolerance: 2});
   }
 }
