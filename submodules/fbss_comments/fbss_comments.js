@@ -43,6 +43,11 @@ Drupal.behaviors.fbss_comments = function (context) {
   ctxt.find('.fbss-comments-comment-form').bind('ahah_success', function() {
     $(this).find('.fbss-comments-submit').attr('disabled', true);
   });
+  // Hide the save button until the comment textarea is clicked.
+  ctxt.find('.fbss-comments-submit').hide();
+  ctxt.find('.fbss-comments-textarea').focus(function() {
+    $(this).parents('form').find('.fbss-comments-submit').show();
+  });
   // Enable the save button if there is text in the textarea.
   ctxt.find('.fbss-comments-textarea').keypress(function(key) {
     var th = $(this);
