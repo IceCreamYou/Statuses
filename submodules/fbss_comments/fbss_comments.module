@@ -675,8 +675,8 @@ function _fbss_comments_get_thread_author($sid) {
  * Adds the Autogrow jQuery extension.
  */
 function _fbss_comments_use_autogrow() {
-  //module_load_include('inc', 'statuses', 'includes/utility/statuses.form');
-  //_statuses_use_autogrow();
+  module_load_include('inc', 'statuses', 'includes/utility/statuses.form');
+  return _statuses_use_autogrow();
 }
 
 /**
@@ -756,7 +756,7 @@ function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_
   drupal_add_js(array('fbss_comments' => array(
       'ahah_enabled' => (bool) variable_get('fbss_comments_ahah', 1),
     )), array('type' => 'setting', 'scope' => JS_DEFAULT));
-  _fbss_comments_use_autogrow();
+  $autogrow = _fbss_comments_use_autogrow();
   $form = array();
   if (!isset($form_state['fbss_comments']['q'])) {
     $form['#qu'] = $_GET['q'];
@@ -774,7 +774,7 @@ function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_
   $form['comment-entry-wrapper'] = array('#markup' => '<div class="statuses-subitem">',);
   $form['status-comment'] = array(
     '#type' => 'textarea',
-    '#rows' => 2,
+    '#rows' => $autogrow ? 1 : 2,
     '#prefix' => '<div class="statuses-textarea-wrapper">',
     '#suffix' => '</div>',
     '#attributes' => array('class' => array('fbss-comments-textarea')),
