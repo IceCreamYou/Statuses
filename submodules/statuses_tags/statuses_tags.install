@@ -64,7 +64,7 @@ function statuses_tags_install() {
       return;
     }
     // Create a default vocabulary for use with hashtags.
-    $vocab = (object) array(
+    $vocabulary = (object) array(
       'name' => st('Hashtags'),
       'machine_name' => 'hashtags',
       'description' => st('Contains #hashtags used in Statuses.'),
