@@ -1,6 +1,7 @@
 name = Statuses
 description = "Creates context-sensitive social streams."
 package = Statuses
+configure = admin/config/statuses
 dependencies[] = views
 core = 7.x
 
