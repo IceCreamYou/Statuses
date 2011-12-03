@@ -240,6 +240,15 @@ function statuses_views_data() {
       'label' => t('Restrict to own status updates'),
     ),
   );
+  $data['statuses']['sender_pic'] = array(
+    'title' => t('Sender picture'),
+    'help' => t('The picture of the user who sent the status message.'),
+    'field' => array(
+      'field' => 'sender',
+      'handler' => 'statuses_views_handler_field_sender_pic',
+      'click sortable' => FALSE,
+    ),
+  );
   $data['statuses']['user_contextual_pic'] = array(
     'title' => t('Users with Pictures'),
     'help' => t('The themed username(s) and pictures of either the owner or the sender and recipient of the status, depending on the context.'),
@@ -303,6 +312,16 @@ function statuses_views_data() {
     ),
     'filter' => array(
       'handler' => 'views_handler_filter_string',
+    ),
+  );
+
+  $data['statuses']['classes'] = array(
+    'title' => t('HTML classes'),
+    'help' => t('The HTML classes that should be associated with a status.'),
+    'field' => array(
+      'field' => 'sender',
+      'handler' => 'statuses_views_handler_field_classes',
+      'click sortable' => FALSE,
     ),
   );
 
@@ -379,6 +398,9 @@ function statuses_views_handlers() {
       'statuses_views_handler_argument_rels_and_me' => array(
         'parent' => 'views_handler_argument',
       ),
+      'statuses_views_handler_field_classes' => array(
+        'parent' => 'views_handler_field',
+      ),
       'statuses_views_handler_field_created' => array(
         'parent' => 'views_handler_field_date',
       ),
@@ -413,6 +435,9 @@ function statuses_views_handlers() {
         'parent' => 'views_handler_field',
       ),
       'statuses_views_handler_field_respond' => array(
+        'parent' => 'views_handler_field',
+      ),
+      'statuses_views_handler_field_sender_pic' => array(
         'parent' => 'views_handler_field',
       ),
       'statuses_views_handler_filter_autotype' => array(

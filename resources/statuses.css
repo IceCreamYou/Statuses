@@ -1,8 +1,54 @@
-.statuses-negative {
-  color: #800000;
+/**
+ * @group Visuals
+ *
+ * Things that you are relatively likely to want to override in your theme.
+ */
+
+.statuses-textarea-wrapper {
+  border-color: #CCCCCC;
 }
 
+.statuses-update .button {
+  background-color: #EEEEEE;
+  border-color: #CCCCCC;
+}
+
+.statuses-update .button:hover {
+  background-color: #F6F6F6;
+}
+
+.statuses-negative {
+  color: #900000;
+}
+
+.statuses-faded {
+  color: #999999;
+}
+
+.statuses-time { /* does not affect links */
+  color: #999999;
+}
+
+.statuses-item .statuses-links ul.links li {
+  background-image: none;
+  list-style: none;
+}
+
+/* Garland floats pictures right, which looks weird in FBSS Views. */
+.view .picture {
+  float: left; /* LTR */
+  margin: 0 1em 0 0;
+  padding: 0;
+}
+
+/* @end */
+
+/**
+ * Miscellaneous
+ */
+
 .statuses-chars {
+  clear: both;
   float: right;
 }
 
@@ -16,21 +62,22 @@
 
 .statuses-update {
   margin-bottom: 1em;
+  width: 100%;
 }
 
 .statuses-update #statuses-box {
   margin-bottom: 0;
 }
 
-/* Views fields. */
-.statuses-edit,
-.statuses-delete,
-.statuses-respond,
-.statuses-repost,
-.statuses-share,
-.statuses-details .flag-wrapper {
-  font-size: 90%;
-  margin-left: 0.5em;
+.statuses-item .clearfix:after { /* adopted from Fusion */
+  clear: both;
+  content: ".";
+  display: block;
+  font-size: 0;
+  height: 0;
+  line-height: 0;
+  overflow: auto;
+  visibility: hidden;
 }
 
 /* @group Textareas
@@ -42,6 +89,13 @@
 .statuses-textarea-wrapper {
   border-style: solid;
   border-width: 1px;
+  -moz-box-shadow: 1px 1px 0 rgba(0,0,0,0.4) inset, 2px 2px 2px rgba(0,0,0,0.3) inset;
+  -o-box-shadow: 1px 1px 0 rgba(0,0,0,0.4) inset, 2px 2px 2px rgba(0,0,0,0.3) inset;
+  -webkit-box-shadow: 1px 1px 0 rgba(0,0,0,0.4) inset, 2px 2px 2px rgba(0,0,0,0.3) inset;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4) inset, 2px 2px 2px rgba(0, 0, 0, 0.3) inset;
+  clear: both;
+  margin-bottom: 0;
+  margin-top: 0;
   padding: 4px 2px 2px 4px;
 }
 
@@ -54,11 +108,8 @@
   border: 0 none;
   display: block;
   line-height: 1.5em;
+  max-width: 100%;
   width: 100%;
-}
-
-.statuses-faded {
-  color: #999999;
 }
 
 /* @end */
@@ -67,21 +118,10 @@
 
 .statuses-update .button {
   border-style: solid;
-  border-width: 0 1px 1px 0;
-}
-
-.statuses-update .fbsmp-plugin-icon:first-child .button,
-.statuses-submit {
-  border-left-width: 1px;
-}
-
-form input.fbsmp-plugin-icon-button,
-form input.statuses-submit { /* Forced by Fusion */
-  padding: 7px 14px;
-}
-
-form input.fbsmp-plugin-icon-button { /* Forced by Fusion */
-  padding-left: 34px;
+  border-width: 1px;
+  cursor: pointer;
+  margin: -1px 0 0;
+  padding: 0.6em 1.2em;
 }
 
 .statuses-submit {
@@ -102,8 +142,8 @@ form input.fbsmp-plugin-icon-button { /* Forced by Fusion */
 
 /* @group Entry items
  *
- * Media is a generic class for any presentation that includes a user image to one side
- * and content to the other.
+ * Media is a generic class for any presentation that generally includes a
+ * user image to one side and content to the other.
  */
 
 .statuses-media > .user-picture {
@@ -123,7 +163,7 @@ form input.fbsmp-plugin-icon-button { /* Forced by Fusion */
   margin-top: 0;
 }
 
-.statuses-media .links {
+.statuses-media .statuses-links {
   float: right;
 }
 
@@ -135,15 +175,13 @@ form input.fbsmp-plugin-icon-button { /* Forced by Fusion */
   margin: 0 0 0 0.5em;
 }
 
-/* @group Comments */
-
-.statuses-media > .content .statuses-comments {
-  margin-top: 1em;
+.statuses-subitem {
+  padding: 0.75em;
 }
 
-/* @end */
-
-/* @group Links */
+.statuses-subitem.form-piece {
+  padding-top: 0;
+}
 
 .statuses-item .links {
   margin-bottom: 0;

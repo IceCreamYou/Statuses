@@ -10,6 +10,11 @@
  */
 class fbss_comments_views_handler_field_comment_box extends views_handler_field {
   function render($values) {
-    return theme('fbss_comments_form_display', array('sid' => $values->{$this->field_alias}, 'delay_load_form' => TRUE, 'delay_load_comments' => TRUE));
+    return '<div class="statuses-comments">' .
+      theme('fbss_comments_form_display', array(
+        'sid' => $values->{$this->field_alias},
+        'delay_load_form' => TRUE,
+        'delay_load_comments' => TRUE
+      )) . '</div>';
   }
 }

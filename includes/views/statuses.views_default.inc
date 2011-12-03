@@ -52,7 +52,7 @@ function statuses_views_default_views() {
       'field' => 'sid',
       'relationship' => 'none',
     ),
-    'user_contextual_pic' => array(
+    'classes' => array(
       'label' => '',
       'alter' => array(
         'alter_text' => 0,
@@ -76,9 +76,67 @@ function statuses_views_default_views() {
       'hide_empty' => 0,
       'empty_zero' => 0,
       'exclude' => 1,
-      'id' => 'user_contextual_pic',
+      'id' => 'classes',
       'table' => 'statuses',
-      'field' => 'user_contextual_pic',
+      'field' => 'classes',
+      'relationship' => 'none',
+    ),
+    'sender_pic' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 1,
+      'id' => 'sender_pic',
+      'table' => 'facebook_status',
+      'field' => 'sender_pic',
+      'relationship' => 'none',
+    ),
+    'user_contextual' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 1,
+      'id' => 'user_contextual',
+      'table' => 'facebook_status',
+      'field' => 'user_contextual',
       'relationship' => 'none',
     ),
     'message' => array(
@@ -232,9 +290,17 @@ function statuses_views_default_views() {
     'nothing' => array(
       'label' => '',
       'alter' => array(
-        'text' => '<div>[user_contextual_pic] [message]</div>
-
-<div class="statuses-details">[created] [edit] [delete] [repost]</div>',
+        'text' => '<div id="statuses-item-[sid]" class="[classes]">
+  [sender_pic]
+  <div class="content">
+    <div class="statuses-participants">[user_contextual]</div>
+    [message]
+    <div class="statuses-details">
+      <div class="statuses-links">[edit] [delete] [repost]</div> [created]
+    </div>
+    <!-- meta -->
+  </div>
+</div>',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',
@@ -389,7 +455,7 @@ function statuses_views_default_views() {
       'field' => 'sid',
       'relationship' => 'none',
     ),
-    'picture' => array(
+    'classes' => array(
       'label' => '',
       'alter' => array(
         'alter_text' => 0,
@@ -413,9 +479,9 @@ function statuses_views_default_views() {
       'hide_empty' => 0,
       'empty_zero' => 0,
       'exclude' => 1,
-      'id' => 'picture',
-      'table' => 'users',
-      'field' => 'picture',
+      'id' => 'classes',
+      'table' => 'statuses',
+      'field' => 'classes',
       'relationship' => 'none',
     ),
     'name' => array(
@@ -448,6 +514,35 @@ function statuses_views_default_views() {
       'id' => 'name',
       'table' => 'users',
       'field' => 'name',
+      'relationship' => 'none',
+    ),
+    'sender_pic' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 1,
+      'id' => 'sender_pic',
+      'table' => 'facebook_status',
+      'field' => 'sender_pic',
       'relationship' => 'none',
     ),
     'message' => array(
@@ -571,9 +666,17 @@ function statuses_views_default_views() {
     'nothing' => array(
       'label' => '',
       'alter' => array(
-        'text' => '<div>[picture] [name] [message]</div>
-
-<div class="statuses-details">[created] [edit] [delete]</div>',
+        'text' => '<div id="statuses-item-[sid]" class="[classes]">
+  [sender_pic]
+  <div class="content">
+    <div class="statuses-participants">[name]</div>
+    [message]
+    <div class="statuses-details">
+      <div class="statuses-links">[edit] [delete] [repost]</div> [created]
+    </div>
+    <!-- meta -->
+  </div>
+</div>',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',
@@ -760,7 +863,7 @@ function statuses_views_default_views() {
       'field' => 'sid',
       'relationship' => 'none',
     ),
-    'picture' => array(
+    'classes' => array(
       'label' => '',
       'alter' => array(
         'alter_text' => 0,
@@ -784,9 +887,9 @@ function statuses_views_default_views() {
       'hide_empty' => 0,
       'empty_zero' => 0,
       'exclude' => 1,
-      'id' => 'picture',
-      'table' => 'users',
-      'field' => 'picture',
+      'id' => 'classes',
+      'table' => 'statuses',
+      'field' => 'classes',
       'relationship' => 'none',
     ),
     'name' => array(
@@ -819,6 +922,35 @@ function statuses_views_default_views() {
       'id' => 'name',
       'table' => 'users',
       'field' => 'name',
+      'relationship' => 'none',
+    ),
+    'sender_pic' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 1,
+      'id' => 'sender_pic',
+      'table' => 'facebook_status',
+      'field' => 'sender_pic',
       'relationship' => 'none',
     ),
     'message' => array(
@@ -972,9 +1104,17 @@ function statuses_views_default_views() {
     'nothing' => array(
       'label' => '',
       'alter' => array(
-        'text' => '<div>[picture] [name] [message]</div>
-
-<div class="statuses-details">[created] [edit] [delete] [repost]</div>',
+        'text' => '<div id="statuses-item-[sid]" class="[classes]">
+  [sender_pic]
+  <div class="content">
+    <div class="statuses-participants">[name]</div>
+    [message]
+    <div class="statuses-details">
+      <div class="statuses-links">[edit] [delete] [repost]</div> [created]
+    </div>
+    <!-- meta -->
+  </div>
+</div>',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',

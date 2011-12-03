@@ -33,6 +33,8 @@ function statuses_edit($form, &$form_state, $status) {
     '#default_value' => $status->message,
     '#attributes' => array('class' => array('statuses-text')),
     '#resizable' => FALSE,
+    '#prefix' => '<div class="statuses-textarea-wrapper">',
+    '#suffix' => '</div>',
     '#weight' => -40,
   );
   if ($maxlength > 0) {

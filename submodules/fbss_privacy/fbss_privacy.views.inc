@@ -30,10 +30,11 @@ function fbss_privacy_views_data() {
   $data = array();
   $data['statuses']['private'] = array(
     'title' => t('Show private status messages'),
-    'help' => t('Enable showing private status messages in this view.'),
+    'help' => t('Enable showing private status messages in this view'),
     'field' => array(
       'handler' => 'fbss_privacy_views_handler_field',
-      'label' => t('The word "%private" if the status message is private', array('%private' => t('(Private)'))),
+      'title' => t('The word "<em>(Private)</em>" if the status message is private'),
+      'help' => t('Distinguish between private and non-private messages'),
     ),
     'filter' => array(
       'handler' => 'fbss_privacy_views_handler_filter',
@@ -45,7 +46,8 @@ function fbss_privacy_views_data() {
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
-      'label' => t('Private messages first'),
+      'title' => t('Private messages first'),
+      'help' => t('Choose "Descending" to float private messages to the top of the list.'),
     ),
   );
   return $data;

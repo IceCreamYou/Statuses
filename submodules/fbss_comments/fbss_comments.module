@@ -277,7 +277,7 @@ function theme_fbss_comments_item($variables) {
   }
   // The following links output should ideally be created with theme_links. But since the query property
   // is not supported by theme_links, we have to build the output structure by hand at the moment.
-  $output .= '<ul class="links inline">';
+  $output .= '<ul class="links inline fbss-comments-links">';
   if (fbss_comments_can('edit', $comment)) {
     $output .= '<li class="fbss-comments-edit-delete fbss-comments-edit-link">'.
       l(t('Edit'), 'statuses/comment/'. $comment->cid .'/edit', array('query' => array('destination' => $q)))
@@ -959,12 +959,7 @@ function fbss_comments_views_default_views_alter(&$views) {
       );
       $view->display['default']->display_options['fields']['nothing'] = $s;
       $t = $view->display['default']->display_options['fields']['nothing']['alter']['text'];
-      if (drupal_substr($t, -6) == '</div>') {
-        $t = drupal_substr($t, 0, -6) . ' [comment-box]</div>';
-      }
-      else {
-        $t .= "\n\n<div>[comment-box]</div>";
-      }
+      $t = str_replace('<!-- meta -->', '<!-- meta -->[comment-box]', $t);
       $view->display['default']->display_options['fields']['nothing']['alter']['text'] = $t;
     }
   }

@@ -49,14 +49,18 @@
     <div class="statuses-sender-picture user-picture"><?php echo $sender_picture; ?></div>
   <?php endif; ?>
   <div class="content">
-    <?php if (!empty($sender_link)) : ?>
-      <div class="statuses-sender"><?php echo $sender_link; ?></div>
-    <?php endif; ?>
-    <?php if (!$in_context): ?>
-      &raquo; <span class="statuses-recipient"><?php echo $recipient_link; ?></span>
-    <?php endif; ?>
-    <?php if (!empty($private)) : ?>
-      <div class="statuses-private-text"><?php echo $private_text; ?></div>
+    <?php if (!empty($sender_link) && !empty($recipient_link)): ?>
+      <div class="statuses-participants">
+      <?php if (!empty($sender_link)) : ?>
+        <span class="statuses-sender"><?php echo $sender_link; ?></span>
+      <?php endif; ?>
+      <?php if (!empty($recipient_link) && !$in_context): ?>
+        &raquo; <span class="statuses-recipient"><?php echo $recipient_link; ?></span>
+      <?php endif; ?>
+      <?php if (!empty($private)) : ?>
+        <span class="statuses-private-text"><?php echo $private_text; ?></span>
+      <?php endif; ?>
+      </div>
     <?php endif; ?>
     <div class="statuses-content"><?php echo $message; ?></div>
     <?php if (!empty($attachment)) : ?>

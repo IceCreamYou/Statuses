@@ -43,6 +43,8 @@ function fbss_twitter_form_statuses_box_alter(&$form, &$form_state) {
       '#type' => 'checkbox',
       '#title' => t('Post to Twitter'),
       '#default_value' => _fbss_twitter_get_default($recipient),
+      '#prefix' => '<div class="fbss-twitter-box">',
+      '#suffix' => '</div>',
       '#weight' => -30,
     );
   }

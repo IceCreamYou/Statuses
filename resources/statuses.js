@@ -22,6 +22,7 @@ attach: function (context) {
   if ($.fn.autogrow && $statuses_field) {
     // jQuery Autogrow plugin integration.
     $statuses_field.autogrow({expandTolerance: 2});
+    $statuses_field.css('resize', 'none');
   }
   if (Drupal.settings.statuses.autofocus) {
     $statuses_field.focus();
