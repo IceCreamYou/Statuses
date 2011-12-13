@@ -272,7 +272,7 @@ function theme_fbss_comments_item($variables) {
   if ($destination) {
     $q = $destination;
   }
-  elseif (strpos($q, 'fbss_comments/js/refresh') !== FALSE) {
+  elseif (strpos($q, 'fbss_comments/js') !== FALSE) {
     $q = '<front>';
   }
   // The following links output should ideally be created with theme_links. But since the query property
@@ -885,8 +885,11 @@ function fbss_comments_form_statuses_box_alter(&$form) {
  * The JS callback for the Modalframe submit callback.
  */
 function fbss_comments_modalframe_refresh($sid) {
-  drupal_add_http_header('Content-Type', 'text/html; charset');
-  echo theme('fbss_comments_items', array('comments' => fbss_comments_get_comments($sid, TRUE)));
+  drupal_add_http_header('Content-Type', 'text/html');
+  drupal_add_http_header('charset', 'utf-8');
+  // $destination eventually gets encoded via l().
+  $destination = empty($_GET['source']) ? '' : $_GET['source'];
+  echo theme('fbss_comments_items', array('comments' => fbss_comments_get_comments($sid, TRUE), 'delay_load' => TRUE, 'destination' => $destination));
 }
 
 /**
