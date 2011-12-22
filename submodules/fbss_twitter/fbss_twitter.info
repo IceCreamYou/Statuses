@@ -3,7 +3,7 @@ description = Integrates Twitter with Statuses.
 package = Statuses
 dependencies[] = statuses
 dependencies[] = twitter
-dependencies[] = oauth
+dependencies[] = oauth_common
 core = 7.x
 
 files[] = fbss_twitter.admin.inc

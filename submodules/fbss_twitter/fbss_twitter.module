@@ -45,7 +45,7 @@ function fbss_twitter_form_statuses_box_alter(&$form, &$form_state) {
       '#default_value' => _fbss_twitter_get_default($recipient),
       '#prefix' => '<div class="fbss-twitter-box">',
       '#suffix' => '</div>',
-      '#weight' => -30,
+      '#weight' => -15,
     );
   }
   $form['fbss-submit']['#submit'][] = 'fbss_twitter_statuses_box_submit';
