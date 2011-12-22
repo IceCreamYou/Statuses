@@ -27,6 +27,7 @@
 
 .statuses-time { /* does not affect links */
   color: #999999;
+  display: inline;
 }
 
 .statuses-item .statuses-links ul.links li {
