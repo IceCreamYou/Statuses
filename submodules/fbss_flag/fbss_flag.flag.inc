@@ -22,7 +22,7 @@ class fbss_flag extends flag_flag {
     return is_numeric($content_id) ? statuses_load($content_id) : NULL;
   }
   function applies_to_content_object($status) {
-    return !empty($status) && !empty($status->message);
+    return !empty($status) && isset($status->sid);
   }
   function get_content_id($status) {
     return $status->sid;
