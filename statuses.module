@@ -893,7 +893,7 @@ function statuses_save_status($recipient, $type, $message, $sender = NULL, $opti
     'type' => $type,
     'private' => isset($options['form_state']['values']['private']) ? $options['form_state']['values']['private'] : 0,
   );
-  if ($message != $status->message || $type != $status->type || $recipient_id != $status->recipient || !$options['discard duplicates']) {
+  if (empty($status) || $message != $status->message || $type != $status->type || $recipient_id != $status->recipient || !$options['discard duplicates']) {
     $edit = FALSE;
     // If a new status is submitted on one's own profile within
     // STATUSES_OVERRIDE_TIMER seconds of the old one,
