@@ -898,7 +898,7 @@ function statuses_save_status($recipient, $type, $message, $sender = NULL, $opti
     // If a new status is submitted on one's own profile within
     // STATUSES_OVERRIDE_TIMER seconds of the old one,
     // we assume the user didn't mean to post the first one.
-    if ($time - $status->created < STATUSES_OVERRIDE_TIMER && $type = 'user' && $sender->uid == $recipient_id && $options['timed override']) {
+    if (!empty($status) && $time - $status->created < STATUSES_OVERRIDE_TIMER && $type = 'user' && $sender->uid == $recipient_id && $options['timed override']) {
       db_update('statuses')
         ->fields(array(
           'message' => $message,
