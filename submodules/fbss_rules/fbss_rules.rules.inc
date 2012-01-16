@@ -341,16 +341,6 @@ function fbss_rules_add_action_form($settings, &$form) {
 }
 
 /**
- * Validates the form for adding a status.
- */
-function fbss_rules_add_action_validate($form, $form_state) {
-  $recipient_id = $form_state['values']['settings']['recipient'];
-  if (!is_numeric($recipient_id) || $recipient_id != round($recipient_id) || $recipient_id < 0) {
-    form_set_error('settings][recipient', t('The Recipient ID must be a nonnegative integer.'));
-  }
-}
-
-/**
  * Adds a status.
  */
 function fbss_rules_add_action($settings) {
