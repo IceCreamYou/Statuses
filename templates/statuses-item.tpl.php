@@ -44,7 +44,7 @@
  * Other modules may add additional variables.
  */
 ?>
-<div id="statuses-item-<?php echo $sid; ?>" class="statuses-item statuses-media statuses-type-<?php echo $type; ?><?php if ($self): ?> statuses-self-update<?php endif; ?><?php if ($page): ?> statuses-page<?php endif; ?><?php if ($private): ?> statuses-private<?php endif; ?>">
+<div id="statuses-item-<?php echo $sid; ?>" class="statuses-item statuses-media statuses-type-<?php echo $type; ?><?php if ($self): ?> statuses-self-update<?php endif; ?><?php if ($page): ?> statuses-page<?php endif; ?><?php if (!empty($private)): ?> statuses-private<?php endif; ?>">
   <?php if (!empty($sender_picture)) : ?>
     <div class="statuses-sender-picture user-picture"><?php echo $sender_picture; ?></div>
   <?php endif; ?>
