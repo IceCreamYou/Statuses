@@ -92,7 +92,6 @@ Drupal.behaviors.ViewsAjaxView = function() {
                   type: 'GET',
                   data: viewData,
                   success: function(response) {
-                    console.log('here');
                     // Scroll to the top of the view. This will allow users
                     // to browse newly loaded content after e.g. clicking a pager
                     // link.
