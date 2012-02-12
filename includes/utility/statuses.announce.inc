@@ -8,7 +8,7 @@
 /**
  * Admin form callback.
  */
-function statuses_announce_admin(&$form_state) {
+function statuses_announce_admin($form, &$form_state) {
   $form = array();
   drupal_set_message(t('<span class="error">Warning</span>: this can be VERY SLOW on sites with lots of users.'), 'warning');
   $form['from'] = array(
@@ -40,7 +40,7 @@ function statuses_announce_admin_submit($form, &$form_state) {
     $from = FALSE;
   }
 
-  $count = db_query("SELECT COUNT(*) FROM {users} WHERE status = :status", array(':status' => 1))->fetchField();
+  $count = db_query("SELECT COUNT(*) FROM {users} WHERE status = 1")->fetchField();
   $batch = array(
     'operations' => array(
       array('statuses_announce_generate_status', array($v['message'], $from, $count)),
@@ -66,7 +66,7 @@ function statuses_announce_generate_status($message, $from, $count, &$context) {
   if (!isset($context['sandbox']['progress'])) {
     $context['sandbox']['progress'] = 0;
   }
-  $uid = db_query_range("SELECT uid FROM {users} WHERE status = :status", array(':status' => 1))->fetchField();
+  $uid = db_query_range("SELECT uid FROM {users} WHERE status = 1", $context['sandbox']['progress'], 1)->fetchField();
   $to = user_load($uid);
   statuses_save_status($to, 'user', $message, $from);
   $context['message'] = t('Sending message to %user (@current of @total)',
