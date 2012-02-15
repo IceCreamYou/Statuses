@@ -24,11 +24,12 @@ class fbss_privacy_views_handler_filter extends views_handler_filter {
   }
   function query() {
     global $user;
+    $table_alias = $this->ensure_my_table();
     // This selects only statuses in which the current user participated.
-    $subquery = "{statuses}.sender = %d OR ({statuses}.recipient = %d AND {facebook_status}.type = 'user')";
+    $subquery = "$table_alias.sender = %d OR ($table_alias.recipient = %d AND $table_alias.type = 'user')";
     // Show only private or only non-private status messages.
     if (is_numeric($this->value)) {
-      $query = "{statuses}.private = %d";
+      $query = "$table_alias.private = %d";
       // If we're showing only private messages, only show the ones in which the current user participated, unless the current user has permission to see all private messages.
       if ($this->value && !user_access('view all private status messages')) {
         $this->query->add_where('fbss_privacy', db_prefix_tables($query . " AND ($subquery)"), $this->value, $user->uid, $user->uid);
@@ -41,10 +42,10 @@ class fbss_privacy_views_handler_filter extends views_handler_filter {
     else {
       // Only show private messages in which the current user participated, unless the current user has permission to see all private messages.
       if (user_access('view all private status messages')) {
-        $this->query->add_where('fbss_privacy', db_prefix_tables("{statuses}.private = 0 OR {statuses}.private = 1"));
+        $this->query->add_where('fbss_privacy', db_prefix_tables("$table_alias.private = 0 OR $table_alias.private = 1"));
       }
       else {
-        $this->query->add_where('fbss_privacy', db_prefix_tables("{statuses}.private = 0 OR ({statuses}.private = 1 AND ($subquery))"), $user->uid, $user->uid);
+        $this->query->add_where('fbss_privacy', db_prefix_tables("$table_alias.private = 0 OR ($table_alias.private = 1 AND ($subquery))"), $user->uid, $user->uid);
       }
     }
   }
