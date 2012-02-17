@@ -309,7 +309,9 @@ function statuses_save_js($form, $form_state) {
   $new_form['fbss-submit'] = $form['fbss-submit'];
   $new_form['sdefault']    = $form['sdefault'];
   $new_form['closediv']    = $form['closediv'];
-  unset($new_form['fbss-status']['#value']);
+  if (isset($new_form['fbss-status']['#value'])) {
+    unset($new_form['fbss-status']['#value']);
+  }
   // Calls hook_statuses_form_ahah_alter(&$new_form, $form).
   drupal_alter('statuses_form_ahah', $new_form, $form);
   return $new_form;
