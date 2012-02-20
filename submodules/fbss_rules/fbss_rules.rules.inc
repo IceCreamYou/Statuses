@@ -360,11 +360,8 @@ function fbss_rules_rules_data_type_info() {
   return array(
     'statuses' => array(
       'label' => t('Facebook-style Status'),
-      'class' => 'rules_data_type_statuses',
-      'savable' => TRUE,
-      'identifiable' => TRUE,
-      'use_input_form' => FALSE,
-      'module' => 'Statuses',
+      'wrapper class' => 'StatusesRulesDataWrapper',
+      'wrap' => TRUE,
     ),
   );
 }
@@ -372,20 +369,19 @@ function fbss_rules_rules_data_type_info() {
 /**
  * Defines the rules node data type.
  */
-class rules_data_type_statuses extends rules_data_type {
-  function save() {
-    $status = &$this->get();
+class StatusesRulesDataWrapper extends RulesIdentifiableDataWrapper implements RulesDataWrapperSavableInterface {
+  public function save() {
+    $status = $this->value();
     $context = statuses_determine_context($status->type);
     $recipient = $context['handler']->load_recipient($status->recipient);
     $sender = _statuses_user_load($status->sender);
     statuses_save_status($recipient, $status->type, $status->message, $sender);
     return TRUE;
   }
-  function load($sid) {
+  protected function load($sid) {
     return statuses_load($sid);
   }
-  function get_identifier() {
-    $status = &$this->get();
+  protected function extractIdentifier($status) {
     return $status->sid;
   }
 }
