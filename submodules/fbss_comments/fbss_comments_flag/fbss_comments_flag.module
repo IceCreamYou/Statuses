@@ -9,34 +9,36 @@
  * Implements hook_statuses_delete().
  */
 function fbss_comments_flag_statuses_delete($status) {
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
+  $subSelect = db_select('fbss_comments')
+    ->addField('cid')
+    ->condition('status', $status->sid);
+
   /* db_query("DELETE FROM {flag_content} WHERE content_type = 'fbss_comment' AND content_id IN (SELECT cid FROM {fbss_comments} WHERE sid = %d)", $status->sid) */
   db_delete('flag_content')
-    ->where('content_type = ' fbss_comment ' AND content_id IN (SELECT cid FROM {fbss_comments} WHERE sid = %d)',  )
-  ->execute();
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
+    ->condition('content_type', 'fbss_comment')
+    ->condition('content_id', $subSelect, 'IN')
+    ->execute();
   /* db_query("DELETE FROM {flag_counts} WHERE content_type = 'fbss_comment' AND content_id IN (SELECT cid FROM {fbss_comments} WHERE sid = %d)", $status->sid) */
   db_delete('flag_counts')
-    ->where('content_type = ' fbss_comment ' AND content_id IN (SELECT cid FROM {fbss_comments} WHERE sid = %d)',  )
-  ->execute();
+    ->condition('content_type', 'fbss_comment')
+    ->condition('content_id', $subSelect, 'IN')
+    ->execute();
 }
 
 /**
  * Implements hook_fbss_comments_delete().
  */
 function fbss_comments_flag_fbss_comments_delete($cid) {
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
   /* db_query("DELETE FROM {flag_content} WHERE content_type = 'fbss_comment' AND content_id = %s", $cid) */
   db_delete('flag_content')
-  ->condition('content_type', 'fbss_comment')
-  ->condition('content_id', $cid)
-  ->execute();
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
+    ->condition('content_type', 'fbss_comment')
+    ->condition('content_id', $cid)
+    ->execute();
   /* db_query("DELETE FROM {flag_counts} WHERE content_type = 'fbss_comment' AND content_id = %s", $cid) */
   db_delete('flag_counts')
-  ->condition('content_type', 'fbss_comment')
-  ->condition('content_id', $cid)
-  ->execute();
+    ->condition('content_type', 'fbss_comment')
+    ->condition('content_id', $cid)
+    ->execute();
 }
 
 /**
