@@ -22,16 +22,11 @@ class statuses_views_handler_field_recipient_pic extends views_handler_field {
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     if (module_exists('imagecache_profiles')) {
-      $presets = image_styles();
-      $opt = array('' => '');
-      foreach ($presets as $name => $preset) {
-        $opt[$name] = check_plain($name);
-      }
       $options = $this->options;
       $form['imagecache_preset'] = array(
         '#title' => t('Image style'),
         '#type' => 'select',
-        '#options' => $opt,
+        '#options' => image_style_options(TRUE),
         '#default_value' => $options['imagecache_preset'],
       );
     }
