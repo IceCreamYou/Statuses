@@ -59,12 +59,10 @@ function fbss_comments_flag_flag_definitions() {
  */
 function fbss_comments_flag_flag_default_flags() {
   $flags = array();
-  $flags[] = array(
+  $flags['like_comments'] = array(
     'content_type' => 'fbss_comment',
-    'name' => 'like_comments',
     'title' => t('Like'),
-    'roles' => array('2'),
-    'global' => FALSE,
+    'global' => '0',
     'types' => array('page'),
     'flag_short' => t('Like'),
     'flag_long' => '',
@@ -72,11 +70,16 @@ function fbss_comments_flag_flag_default_flags() {
     'unflag_short' => t('Un-like'),
     'unflag_long' => '',
     'unflag_message' => '',
+    'unflag_denied_text' => '',
+    'link_type' => 'toggle',
+    'roles' => array('flag' => array('2'), 'unflag' => array('2')),
     'show_on_page' => FALSE,
     'show_on_teaser' => FALSE,
     'show_on_form' => FALSE,
     'status' => TRUE,
-    'locked' => array('name', 'global', 'types', 'show_on_page', 'show_on_teaser', 'show_on_form', 'status'),
+    'locked' => drupal_map_assoc(array('name', 'global', 'types', 'show_on_teaser', 'show_on_form', 'status')),
+    'module' => 'fbss_comments_flag',
+    'api_version' => 2,
   );
   return $flags;
 }

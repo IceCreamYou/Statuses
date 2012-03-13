@@ -115,7 +115,7 @@ function fbss_comments_edit_submit($form, &$form_state) {
   if (module_exists('trigger')) {
     module_invoke_all('fbss_comments', 'fbss_comments_edited', $c);
   }
-  if ($_GET['destination'] && $_GET['destinaton'] != 'fbss_comments/js/refresh') {
+  if ($_GET['destination'] && $_GET['destination'] != 'fbss_comments/js/refresh') {
     $form_state['redirect'] = $_GET['destination'];
   }
   else {
