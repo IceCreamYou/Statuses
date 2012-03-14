@@ -10,8 +10,8 @@
  */
 function fbss_comments_flag_statuses_delete($status) {
   $subSelect = db_select('fbss_comments')
-    ->addField('cid')
-    ->condition('status', $status->sid);
+    ->fields('fbss_comments',  array('cid'))
+    ->condition('sid', $status->sid);
 
   /* db_query("DELETE FROM {flag_content} WHERE content_type = 'fbss_comment' AND content_id IN (SELECT cid FROM {fbss_comments} WHERE sid = %d)", $status->sid) */
   db_delete('flag_content')
