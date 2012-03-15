@@ -54,9 +54,11 @@ function fbss_comments_menu() {
     'file' => 'fbss_comments.pages.inc',
   );
   $items['fbss_comments/js/refresh'] = array(
-    'title' => 'Save status comment form',
-    'page callback' => 'fbss_comments_save_js',
-    'access arguments' => array('post status comment'),
+    'title' => 'AHAH callback', 
+    'page callback' => 'fbss_comments_ajax_form_callback', 
+    'delivery callback' => 'ajax_deliver', 
+    'access callback' => TRUE, 
+    'theme callback' => 'ajax_base_page_theme', 
     'type' => MENU_CALLBACK,
   );
   $items['fbss_comments/js/modalframe/%'] = array(
@@ -676,31 +678,9 @@ function _fbss_comments_use_autogrow() {
  * @see template_preprocess_user_picture()
  */
 function _fbss_comments_user_picture($account) {
-  if (!module_exists('imagecache_profiles')) {
-    return theme('user_picture', array('account' => $account));
-  }
-  $output = '';
-  if (variable_get('user_pictures', 0)) {
-    if (!empty($account->picture) && file_exists($account->picture)) {
-      $picture = $account->picture;
-    }
-    else if (variable_get('user_picture_default', '')) {
-      $picture = variable_get('user_picture_default', '');
-    }
-    if (isset($picture)) {
-      $alt = t("@user's picture", array('@user' => $account->name ? $account->name : variable_get('anonymous', t('Anonymous'))));
-      // TODO Please change this theme call to use an associative array for the $variables parameter.
-      $output = theme('imagecache', variable_get('fbss_comments_user_pictures', 0), $picture, $alt, $alt, NULL, FALSE);
-      if (!empty($account->uid) && user_access('access user profiles')) {
-        $attributes = array(
-          'attributes' => array('title' => t('View user profile.')),
-          'html' => TRUE,
-        );
-        $output = l($output, "user/$account->uid", $attributes);
-      }
-    }
-  }
-  return $output;
+  $preset = variable_get('fbss_comments_user_pictures', 0);
+  $picture = statuses_display_user_picture($account, $preset);
+  return empty($picture) ? '' : '<div class="fbss-comments-picture user-picture">'. $picture .'</div>';
 }
 
 //=================
@@ -740,7 +720,7 @@ function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_
   drupal_add_css($path . '/fbss_comments.css');
   drupal_add_js($path . '/fbss_comments.js');
   // Defer execution so that it runs after ajax_view.js
-  drupal_add_js($path . '/fbss_comments_views_ahah.js', array('defer' => TRUE));
+  //drupal_add_js($path . '/fbss_comments_views_ahah.js', array('defer' => TRUE));
   if (variable_get('fbss_comments_enter', 0)) {
     drupal_add_js($path . '/fbss_comments_enter.js');
   }
@@ -782,11 +762,11 @@ function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_
     '#submit' => array('fbss_comments_box_submit'),
   );
   if (variable_get('fbss_comments_ahah', 1)) {
-    $form['save-' . $sid]['#ahah'] = array(
+    $form['save-' . $sid]['#ajax'] = array(
       'path' => 'fbss_comments/js/refresh',
+      'callback' => 'fbss_comments_save_js',
       'wrapper' => 'fbss-comments-replace-' . $sid,
-      'effect' => 'fade',
-      'method' => 'replace',
+      'keypress' => TRUE,
     );
   }
   $form['#sid'] = $sid;
@@ -809,8 +789,10 @@ function fbss_comments_box_submit($form, &$form_state) {
     $executed = TRUE;
     fbss_comments_save_comment($form['#sid'], $form_state['values']['status-comment']);
   }
-  if (variable_get('fbss_comments_ahah', 1)) {
-    $form_state['rebuild'] = TRUE;
+  $form_state['rebuild'] = TRUE;
+  if (!variable_get('fbss_comments_ahah', 1)) {
+    $form_state['redirect'] = array($form['#qu']);
+    $form_state['rebuild'] = FALSE;
   }
 }
 
@@ -818,12 +800,26 @@ function fbss_comments_box_submit($form, &$form_state) {
  * Saves status comments via AHAH.
  */
 function fbss_comments_save_js($form, $form_state) {
+  $new_form = array();
   // Get HTML for the replacement form. Only these elements will be AHAH-refreshed.
   $new_form['comment-entry-wrapper']     = $form['comment-entry-wrapper'];
   $new_form['comments']                  = $form['comments'];
   $new_form['end-comment-entry-wrapper'] = $form['end-comment-entry-wrapper'];
   $new_form['status-comment']            = $form['status-comment'];
+  unset($new_form['status-comment']['#value']);
   return $new_form;
+}
+
+/**
+ * Executes the AJAX process.
+ *
+ * This is required because we want all the form-related functions to be in
+ * this file, and to do that we have to implement a custom AJAX path instead
+ * of using the default (system/ajax).
+ */
+function fbss_comments_ajax_form_callback() {
+  require_once DRUPAL_ROOT . '/includes/form.inc';
+  return ajax_form_callback();
 }
 
 //===============
