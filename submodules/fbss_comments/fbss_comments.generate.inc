@@ -92,9 +92,13 @@ function fbss_comments_generate_status_comment_bulk($count, &$context) {
  *   oldest status we could create.
  */
 function fbss_comments_generate_status_comment(&$context) {
-  module_load_include('inc', 'devel', 'devel_generate');
+  module_load_include('inc', 'devel_generate', 'devel_generate');
 
-  $sid = db_query_range("SELECT sid FROM {statuses} ORDER BY RAND()")->fetchField();
+  $sid = db_select('statuses')
+    ->fields('statuses',  array('sid'))
+    ->orderBy('RAND()')
+    ->execute()
+    ->fetchField();
 
   $mtext = devel_create_greeking(mt_rand(2, variable_get('statuses_length', 140) / 7));
   $text = drupal_substr($mtext, 0, variable_get('statuses_length', 140));
@@ -113,13 +117,14 @@ function fbss_comments_generate_status_comment(&$context) {
  * Deletes all status comments.
  */
 function fbss_comments_generate_killswitch(&$context) {
-  $result = db_query("SELECT cid FROM {fbss_comments}");
-  $i = 0;
-  while ($comment = db_fetch_object($result)) {
+  $result = db_select('fbss_comments')
+    ->fields('fbss_comments',  array('cid'))
+    ->execute()
+    ->fetchAll();
+  foreach ($result as $comment) {
     fbss_comments_delete_comment($comment->cid);
-    $i++;
   }
-  drupal_set_message(format_plural($i, 'Deleted one status comment', 'Deleted @count status comments'));
+  drupal_set_message(format_plural(count($result), 'Deleted one status comment', 'Deleted @count status comments'));
 }
 
 /**

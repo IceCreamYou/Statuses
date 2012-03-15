@@ -126,7 +126,7 @@ function statuses_generate_status_bulk($count, $time, $types, $tags, &$context) 
  *   TRUE to make some statuses include #hashtags and @mentions.
  */
 function statuses_generate_status($time, $types, $tags, &$context) {
-  module_load_include('inc', 'devel', 'devel_generate');
+  module_load_include('inc', 'devel_generate', 'devel_generate');
   $stime = REQUEST_TIME - mt_rand(0, $time);
   $uids = devel_get_users();
   $uid = 0;
@@ -193,13 +193,14 @@ function statuses_generate_status($time, $types, $tags, &$context) {
  * Deletes all statuses.
  */
 function statuses_generate_killswitch(&$context) {
-  $result = db_query("SELECT sid FROM {statuses}");
-  $i = 0;
-  while ($status = db_fetch_object($result)) {
+  $result = db_select('statuses')
+    ->fields('statuses',  array('sid'))
+    ->execute()
+    ->fetchAll();
+  foreach ($result as $status) {
     statuses_delete_status($status->sid);
-    $i++;
   }
-  drupal_set_message(format_plural($i, 'Deleted one status', 'Deleted @count statuses'));
+  drupal_set_message(format_plural(count($result), 'Deleted one status', 'Deleted @count statuses'));
 }
 
 /**
