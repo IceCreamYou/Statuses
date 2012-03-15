@@ -15,7 +15,7 @@ attach: function (context) {
   var $statuses_field = ctxt.find('.statuses-text:first');
   var statuses_original_value = $statuses_field.val();
   var fbss_maxlen = Drupal.settings.statuses.maxlength;
-  var fbss_hidelen = parseInt(Drupal.settings.statuses.hideLength);
+  var fbss_hidelen = parseInt(Drupal.settings.statuses.hideLength, 10);
   if (fbss_refreshIDs == undefined) {
     fbss_refreshIDs = Drupal.settings.statuses.refreshIDs;
   }
