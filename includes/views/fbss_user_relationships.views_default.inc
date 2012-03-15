@@ -118,7 +118,7 @@ function fbss_user_relationships_views_default_views() {
       'empty_zero' => 0,
       'exclude' => 1,
       'id' => 'sender_pic',
-      'table' => 'facebook_status',
+      'table' => 'statuses',
       'field' => 'sender_pic',
       'relationship' => 'none',
     ),
