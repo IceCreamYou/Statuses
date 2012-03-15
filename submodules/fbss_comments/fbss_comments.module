@@ -334,13 +334,13 @@ function theme_fbss_comments_items($variables) {
   $output = '<div class="fbss-comments">';
   if ($count > variable_get('fbss_comments_hide_small', 3) && $delay_load) {
     $options = array('attributes' => array(
-        'class' => 'fbss-comments-show-comments-link fbss-comments-show-comments',
+        'class' => array('fbss-comments-show-comments-link', 'fbss-comments-show-comments'),
         'id' => 'fbss-comments-toggle-' . $comments[0]->sid,
       ));
     if ($count >= variable_get('fbss_comments_show_all', 10)) {
-      $options['attributes']['class'] = 'fbss-comments-show-comments-link';
+      $options['attributes']['class'] = array('fbss-comments-show-comments-link');
     }
-    $options['attributes']['class'] .= ' statuses-subitem';
+    $options['attributes']['class'][] = 'statuses-subitem';
     $output .= l(t('Show all @count comments', array('@count' => $count)), 'statuses/' . $comments[0]->sid, $options);
   }
   $rendered = 0;
