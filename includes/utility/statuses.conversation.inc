@@ -48,7 +48,7 @@ function _statuses_conversation() {
       $args[1] = $user->uid;
     }
     $arg = implode(',', $args);
-    return views_embed_view('facebook_status_conversation', 'default', $args[0], $args[1]);
+    return views_embed_view('statuses_conversation', 'default', $args[0], $args[1]);
   }
   $key = $key ? 0 : 1; //The recipient is not the current user.
   $recipient = user_load($args[$key]);

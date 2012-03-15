@@ -80,7 +80,7 @@ function template_preprocess_statuses_item(&$vars) {
   // is that if we're looking at an entity we assume that statuses on the page
   // are "to" that entity.
   else {
-    $current_context = facebook_status_determine_context();
+    $current_context = statuses_determine_context();
     $handler = $current_context['handler'];
     $current_recipient_id = $handler->recipient_id($handler->find_recipient());
     $vars['in_context'] = $status->type == $handler->type() && $status->recipient == $current_recipient_id;

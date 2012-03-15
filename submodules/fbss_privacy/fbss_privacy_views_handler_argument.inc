@@ -34,7 +34,7 @@ class fbss_privacy_views_handler_argument extends views_handler_argument {
     $privacy = $this->options['privacy'];
     $query = "{statuses}.private = %d";
     // The argument user must have participated in the status message.
-    $this->query->add_where('fbss_privacy', db_prefix_tables("{statuses}.sender = %d OR ({statuses}.recipient = %d AND {facebook_status}.type = 'user')"), $argument, $argument);
+    $this->query->add_where('fbss_privacy', db_prefix_tables("{statuses}.sender = %d OR ({statuses}.recipient = %d AND {statuses}.type = 'user')"), $argument, $argument);
     // Show only private or only non-private status messages.
     if (is_numeric($privacy)) {
       // Only show private messages if the current is the argument user or has admin permissions.

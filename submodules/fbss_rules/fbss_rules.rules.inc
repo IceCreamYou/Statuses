@@ -318,7 +318,7 @@ function fbss_rules_add_action_form($settings, &$form) {
     '#default_value' => $settings['recipient'],
     '#required' => TRUE,
   );
-  $types = facebook_status_all_contexts();
+  $types = statuses_all_contexts();
   $options = array();
   foreach ($types as $type => $info) {
     $options[$type] = $info['title'];

@@ -11,7 +11,7 @@
 function statuses_tags_views_default_views_alter(&$views) {
   // We can't assume that $views always contains the full set of Views;
   // one case where it doesn't is when evaluating Features.
-  if (!isset($views['facebook_status_tags'])) {
+  if (!isset($views['statuses_tags'])) {
     return;
   }
 

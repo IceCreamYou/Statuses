@@ -35,7 +35,7 @@ function fbss_pathauto_create_alias($status, $op) {
  */
 function fbss_pathauto_update_aliases($sids, $op) {
   foreach ($sids as $sid) {
-    $status = facebook_status_load($sid);
+    $status = statuses_load($sid);
     if ($status->type == 'user') {
       $type = ($status->recipient == $status->sender) ? 'self' : 'other';
     }
