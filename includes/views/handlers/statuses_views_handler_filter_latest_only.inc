@@ -19,8 +19,12 @@ class statuses_views_handler_filter_latest_only extends views_handler_filter_boo
   function query() {
     if ($this->value) {
       $this->ensure_my_table();
-      $subquery = "(SELECT MAX(sid) FROM {statuses} WHERE sender = recipient AND type = 'user' GROUP BY recipient)";
-      $this->query->add_where(0, db_prefix_tables("$this->table_alias.sid IN $subquery"));
+      $subquery = db_select('statuses')
+        ->where('sender = recipient')
+        ->condition('type', 'user');
+      $subquery->addExpression('MAX(sid)');
+      $subquery->groupBy('recipient');
+      $this->query->add_where(0, "$this->table_alias.sid", $subquery, "IN");
     }
   }
 }
