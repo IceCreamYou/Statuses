@@ -11,10 +11,17 @@
 class statuses_views_handler_argument_communicated extends views_handler_argument {
   function query() {
     $this->ensure_my_table();
-    $this->query->add_where(0, db_prefix_tables("
-        ({users}.uid IN (SELECT sender FROM {statuses} WHERE type = 'user' AND recipient = %d) OR
-        {users}.uid IN (SELECT recipient FROM {statuses} WHERE type = 'user' AND sender = %d))
-        AND {users}.uid <> %d
-    "), $this->argument, $this->argument, $this->argument);
+    $alias = $this->query->ensure_table('users');
+    $recipient_sub_query = db_select('statuses')
+      ->fields('statuses', array('recipient'))
+      ->condition('type', 'user')
+      ->condition('sender', $this->argument);
+    $sender_sub_query = db_select('statuses')
+      ->fields('statuses', array('sender'))
+      ->condition('type', 'user')
+      ->condition('recipient', $this->argument);
+    $this->query->add_where(0, db_and()
+      ->condition(db_or()->condition("$alias.uid", $recipient_sub_query, 'IN')->condition("$alias.uid", $sender_sub_query, 'IN'))
+      ->condition("$alias.uid", $this->argument));
   }
 }

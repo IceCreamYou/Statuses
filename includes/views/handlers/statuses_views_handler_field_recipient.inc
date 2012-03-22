@@ -8,7 +8,7 @@
 /**
  * Allows linking to the recipient of the status.
  */
-class statuses_views_handler_field_recipient extends views_handler_field_user {
+class statuses_views_handler_field_recipient extends views_handler_field {
   function option_definition() {
     $options = parent::option_definition();
     $options['link_to'] = array(
@@ -32,6 +32,7 @@ class statuses_views_handler_field_recipient extends views_handler_field_user {
   function render($values) {
     $type = $values->{$this->aliases['type']};
     $context = statuses_determine_context($type);
+    $recipient_id = $values->{$this->field_alias};
     $recipient = $context['handler']->load_recipient($recipient_id);
     if (!empty($this->options['link_to'])) {
       return '<span class="statuses-recipient">' . $context['handler']->recipient_link($recipient) . '</span>';

@@ -11,6 +11,6 @@
 class statuses_plugin_argument_validate extends views_plugin_argument_validate {
   var $option_name = 'validate_argument_status';
   function validate_argument($argument) {
-    return (bool) db_query("SELECT 1 FROM {statuses} WHERE sid = :sid", array(':sid' => $argument))->fetchField();
+    return (bool) db_query_range('SELECT 1 FROM {statuses} WHERE sid = :sid', 0, 1, array(':sid' => $argument))->fetchField();
   }
 }

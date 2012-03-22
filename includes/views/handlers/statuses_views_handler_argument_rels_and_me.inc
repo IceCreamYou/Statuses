@@ -13,9 +13,12 @@ class statuses_views_handler_argument_rels_and_me extends views_handler_argument
     $this->ensure_my_table();
     $alias = $this->query->ensure_table('users');
     $argument = $this->argument;
-    // Argument user is in an approved relationship
-    $this->query->add_where(isset($this->options['group']) ? $this->options['group'] : 0, db_prefix_tables("
-      (($this->table_alias.requestee_id = %d OR $this->table_alias.requester_id = %d) AND $this->table_alias.approved = 1) OR $alias.uid = %d
-    "), $argument, $argument, $argument);
+    $this->query->add_where(isset($this->options['group']) ? $this->options['group'] : 0, db_or()
+      ->condition(db_and()
+        ->condition(db_or()
+          ->condition('requestee_id', $argument)
+          ->condition('requester_id', $argument))
+        ->condition('approved', 1))
+      ->condition("$alias.uid", $argument));
   }
 }

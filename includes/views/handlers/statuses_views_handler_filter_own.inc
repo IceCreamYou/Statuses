@@ -19,7 +19,9 @@ class statuses_views_handler_filter_own extends views_handler_filter_boolean_ope
   function query() {
     if ($this->value) {
       $this->ensure_my_table();
-      $this->query->add_where(0, db_prefix_tables("($this->table_alias.type = 'user' AND $this->table_alias.sender = $this->table_alias.recipient)"));
+      $this->query->add_where(0, db_and()
+        ->condition('type', 'user')
+        ->where('sender = recipient'));
     }
   }
 }
