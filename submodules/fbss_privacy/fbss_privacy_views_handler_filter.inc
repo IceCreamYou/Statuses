@@ -26,26 +26,30 @@ class fbss_privacy_views_handler_filter extends views_handler_filter {
     global $user;
     $table_alias = $this->ensure_my_table();
     // This selects only statuses in which the current user participated.
-    $subquery = "$table_alias.sender = %d OR ($table_alias.recipient = %d AND $table_alias.type = 'user')";
+    $subquery = db_or()
+      ->condition("$table_alias.sender", $user->uid)
+      ->condition(db_and()->condition("$table_alias.recipient", $user->uid)->condition("$table_alias.type", 'user'));
     // Show only private or only non-private status messages.
     if (is_numeric($this->value)) {
-      $query = "$table_alias.private = %d";
       // If we're showing only private messages, only show the ones in which the current user participated, unless the current user has permission to see all private messages.
       if ($this->value && !user_access('view all private status messages')) {
-        $this->query->add_where('fbss_privacy', db_prefix_tables($query . " AND ($subquery)"), $this->value, $user->uid, $user->uid);
+        $this->query->add_where('fbss_privacy', db_and()->condition("$table_alias.private", $this->value)->condition($subquery));
       }
       else {
-        $this->query->add_where('fbss_privacy', db_prefix_tables($query), $this->value);
+        $this->query->add_where('fbss_privacy', "$table_alias.private", $this->value);
       }
     }
     // Show private and non-private messages.
     else {
       // Only show private messages in which the current user participated, unless the current user has permission to see all private messages.
       if (user_access('view all private status messages')) {
-        $this->query->add_where('fbss_privacy', db_prefix_tables("$table_alias.private = 0 OR $table_alias.private = 1"));
+        $this->query->add_where('fbss_privacy', db_or()->condition("$table_alias.private", 0)->condition("$table_alias.private", 1));
       }
       else {
-        $this->query->add_where('fbss_privacy', db_prefix_tables("$table_alias.private = 0 OR ($table_alias.private = 1 AND ($subquery))"), $user->uid, $user->uid);
+        $this->query->add_where('fbss_privacy', db_or()
+          ->condition("$table_alias.private", 0)
+          ->condition(db_and()->condition("$table_alias.private", 1)->condition($subquery))
+        );
       }
     }
   }

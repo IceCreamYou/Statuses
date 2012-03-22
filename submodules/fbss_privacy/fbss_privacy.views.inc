@@ -52,25 +52,3 @@ function fbss_privacy_views_data() {
   );
   return $data;
 }
-
-/**
- * Implements hook_views_handlers().
- */
-function fbss_privacy_views_handlers() {
-  return array(
-    'info' => array(
-      'path' => drupal_get_path('module', 'fbss_privacy'),
-    ),
-    'handlers' => array(
-      'fbss_privacy_views_handler_argument' => array(
-        'parent' => 'views_handler_argument',
-      ),
-      'fbss_privacy_views_handler_field' => array(
-        'parent' => 'views_handler_field',
-      ),
-      'fbss_privacy_views_handler_filter' => array(
-        'parent' => 'views_handler_filter',
-      ),
-    ),
-  );
-}

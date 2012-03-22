@@ -206,31 +206,3 @@ function fbss_comments_views_data_alter(&$data) {
     ),
   );
 }
-
-/**
- * Implements hook_views_handlers().
- */
-function fbss_comments_views_handlers() {
-  return array(
-    'info' => array(
-      'path' => drupal_get_path('module', 'fbss_comments'),
-    ),
-    'handlers' => array(
-      'fbss_comments_views_handler_field_comment_box' => array(
-        'parent' => 'views_handler_field',
-      ),
-      'fbss_comments_views_handler_field_cc' => array(
-        'parent' => 'views_handler_field',
-      ),
-      'fbss_comments_views_handler_field_cc2' => array(
-        'parent' => 'views_handler_field',
-      ),
-      'fbss_comments_views_handler_field_delete' => array(
-        'parent' => 'views_handler_field',
-      ),
-      'fbss_comments_views_handler_field_edit' => array(
-        'parent' => 'views_handler_field',
-      ),
-    ),
-  );
-}
