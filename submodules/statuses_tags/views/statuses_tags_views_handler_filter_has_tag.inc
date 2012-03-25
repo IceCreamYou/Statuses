@@ -45,19 +45,18 @@ class statuses_tags_views_handler_filter_has_tag extends views_handler_filter {
   }
   function query() {
     $op = ($this->options['statuses_tags_has_tags']) ? 'IN' : 'NOT IN';
-    $query = "{$this->table}.sid $op (SELECT sid FROM {statuses_tags}";
     $options = $this->options['statuses_tags_type'];
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'));
+    $db_or = db_or();
     if (count($options) > 0) {
-      $query .= " WHERE type = '";
-      $types = array();
       foreach ($options as $type => $val) {
         if ($val) {
-          $types[] = $type;
+          $db_or->condition('type', $type);
         }
       }
-      $query .= implode("' OR type = '", $types) . "'";
     }
-    $query .= ')';
-    $this->query->add_where(0, db_prefix_tables($query));
+    $query->condition($db_or);
+    $this->query->add_where(0, 'sid', $query, $op);
   }
 }

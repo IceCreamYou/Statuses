@@ -39,42 +39,48 @@ class statuses_tags_views_handler_filter_has_this_tag extends views_handler_filt
   function value_form(&$form, &$form_state) {
     parent::value_form($form, $form_state);
     if (variable_get('statuses_tags_vid', -1) != -1) {
-      $form['value']['#autocomplete_path'] = 'taxonomy/autocomplete/' . variable_get('statuses_tags_vid', -1);
+      $form['value']['#autocomplete_path'] = 'admin/views/ajax/autocomplete/taxonomy/' . variable_get('statuses_tags_vid', -1);
     }
   }
   function query() {
     $this->ensure_my_table();
     $field = "$this->table_alias.$this->real_field";
-    $upper = $this->case_transform();
-    $where = '';
     $options = $this->options['statuses_tags_type'];
+    $db_or = db_or();
     if (count($options) > 0) {
-      $where .= " AND (type = '";
-      $types = array();
       foreach ($options as $type => $val) {
         if ($val) {
-          $types[] = $type;
+          $db_or->condition('type', $type);
         }
       }
-      $where .= implode("' OR type = '", $types) . "')";
     }
     $info = $this->operators();
     if (!empty($info[$this->operator]['method'])) {
-      $this->{$info[$this->operator]['method']}($field, $upper, $where);
+      $this->{$info[$this->operator]['method']}($field, $db_or);
     }
   }
-  function op_equal($field, $upper, $where) {
-    $query = "$field IN (SELECT sid FROM {statuses_tags} WHERE $upper(name) $this->operator $upper('%s') $where)";
-    $this->query->add_where($this->options['group'], db_prefix_tables($query), $this->value);
+  function op_equal($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition('name', $this->value, $this->operator)
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
 
-  function op_contains($field, $upper, $where) {
-    $query = "$field IN (SELECT sid FROM {statuses_tags} WHERE $upper(name) LIKE $upper('%%%s%%') $where)";
-    $this->query->add_where($this->options['group'], db_prefix_tables($query), $this->value);
+  function op_contains($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition('name', '%%' . db_like($this->value) . '%%', 'LIKE')
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
 
-  function op_word($field, $upper, $extra_where) {
-    $where = array();
+  function op_word($field, $db_or) {
+    $where = $this->operator == 'word' ? db_or() : db_and();
+    // Don't filter on empty strings.
+    if (empty($this->value)) {
+      return;
+    }
     preg_match_all('/ (-?)("[^"]+"|[^" ]+)/i', ' ' . $this->value, $matches, PREG_SET_ORDER);
     foreach ($matches as $match) {
       $phrase = FALSE;
@@ -85,45 +91,81 @@ class statuses_tags_views_handler_filter_has_this_tag extends views_handler_filt
       $words = trim($match[2], ',?!();:-');
       $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
       foreach ($words as $word) {
-        $where[] = "$upper(name) LIKE $upper('%%%s%%')";
-        $values[] = trim($word, " ,!?");
+        $placeholder = $this->placeholder();
+        $where->condition('name', '%' . db_like(trim($word, " ,!?")) . '%', 'LIKE');
       }
     }
     if (!$where) {
       return;
     }
-    if ($this->operator == 'word') {
-      $where = '(' . implode(' OR ', $where) . ')';
-    }
-    else {
-      $where = implode(' AND ', $where);
-    }
-    $where .= " $extra_where";
-    $this->query->add_where($this->options['group'], db_prefix_tables("$field IN (SELECT sid FROM {statuses_tags} WHERE $where)"), $values);
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition($db_or)
+      ->condition($where);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
 
-  function op_starts($field, $upper, $where) {
-    $query = "$field IN (SELECT sid FROM {statuses_tags} WHERE $upper(name) LIKE $upper('%s%%') $where)";
-    $this->query->add_where($this->options['group'], db_prefix_tables($query), $this->value);
+  function op_starts($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition('name', db_like($this->value) . '%%', 'LIKE')
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
 
-  function op_not_starts($field, $upper, $where) {
-    $query = "$field IN (SELECT sid FROM {statuses_tags} WHERE $upper(name) NOT LIKE $upper('%s%%') $where)";
-    $this->query->add_where($this->options['group'], db_prefix_tables($query), $this->value);
+  function op_not_starts($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition('name', db_like($this->value) . '%%', 'NOT LIKE')
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
 
-  function op_ends($field, $upper, $where) {
-    $query = "$field IN (SELECT sid FROM {statuses_tags} WHERE $upper(name) LIKE $upper('%%%s') $where)";
-    $this->query->add_where($this->options['group'], db_prefix_tables($query), $this->value);
+  function op_ends($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition('name', '%%' . db_like($this->value), 'LIKE')
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
 
-  function op_not_ends($field, $upper, $where) {
-    $query = "$field IN (SELECT sid FROM {statuses_tags} WHERE $upper(name) NOT LIKE $upper('%%%s') $where)";
-    $this->query->add_where($this->options['group'], db_prefix_tables($query), $this->value);
+  function op_not_ends($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition('name', '%%' . db_like($this->value), 'NOT LIKE')
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
 
-  function op_not($field, $upper, $where) {
-    $query = "$field IN (SELECT sid FROM {statuses_tags} WHERE $upper(name) NOT LIKE $upper('%%%s%%') $where)";
-    $this->query->add_where($this->options['group'], db_prefix_tables($query), $this->value);
+  function op_not($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition('name', '%%' . db_like($this->value) . '%%', 'NOT LIKE')
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
+  }
+
+  function op_shorter($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->where("LENGTH(name) < :length", array(':length' => $this->value))
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
+  }
+
+  function op_longer($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->where("LENGTH(name) > :length", array(':length' => $this->value))
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
+  }
+
+  function op_regex($field, $db_or) {
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition('name', $this->value, 'RLIKE')
+      ->condition($db_or);
+    $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
 }

@@ -8,7 +8,7 @@
 /**
  * Changes the form for the Tag Type filter options.
  */
-class statuses_views_handler_filter_string_type extends views_handler_filter_in_operator {
+class statuses_tags_views_handler_filter_string_type extends views_handler_filter_in_operator {
   function get_value_options() {
     if (!isset($this->value_options)) {
       $this->value_title = t('Tag type');

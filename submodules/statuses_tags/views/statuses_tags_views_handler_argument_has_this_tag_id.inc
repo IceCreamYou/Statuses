@@ -44,60 +44,41 @@ class statuses_tags_views_handler_argument_has_this_tag_id extends views_handler
     else {
       $this->value = array($this->argument);
     }
-    $where = '';
     $options = $this->options['statuses_tags_type'];
+    $db_or = db_or();
     if (count($options) > 0) {
-      $where .= " AND (type = '";
-      $types = array();
       foreach ($options as $type => $val) {
         if ($val) {
-          $types[] = $type;
+          $db_or->condition('type', $type);
         }
       }
-      $where .= implode("' OR type = '", $types) . "')";
     }
-    //if ($this->operator == 'or') {
     if (count($this->value) > 2) {
       $operator = empty($this->options['not']) ? 'IN' : 'NOT IN';
-      $placeholders = implode(', ', array_fill(0, sizeof($this->value), '%d'));
-      $query = "$this->table_alias.$this->real_field IN (SELECT sid FROM {statuses_tags} WHERE rid $operator ($placeholders) $where)";
-      $this->query->add_where(0, db_prefix_tables($query), $this->value);
+      $query = db_select('statuses_tags')
+        ->fields('statuses_tags', array('sid'))
+        ->condition('rid', $this->value, $operator)
+        ->condition($db_or);
+      $this->query->add_where(0, "$this->table_alias.$this->real_field", $query, 'IN');
     }
     // If there are exactly 2 users specified, show the exchange between them.
-    if (count($this->value) == 2) {
+    elseif (count($this->value) == 2) {
       $operator = empty($this->options['not']) ? 'IN' : 'NOT IN';
-      $placeholders = implode(', ', array_fill(0, sizeof($this->value), '%d'));
-      $query = "$this->table_alias.$this->real_field IN (SELECT sid FROM {statuses_tags} WHERE rid $operator ($placeholders) $where)";
-      $query .= "AND $this->table_alias.pid IN (%d, %d)";
-      $this->query->add_where(0, db_prefix_tables($query), array_merge($this->value, $this->value));
+      $query = db_select('statuses_tags')
+        ->fields('statuses_tags', array('sid'))
+        ->condition('rid', $this->value, $operator)
+        ->condition($db_or);
+      $this->query->add_where(0, "$this->table_alias.$this->real_field", $query, 'IN');
+      $this->query->add_where(0, "$this->table_alias.sender", $this->value, 'IN');
     }
     else {
       $operator = empty($this->options['not']) ? '=' : '!=';
-      $query = "$this->table_alias.$this->real_field IN (SELECT sid FROM {statuses_tags} WHERE rid $operator %d $where)";
-      $this->query->add_where(0, db_prefix_tables($query), $this->argument);
+      $query = db_select('statuses_tags')
+        ->fields('statuses_tags', array('sid'))
+        ->condition('rid', $this->argument, $operator)
+        ->condition($db_or);
+      $this->query->add_where(0, "$this->table_alias.$this->real_field", $query, 'IN');
     }
-    //}
-    /*
-     * Default to the "OR" behavior because it's more useful.
-     * We can never actually allow either to happen because modern browsers
-     * convert "+" to " " so we can't parse for the operator.
-     else { //$this->operator == 'and'
-     $operator = empty($this->options['not']) ? '=' : '!=';
-     if (count($this->value) > 1) {
-     //This causes the query to be pretty slow.
-     $subquery = array();
-     foreach ($this->value as $value) {
-     $subquery[] = "$this->table_alias.$this->real_field IN (SELECT sid FROM {statuses_tags} WHERE rid $operator %d $where)";
-     }
-     $query = '('. implode(' AND ', $subquery) .')';
-     $this->query->add_where(0, db_prefix_tables($query), $this->value);
-     }
-     else {
-     $query = "$this->table_alias.$this->real_field IN (SELECT sid FROM {statuses_tags} WHERE rid $operator %d $where)";
-     $this->query->add_where(0, db_prefix_tables($query), $this->argument);
-     }
-     }
-     */
   }
   function default_actions($which = NULL) {
     $defaults = parent::default_actions($which);

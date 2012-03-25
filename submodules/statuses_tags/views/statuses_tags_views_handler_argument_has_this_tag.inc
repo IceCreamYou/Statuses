@@ -57,20 +57,20 @@ class statuses_tags_views_handler_argument_has_this_tag extends views_handler_ar
     else {
       $field = $this->get_formula();
     }
-    $where = '';
     $options = $this->options['statuses_tags_type'];
+    $db_or = db_or();
     if (count($options) > 0) {
-      $where .= " AND (type = '";
-      $types = array();
       foreach ($options as $type => $val) {
         if ($val) {
-          $types[] = $type;
+          $db_or->condition('type', $type);
         }
       }
-      $where .= implode("' OR type = '", $types) . "')";
     }
-    $query = "$field IN (SELECT sid FROM {statuses_tags} WHERE name = '%s' $where)";
-    $this->query->add_where(0, db_prefix_tables($query), $argument);
+    $query = db_select('statuses_tags')
+      ->fields('statuses_tags', array('sid'))
+      ->condition('name', $argument)
+      ->condition($db_or);
+    $this->query->add_where(0, $field, $query, 'IN');
   }
   function default_actions($which = NULL) {
     $defaults = parent::default_actions($which);
