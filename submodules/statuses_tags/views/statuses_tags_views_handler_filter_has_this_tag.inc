@@ -70,7 +70,7 @@ class statuses_tags_views_handler_filter_has_this_tag extends views_handler_filt
   function op_contains($field, $db_or) {
     $query = db_select('statuses_tags')
       ->fields('statuses_tags', array('sid'))
-      ->condition('name', '%%' . db_like($this->value) . '%%', 'LIKE')
+      ->condition('name', '%' . db_like($this->value) . '%', 'LIKE')
       ->condition($db_or);
     $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
@@ -108,7 +108,7 @@ class statuses_tags_views_handler_filter_has_this_tag extends views_handler_filt
   function op_starts($field, $db_or) {
     $query = db_select('statuses_tags')
       ->fields('statuses_tags', array('sid'))
-      ->condition('name', db_like($this->value) . '%%', 'LIKE')
+      ->condition('name', db_like($this->value) . '%', 'LIKE')
       ->condition($db_or);
     $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
@@ -116,7 +116,7 @@ class statuses_tags_views_handler_filter_has_this_tag extends views_handler_filt
   function op_not_starts($field, $db_or) {
     $query = db_select('statuses_tags')
       ->fields('statuses_tags', array('sid'))
-      ->condition('name', db_like($this->value) . '%%', 'NOT LIKE')
+      ->condition('name', db_like($this->value) . '%', 'NOT LIKE')
       ->condition($db_or);
     $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
@@ -124,7 +124,7 @@ class statuses_tags_views_handler_filter_has_this_tag extends views_handler_filt
   function op_ends($field, $db_or) {
     $query = db_select('statuses_tags')
       ->fields('statuses_tags', array('sid'))
-      ->condition('name', '%%' . db_like($this->value), 'LIKE')
+      ->condition('name', '%' . db_like($this->value), 'LIKE')
       ->condition($db_or);
     $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
@@ -132,7 +132,7 @@ class statuses_tags_views_handler_filter_has_this_tag extends views_handler_filt
   function op_not_ends($field, $db_or) {
     $query = db_select('statuses_tags')
       ->fields('statuses_tags', array('sid'))
-      ->condition('name', '%%' . db_like($this->value), 'NOT LIKE')
+      ->condition('name', '%' . db_like($this->value), 'NOT LIKE')
       ->condition($db_or);
     $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
@@ -140,7 +140,7 @@ class statuses_tags_views_handler_filter_has_this_tag extends views_handler_filt
   function op_not($field, $db_or) {
     $query = db_select('statuses_tags')
       ->fields('statuses_tags', array('sid'))
-      ->condition('name', '%%' . db_like($this->value) . '%%', 'NOT LIKE')
+      ->condition('name', '%' . db_like($this->value) . '%', 'NOT LIKE')
       ->condition($db_or);
     $this->query->add_where($this->options['group'], $field, $query, 'IN');
   }
