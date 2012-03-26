@@ -30,22 +30,3 @@ function fbss_flag_views_data() {
 
   return $data;
 }
-
-/**
- * Implements hook_views_handlers().
- */
-function fbss_flag_views_handlers() {
-  return array(
-    'info' => array(
-      'path' => drupal_get_path('module', 'fbss_flag') . '/views',
-    ),
-    'handlers' => array(
-      'statuses_views_handler_filter_flagged_user' => array(
-        'parent' => 'views_handler_filter',
-      ),
-      'statuses_views_handler_argument_flagged_user' => array(
-        'parent' => 'views_handler_argument',
-      ),
-    ),
-  );
-}

@@ -11,6 +11,7 @@
 class statuses_views_handler_filter_flagged_user extends views_handler_filter {
   function option_definition() {
     $options = parent::option_definition();
+    $content_type = 'statuses';
     $flag = array_shift(flag_get_flags($content_type));
     $default = $flag ? $flag->fid : NULL;
     $options['statuses_flag_type'] = array(
@@ -27,7 +28,8 @@ class statuses_views_handler_filter_flagged_user extends views_handler_filter {
       $options[$flag->fid] = $flag->get_title();
     }
     $form['warning'] = array(
-      '#value' => t('Warning: this filter can be slow.'),
+      '#type' => 'markup',
+      '#markup' => t('Warning: this filter can be slow.'),
       '#weight' => -100,
     );
     $form['statuses_flag_type'] = array(
@@ -39,8 +41,12 @@ class statuses_views_handler_filter_flagged_user extends views_handler_filter {
     );
   }
   function query() {
-    $query = "({$this->table}.sender IN (SELECT content_id FROM {flag_content} WHERE fid = %d AND uid = %d) OR {$this->table}.sender = %d)";
-    $query = db_prefix_tables($query);
-    $this->query->add_where($this->options['group'], $query, $this->options['statuses_flag_type'], $GLOBALS['user']->uid, $GLOBALS['user']->uid);
+    $query = db_select('flag_content')
+      ->fields('flag_content', array('content_id'))
+      ->condition('fid', $this->options['statuses_flag_type'])
+      ->condition('uid', $GLOBALS['user']->uid);
+    $this->query->add_where($this->options['group'], db_or()
+      ->condition('sender', $query, 'IN')
+      ->condition('sender', $GLOBALS['user']->uid));
   }
 }
