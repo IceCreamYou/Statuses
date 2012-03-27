@@ -89,16 +89,16 @@ function statuses_tags_install() {
 function statuses_tags_uninstall() {
   if (variable_get('statuses_tags_vid', -1) != -1) {
     $vocabulary = taxonomy_vocabulary_load(variable_get('statuses_tags_vid', -1));
-    if (isset($vocabulary->nodes) && count($vocabulary->nodes) == 0) {
+    if (isset($vocabulary->name)) {
       drupal_set_message(
         st('The Statuses Tags module has been uninstalled.') . ' ' .
         st(
-          'However, the vocabulary "@name," which was used to store #hashtags for the Statuses Tags module, has not been deleted.',
+          'The vocabulary @name was previously used to store #hashtags for the Statuses Tags module.',
           array('@name' => $vocabulary->name)
         ) . ' ' .
         st(
-          'This vocabulary was not used for any other purpose, so <a href="!delete_url">deleting it</a> is recommended.',
-          array('!delete_url' => url('admin/structure/taxonomy/edit/vocabulary/2', array('absolute' => TRUE)))
+          'If you are not using this vocabulary for anything else, you may want to <a href="!delete_url">delete it</a> now.',
+          array('!delete_url' => url('admin/structure/taxonomy/hashtags/edit', array('absolute' => TRUE)))
         )
       );
     }
