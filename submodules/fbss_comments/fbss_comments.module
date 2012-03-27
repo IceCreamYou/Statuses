@@ -809,7 +809,7 @@ function fbss_comments_save_js($form, $form_state) {
   $new_form['comments']                  = $form['comments'];
   $new_form['end-comment-entry-wrapper'] = $form['end-comment-entry-wrapper'];
   $new_form['status-comment']            = $form['status-comment'];
-  unset($new_form['status-comment']['#value']);
+  $new_form['status-comment']['#value']  =  '';
   return $new_form;
 }
 
