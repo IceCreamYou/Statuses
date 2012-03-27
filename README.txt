@@ -9,3 +9,7 @@ Check out the issue queue at http://drupal.org/project/issues/statuses
 Isaac Sukin (IceCreamYou) wrote and maintains this module.
 Contact him at http://drupal.org/user/201425/contact
 or visit his website at http://www.isaacsukin.com/blog.
+
+Mathankumar Chermakani (mathankumarc) also maintains this module.
+Contact him at http://drupal.org/user/1315174/contact
+or visit his website at http://mathankumar.drupalgardens.com/.
