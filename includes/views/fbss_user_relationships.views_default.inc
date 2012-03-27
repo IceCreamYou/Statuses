@@ -21,7 +21,7 @@ function fbss_user_relationships_views_default_views() {
   $view->view_php = '';
   $view->base_table = 'users';
   $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->api_version = 3;
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('relationships', array(
@@ -363,8 +363,15 @@ function fbss_user_relationships_views_default_views() {
       'breadcrumb' => '',
       'default_argument_type' => 'fixed',
       'default_argument' => '',
-      'validate_type' => 'none',
-      'validate_fail' => 'not found',
+      'specify_validation' => 1,
+      'validate' => array(
+        'type' => 'user',
+        'fail' => 'not found',
+      ),
+      'validate_options' => array(
+        'type' => 'uid',
+        'restrict_roles' => 0,
+      ),
       'id' => 'rels_and_me',
       'table' => 'user_relationships',
       'field' => 'rels_and_me',

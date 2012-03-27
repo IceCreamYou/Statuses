@@ -365,7 +365,7 @@ function statuses_views_data() {
     ),
   );
 
-  if (module_exists('user_relationships_api')) {
+  if (module_exists('user_relationships')) {
     // Expose data from a user's friends AND that user.
     $data['user_relationships']['rels_and_me'] = array(
       'title' => t('Requestee or Requester or Argument user'),
