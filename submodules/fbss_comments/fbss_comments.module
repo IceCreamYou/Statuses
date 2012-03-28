@@ -291,10 +291,8 @@ function theme_fbss_comments_item($variables) {
       .'</li>';
   }
   if (module_exists('fbss_comments_flag')) {
-    foreach (flag_get_flags() as $name => $info) {
-      if ($info->content_type == 'fbss_comment') {
-        $output .= '<li class="fbss-comments-flag-'. check_plain($name) .'-link">' . flag_create_link($name, $comment->cid) . '</li>';
-      }
+    foreach (flag_get_flags('fbss_comment') as $name => $info) {
+      $output .= '<li class="fbss-comments-flag-'. check_plain($name) .'-link">' . flag_create_link($name, $comment->cid) . '</li>';
     }
   }
   $output .= '</ul></div></div></div>';

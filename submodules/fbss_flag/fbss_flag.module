@@ -147,7 +147,6 @@ function fbss_flag_flag_default_flags() {
   $flags = array();
   $flags['like'] = array(
     'content_type' => 'statuses',
-    //'name' => 'like',
     'title' => t('Like'),
     'global' => '0',
     'types' => array('page'),
@@ -170,7 +169,6 @@ function fbss_flag_flag_default_flags() {
   );
   $flags['follow'] = array(
     'content_type' => 'user',
-    //'name' => 'follow',
     'title' => t('Follow'),
     'global' => '0',
     'types' => array('-'),
