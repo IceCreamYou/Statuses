@@ -133,23 +133,6 @@ attach: function (context) {
   }
 }
 }
-// Change remaining character count.
-function fbss_print_remaining(fbss_remaining, where) {
-  if (fbss_remaining >= 0) {
-    where.html(Drupal.formatPlural(fbss_remaining, '1 character left', '@count characters left', {}));
-    if (statuses_submit_disabled) {
-      $('.statuses-submit').attr('disabled', false);
-      statuses_submit_disabled = false;
-    }
-  }
-  else if (Drupal.settings.statuses.maxlength != 0) {
-    where.html('<span class="statuses-negative">'+ Drupal.formatPlural(Math.abs(fbss_remaining), '-1 character left', '-@count characters left', {}) +'</span>');
-    if (!statuses_submit_disabled) {
-      $('.statuses-submit').attr('disabled', true);
-      statuses_submit_disabled = true;
-    }
-  }
-}
 // Disallow refreshing too often or double-clicking the Refresh link.
 function fbss_allowRefresh() {
   fbss_allowClickRefresh = !fbss_allowClickRefresh;
@@ -217,3 +200,21 @@ function fbss_refresh() {
   }
 }
 })(jQuery);
+
+// Change remaining character count.
+function fbss_print_remaining(fbss_remaining, where) {
+  if (fbss_remaining >= 0) {
+    where.html(Drupal.formatPlural(fbss_remaining, '1 character left', '@count characters left', {}));
+    if (statuses_submit_disabled) {
+      jQuery('.statuses-submit').attr('disabled', false);
+      statuses_submit_disabled = false;
+    }
+  }
+  else if (Drupal.settings.statuses.maxlength != 0) {
+    where.html('<span class="statuses-negative">'+ Drupal.formatPlural(Math.abs(fbss_remaining), '-1 character left', '-@count characters left', {}) +'</span>');
+    if (!statuses_submit_disabled) {
+      jQuery('.statuses-submit').attr('disabled', true);
+      statuses_submit_disabled = true;
+    }
+  }
+}
