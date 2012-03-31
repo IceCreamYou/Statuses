@@ -7,8 +7,8 @@ function fbss_comments_rules_rules_event_info() {
   return array(
     'fbss_comments_save' => array(
       'label' => t('User saves a new comment on a status'),
-      'module' => 'Statuses Comments',
-      'arguments' => array(
+      'group' => t('Statuses Comments'),
+      'variables' => array(
         'comment' => array(
           'type' => 'fbss_comment',
           'label' => t('The status comment.'),
@@ -17,8 +17,8 @@ function fbss_comments_rules_rules_event_info() {
     ),
     'fbss_comments_edit' => array(
       'label' => t('User edits a comment on a status'),
-      'module' => 'Statuses Comments',
-      'arguments' => array(
+      'group' => t('Statuses Comments'),
+      'variables' => array(
         'comment' => array(
           'type' => 'fbss_comment',
           'label' => t('The status comment.'),
@@ -27,8 +27,8 @@ function fbss_comments_rules_rules_event_info() {
     ),
     'fbss_comments_delete' => array(
       'label' => t('User deletes a comment on a status'),
-      'module' => 'Statuses Comments',
-      'arguments' => array(
+      'group' => t('Statuses Comments'),
+      'variables' => array(
         'comment' => array(
           'type' => 'fbss_comment',
           'label' => t('The status comment.'),
@@ -51,12 +51,12 @@ function fbss_comments_rules_rules_condition_info() {
           'label' => t('The status comment.'),
         ),
       ),
-      'module' => 'Statuses Comments',
+      'group' => t('Statuses Comments'),
     ),
     'fbss_comments_rules_can_post' => array(
       'label' => t('User has permission to send a status comment'),
       'arguments' => array(),
-      'module' => 'Statuses Comments',
+      'group' => t('Statuses Comments'),
     ),
     'fbss_comments_rules_can_edit' => array(
       'label' => t('User has permission to edit a status comment'),
@@ -66,7 +66,7 @@ function fbss_comments_rules_rules_condition_info() {
           'label' => t('The status comment.'),
         ),
       ),
-      'module' => 'Statuses Comments',
+      'group' => t('Statuses Comments'),
     ),
     'fbss_comments_rules_can_delete' => array(
       'label' => t('User has permission to delete a status comment'),
@@ -76,7 +76,7 @@ function fbss_comments_rules_rules_condition_info() {
           'label' => t('The status comment.'),
         ),
       ),
-      'module' => 'Statuses Comments',
+      'group' => t('Statuses Comments'),
     ),
   );
 }
@@ -124,85 +124,88 @@ function fbss_comments_rules_rules_action_info() {
         ),
       ),
       'help' => t('Enter the Comment ID of a status comment to load.'),
-      'module' => 'Statuses Comments',
-      'eval input' => array('cid'),
+      'group' => t('Statuses Comments'),
+      'parameter' => array(
+        'cid' => array(
+          'type' => 'integer',
+          'label' => t('Status Comment ID'),
+          'description' => t("Enter the Comment ID of a status comment to load."),
+        ),
+      ),
     ),
     'fbss_comments_rules_edit_action' => array(
       'label' => t('Edit a status comment'),
       'help' => t('Enter the Status Comment ID of the status comment to edit and the text you wish to replace the comment.'),
-      'module' => 'Statuses Comments',
-      'eval input' => array('cid', 'message'),
+      'group' => t('Statuses Comments'),
+      'parameter' => array(
+        'cid' => array(
+          'type' => 'integer',
+          'label' => t('Status Comment ID'),
+          'description' => t("Enter the Comment ID of a status comment to edit."),
+        ),
+        'message' => array(
+          'type' => 'text',
+          'label' => t('Comment message'),
+          'description' => t("Enter the message for the Comment."),
+        ),
+      ),
     ),
     'fbss_comments_rules_delete_action' => array(
       'label' => t('Delete a status comment'),
       'help' => t('Enter the Status Comment ID of the status comment to delete.'),
-      'module' => 'Statuses Comments',
-      'eval input' => array('cid'),
+      'group' => t('Statuses Comments'),
+      'parameter' => array(
+        'cid' => array(
+          'type' => 'integer',
+          'label' => t('Status Comment ID'),
+          'description' => t("Enter the Comment ID of the status comment to delete."),
+        ),
+      ),
     ),
     'fbss_comments_rules_add_action' => array(
       'label' => t('Add a status comment'),
       'help' => t('Enter the status comment text, the ID of the relevant status, and the user ID of the creator of the comment.'),
-      'module' => 'Statuses Comments',
-      'eval input' => array('sid', 'message', 'uid'),
+      'group' => t('Statuses Comments'),
+      'parameter' => array(
+        'sid' => array(
+          'type' => 'integer',
+          'label' => t('Status ID'),
+          'description' => t("Enter the ID of the status on which this comment will be posted."),
+        ),
+        'message' => array(
+          'type' => 'text',
+          'label' => t('Comment message'),
+          'description' => t("Enter the message for the Comment."),
+        ),
+        'uid' => array(
+          'type' => 'integer',
+          'label' => t('User ID'),
+          'description' => t("Enter the ID of the user who created this comment."),
+          'optional' => TRUE,
+        ),
+      ),
     ),
-  );
-}
-
-/**
- * Builds the form for loading a status comment.
- */
-function fbss_comments_rules_load_action_form($settings, &$form) {
-  $settings += array('cid' => '');
-  $form['settings']['cid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Status Comment ID'),
-    '#default_value' => $settings['cid'],
-    '#required' => TRUE,
   );
 }
 
 /**
  * Loads a status.
  */
-function fbss_comments_rules_load_action($settings) {
-  return array('comment_loaded' => fbss_comments_load($settings['cid']));
-}
-
-/**
- * Builds the form for editing a status comment.
- */
-function fbss_comments_rules_edit_action_form($settings, &$form) {
-  $settings += array(
-    'cid' => '',
-    'message' => '',
-  );
-  $form['settings']['cid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Status Comment ID'),
-    '#default_value' => $settings['cid'],
-    '#required' => TRUE,
-  );
-  $form['settings']['message'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Comment message'),
-    '#default_value' => $settings['message'],
-    '#rows' => 3,
-  );
+function fbss_comments_rules_load_action($cid) {
+  return array('comment_loaded' => fbss_comments_load($cid));
 }
 
 /**
  * Edits a status.
  */
-function fbss_comments_rules_edit_action($settings) {
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
-  /* db_query("UPDATE {fbss_comments} SET comment = '%s' WHERE cid = %d", $settings['message'], $settings['cid']) */
+function fbss_comments_rules_edit_action($cid, $message) {
   db_update('fbss_comments')
   ->fields(array(
-    'comment' => $settings['message'],
+    'comment' => $message,
   ))
-  ->condition('cid', $settings['cid'])
+  ->condition('cid', $cid)
   ->execute();
-  $c = fbss_comments_load($settings['cid']);
+  $c = fbss_comments_load($cid);
   module_invoke_all('fbss_comments_after_save', $c, TRUE);
   if (module_exists('trigger')) {
     module_invoke_all('fbss_comments', 'fbss_comments_edited', $c);
@@ -210,61 +213,17 @@ function fbss_comments_rules_edit_action($settings) {
 }
 
 /**
- * Builds the form for deleting a status.
- */
-function fbss_comments_rules_delete_action_form($settings, &$form) {
-  $settings += array('cid' => '');
-  $form['settings']['cid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Status Comment ID'),
-    '#default_value' => $settings['cid'],
-    '#required' => TRUE,
-  );
-}
-
-/**
  * Deletes a status.
  */
-function fbss_comments_rules_delete_action($settings) {
-  fbss_comments_delete_comment($settings['cid']);
+function fbss_comments_rules_delete_action($cid) {
+  fbss_comments_delete_comment($cid);
 }
 
 /**
- * Builds the form for adding a status.
+ * Adds a status comment.
  */
-function fbss_comments_rules_add_action_form($settings, &$form) {
-  $settings += array(
-    'sid' => '',
-    'message' => '',
-    'uid' => '',
-  );
-  $form['settings']['sid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Status ID'),
-    '#description' => t('Enter the ID of the status on which this comment will be posted.'),
-    '#default_value' => $settings['sid'],
-    '#required' => TRUE,
-  );
-  $form['settings']['message'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Comment message'),
-    '#default_value' => $settings['message'],
-    '#rows' => 3,
-    '#required' => TRUE,
-  );
-  $form['settings']['uid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('User ID'),
-    '#description' => t('Enter the ID of the user who created this comment.'),
-    '#default_value' => $settings['uid'],
-  );
-}
-
-/**
- * Adds a status.
- */
-function fbss_comments_rules_add_action($settings) {
-  fbss_comments_save_comment($settings['sid'], $settings['message'], empty($settings['uid']) ? $GLOBALS['user']->uid : $settings['uid']);
+function fbss_comments_rules_add_action($sid, $message, $uid) {
+  fbss_comments_save_comment($sid, $message, empty($uid) ? $GLOBALS['user']->uid : $uid);
 }
 
 /**
@@ -273,12 +232,9 @@ function fbss_comments_rules_add_action($settings) {
 function fbss_comments_rules_rules_data_type_info() {
   return array(
     'fbss_comment' => array(
-      'label' => t('Facebook-style Status Comment'),
-      'class' => 'rules_data_type_fbss_comment',
-      'savable' => FALSE,
-      'identifiable' => TRUE,
-      'use_input_form' => FALSE,
-      'module' => 'Statuses Comments',
+      'label' => t('Statuses Comment'),
+      'wrapper class' => 'FBSSCommentRulesDataWrapper',
+      'wrap' => TRUE,
     ),
   );
 }
@@ -286,17 +242,16 @@ function fbss_comments_rules_rules_data_type_info() {
 /**
  * Defines the rules node data type.
  */
-class rules_data_type_fbss_comment extends rules_data_type {
-  function save() {
-    $comment = &$this->get();
+class FBSSCommentRulesDataWrapper extends RulesIdentifiableDataWrapper implements RulesDataWrapperSavableInterface {
+  public function save() {
+    $comment = $this->value();
     fbss_comments_save_comment($comment->sid, $comment->comment, $comment->uid);
     return TRUE;
   }
-  function load($cid) {
+  protected function load($cid) {
     return fbss_comments_load($cid);
   }
-  function get_identifier() {
-    $status = &$this->get();
-    return $status->cid;
+  protected function extractIdentifier($comment) {
+    return $comment->cid;
   }
 }
