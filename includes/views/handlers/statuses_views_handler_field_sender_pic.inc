@@ -34,10 +34,11 @@ class statuses_views_handler_field_sender_pic extends views_handler_field {
   function render($values) {
     $account = user_load($values->{$this->field_alias});
     $options = $this->options;
+    $preset = NULL;
     if (isset($options['imagecache_preset']) && $options['imagecache_preset']) {
-      $account->imagecache_preset = $options['imagecache_preset'];
+      $preset = $options['imagecache_preset'];
     }
-    $picture = statuses_display_user_picture($account);
+    $picture = statuses_display_user_picture($account, $preset);
     if (!empty($picture)) {
       return '<div class="facebook-status-sender-picture user-picture">'. $picture .'</div>';
     }

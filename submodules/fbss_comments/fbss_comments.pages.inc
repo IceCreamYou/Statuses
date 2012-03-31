@@ -178,7 +178,7 @@ function fbss_comments_delete_confirm($form, &$form_state) {
  */
 function fbss_comments_delete_cancel($form, &$form_state) {
   drupal_set_message(t('Status comment was not deleted.'));
-  if ($_GET['destination'] && $_GET['destinaton'] != 'fbss_comments/js/refresh') {
+  if ($_GET['destination'] && $_GET['destination'] != 'fbss_comments/js/refresh') {
     $form_state['redirect'] = $_GET['destination'];
   }
   else {

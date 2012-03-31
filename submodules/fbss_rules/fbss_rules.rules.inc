@@ -28,7 +28,6 @@ function fbss_rules_rules_event_info() {
           'type' => 'statuses',
           'label' => t('The status.'),
         ),
-        //'context' => array('type' => 'value', 'label' => t('The status context.')),
       ),
     ),
     'statuses_save' => array(
@@ -39,7 +38,6 @@ function fbss_rules_rules_event_info() {
           'type' => 'statuses',
           'label' => t('The status.'),
         ),
-        //'context' => array('type' => 'value', 'label' => t('The status context.')),
       ),
     ),
   );
@@ -58,21 +56,29 @@ function fbss_rules_rules_condition_info() {
           'label' => t('The status'),
         ),
       ),
-      'module' => 'Statuses',
+      'group' => t('Statuses'),
     ),
     'fbss_rules_can_post' => array(
       'label' => t('User has permission to send a status message'),
       'arguments' => array(
         'recipient' => array(
-          'type' => 'number',
+          'type' => 'user',
           'label' => t('The ID of the object to which the status will be posted.'),
+        ),
+        'recipient_type' => array(
+          'type' => 'text',
+          'label' => t('Recipient type'),
+          'restriction' => 'input',
+          'options list' => 'fbss_can_post_reciptent_types',
+          'optional' => TRUE,
+          'description' =>  t('The types of recipients allowed for this condition to be true.'),
         ),
         'sender' => array(
           'type' => 'user',
           'label' => t('Sender'),
         ),
       ),
-      'module' => 'Statuses',
+      'group' => 'Statuses',
     ),
     'fbss_rules_rules_condition_can_edit' => array(
       'label' => t('User has permission to edit a status'),
@@ -82,7 +88,7 @@ function fbss_rules_rules_condition_info() {
           'label' => t('The status'),
         ),
       ),
-      'module' => 'Statuses',
+      'group' => 'Statuses',
     ),
     'fbss_rules_rules_condition_can_delete' => array(
       'label' => t('User has permission to delete a status'),
@@ -92,7 +98,7 @@ function fbss_rules_rules_condition_info() {
           'label' => t('The status'),
         ),
       ),
-      'module' => 'Statuses',
+      'group' => 'Statuses',
     ),
     'fbss_rules_rules_condition_is_type' => array(
       'label' => t('Status recipient is a certain type'),
@@ -101,8 +107,16 @@ function fbss_rules_rules_condition_info() {
           'type' => 'statuses',
           'label' => t('The status'),
         ),
+        'recipient_types' => array(
+          'type' => 'list<text>',
+          'label' => t('Recipient type'),
+          'restriction' => 'input',
+          'options list' => 'fbss_reciptent_types',
+          'optional' => TRUE,
+          'description' =>  t('The types of recipients allowed for this condition to be true.'),
+        ),
       ),
-      'module' => 'Statuses',
+      'group' => 'Statuses',
     ),
   );
 }
@@ -115,76 +129,58 @@ function fbss_rules_is_self($status) {
 }
 
 /**
- * Builds the form for the fbss_rules_can_post condition.
+ * Generates the options for the fbss_rules_rules_condition_is_type condition.
  */
-function fbss_rules_can_post_form($settings, &$form) {
-  $settings += array('type' => 'user');
-  $contexts = module_invoke_all('statuses_context_info');
-  $options = array('auto' => t('Automatically determined'));
+function  fbss_reciptent_types(){
+  $contexts = statuses_all_contexts();
+  $options = array();
   foreach ($contexts as $key => $context) {
     $options[$key] = $context['title'];
   }
-  $form['settings']['type'] = array(
-    '#type' => 'select',
-    '#title' => t('Recipient type'),
-    '#default_value' => $settings['type'],
-    '#description' => t('The type of entity onto whose stream the status update will be posted.'),
-    '#options' => $options,
-  );
+  return  $options;
+}
+
+/**
+ * Generate the options for the fbss_rules_can_post condition
+ */
+function fbss_can_post_reciptent_types() {
+  $options = array('auto' => t('Automatically determined'));
+  return array_merge($options, fbss_reciptent_types());
 }
 
 /**
  * Checks if the user is allowed to post a status.
  */
-function fbss_rules_can_post($recipient, $sender, $settings) {
-  if ($settings['type'] == 'auto') {
+function fbss_rules_can_post($recipient, $recipient_type, $sender) {
+  if ($recipient_type == 'auto') {
     $context = statuses_determine_context();
-    $settings['type'] = $context['handler']->type();
+    $recipient_type = $context['handler']->type();
   }
-  return statuses_user_access('add', $recipient, $settings['type'], $sender);
-}
-
-/**
- * Builds the form for the fbss_rules_rules_condition_is_type condition.
- */
-function fbss_rules_rules_condition_is_type_form($settings, &$form) {
-  $settings += array('types' => array());
-  $contexts = module_invoke_all('statuses_context_info');
-  $options = array();
-  foreach ($contexts as $key => $context) {
-    $options[$key] = $context['title'];
-  }
-  $form['settings']['types'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Recipient type'),
-    '#default_value' => $settings['types'],
-    '#description' => t('The types of recipients allowed for this condition to be true.'),
-    '#options' => $options,
-  );
+  return statuses_user_access('add', $recipient, $recipient_type, $sender);
 }
 
 /**
  * Checks if the status recipient is one of a specified type.
  */
-function fbss_rules_rules_condition_is_type($status, $settings) {
-  if (empty($settings['types'])) {
+function fbss_rules_rules_condition_is_type($status, $recipient_types) {
+  if (empty($recipient_types)) {
     return FALSE;
   }
-  return !empty($settings['types'][$status->type]);
+  return !empty($recipient_types[$status->type]);
 }
 
 /**
  * Checks if the current user can edit the status.
  */
 function fbss_rules_rules_condition_can_edit($status) {
-  statuses_user_access('edit', $status);
+  return statuses_user_access('edit', $status);
 }
 
 /**
  * Checks if the current user can delete the status.
  */
 function fbss_rules_rules_condition_can_delete($status) {
-  statuses_user_access('delete', $status);
+  return statuses_user_access('delete', $status);
 }
 
 /**
@@ -201,155 +197,105 @@ function fbss_rules_rules_action_info() {
         ),
       ),
       'help' => t('Enter the Status ID of a status to load.'),
-      'module' => 'Statuses',
-      'eval input' => array('sid'),
+      'group' => t('Statuses'),
+      'parameter' => array(
+        'sid' => array(
+          'type' => 'integer',
+          'label' => t('Status ID'),
+          'description' => t("Enter the Status ID of a status to load."),
+        ),
+      ),
     ),
     'fbss_rules_edit_action' => array(
       'label' => t('Edit a status'),
       'help' => t('Enter the Status ID of the status to edit and the text you wish to replace the status.'),
-      'module' => 'Statuses',
-      'eval input' => array('sid', 'message'),
+      'group' => t('Statuses'),
+      'parameter' => array(
+        'sid' => array(
+          'type' => 'integer',
+          'label' => t('Status ID'),
+          'description' => t("Enter the Status ID of a status to edit."),
+        ),
+        'message' => array(
+          'type' => 'text',
+          'label' => t('Message'),
+          'description' => t("Enter the message for the status."),
+          'optional' => TRUE,
+        ),
+      ),
     ),
     'fbss_rules_delete_action' => array(
       'label' => t('Delete a status'),
       'help' => t('Enter the Status ID of the status to delete.'),
-      'module' => 'Statuses',
-      'eval input' => array('sid'),
+      'group' => t('Statuses'),
+      'parameter' => array(
+        'sid' => array(
+          'type' => 'integer',
+          'label' => t('Status ID'),
+          'description' => t("Enter the Status ID of a status to load."),
+        ),
+      ),
     ),
     'fbss_rules_add_action' => array(
       'label' => t('Add a status'),
       'help' => t('Enter the status text and the ID and type of the recipient to which the status will be posted.'),
-      'module' => 'Statuses',
-      'eval input' => array('sender', 'recipient', 'type', 'message'),
+      'group' => t('Statuses'),
+      'parameter' => array(
+        'sender' => array(
+          'type' => 'user',
+          'label' => t('Sender name'),
+          'description' => t("Enter the Sender name."),
+        ),
+        'recipient' => array(
+          'type' => 'integer',
+          'label' => t('Rcipient ID'),
+          'description' => t("Enter the Recipient ID."),
+        ),
+        'recipient_types' => array(
+          'type' => 'text',
+          'label' => t('Recipient type'),
+          'restriction' => 'input',
+          'options list' => 'fbss_reciptent_types',
+          'description' =>  t('Enter the type for the new Status'),
+        ),
+        'message' => array(
+          'type' => 'text',
+          'label' => t('Message'),
+          'description' => t("Enter the message for the status."),
+        ),
+      ),
     ),
-  );
-}
-
-/**
- * Builds the form for loading a status.
- */
-function fbss_rules_load_action_form($settings, &$form) {
-  $settings += array('sid' => '');
-  $form['settings']['sid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Status ID'),
-    '#default_value' => $settings['sid'],
-    '#required' => TRUE,
   );
 }
 
 /**
  * Loads a status.
  */
-function fbss_rules_load_action($settings) {
-  return array('status_loaded' => statuses_load($settings['sid']));
-}
-
-/**
- * Builds the form for editing a status.
- */
-function fbss_rules_edit_action_form($settings, &$form) {
-  $settings += array(
-    'sid' => '',
-    'message' => '',
-  );
-  $form['settings']['sid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Status ID'),
-    '#default_value' => $settings['sid'],
-    '#required' => TRUE,
-  );
-  $form['settings']['message'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Status message'),
-    '#default_value' => $settings['message'],
-    '#rows' => 3,
-  );
+function fbss_rules_load_action($sid) {
+  return array('status_loaded' => statuses_load($sid));
 }
 
 /**
  * Edits a status.
  */
-function fbss_rules_edit_action($settings) {
-  statuses_edit_status(statuses_load($settings['sid']), $settings['message']);
-}
-
-/**
- * Builds the form for deleting a status.
- */
-function fbss_rules_delete_action_form($settings, &$form) {
-  $settings += array('sid' => '');
-  $form['settings']['sid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Status ID'),
-    '#default_value' => $settings['sid'],
-    '#required' => TRUE,
-  );
+function fbss_rules_edit_action($sid, $message) {
+  statuses_edit_status(statuses_load($sid), $message);
 }
 
 /**
  * Deletes a status.
  */
-function fbss_rules_delete_action($settings) {
-  statuses_delete_status($settings['sid']);
-}
-
-/**
- * Builds the form for adding a status.
- */
-function fbss_rules_add_action_form($settings, &$form) {
-  $settings += array(
-    'sender' => '',
-    'recipient' => '',
-    'type' => 'user',
-    'message' => '',
-  );
-  $form['settings']['sender'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Sender username'),
-    '#autocomplete_path' => 'user/autocomplete',
-    '#description' => t('If you leave this blank, the current user will be assumed.'),
-    '#default_value' => $settings['sender'],
-  );
-  $form['settings']['recipient'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Recipient ID'),
-    '#description' => t('The ID of the recipient.'),
-    '#default_value' => $settings['recipient'],
-    '#required' => TRUE,
-  );
-  $types = statuses_all_contexts();
-  $options = array();
-  foreach ($types as $type => $info) {
-    $options[$type] = $info['title'];
-  }
-  $form['settings']['type'] = array(
-    '#type' => 'select',
-    '#title' => t('Recipient type'),
-    '#default_value' => $settings['type'],
-    '#required' => TRUE,
-    '#options' => $options,
-  );
-  $form['settings']['message'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Status message'),
-    '#default_value' => $settings['message'],
-    '#rows' => 3,
-    '#required' => TRUE,
-  );
+function fbss_rules_delete_action($sid) {
+  statuses_delete_status($sid);
 }
 
 /**
  * Adds a status.
  */
-function fbss_rules_add_action($settings) {
-  $type = $settings['type'];
-  $context = statuses_determine_context($type);
-  $recipient = $context['handler']->load_recipient($settings['recipient']);
-  $message = $settings['message'];
-  $sender_name = empty($settings['sender']) ? $GLOBALS['user']->name : $settings['sender'];
-  $sender = user_load_by_name($settings['sender']);
-  statuses_save_status($recipient, $type, $message, $sender);
+function fbss_rules_add_action($sender, $recipient, $recipient_type, $message) {
+  $context = statuses_determine_context($recipient_type);
+  $recipient = $context['handler']->load_recipient($recipient);
+  statuses_save_status($recipient, $recipient_type, $message, $sender);
 }
 
 /**
@@ -358,7 +304,7 @@ function fbss_rules_add_action($settings) {
 function fbss_rules_rules_data_type_info() {
   return array(
     'statuses' => array(
-      'label' => t('Facebook-style Status'),
+      'label' => t('Statuses'),
       'wrapper class' => 'StatusesRulesDataWrapper',
       'wrap' => TRUE,
     ),
