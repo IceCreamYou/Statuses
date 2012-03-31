@@ -20,7 +20,9 @@ function fbss_domain_statuses_save($status, $context, $edit, $options) {
  * Implements hook_statuses_delete().
  */
 function fbss_domain_statuses_delete($status, $meta) {
-  db_query("DELETE FROM {fbss_domain} WHERE sid = :sid", array(':sid' => $status->sid));
+  db_delete('fbss_domain')
+    ->condition('sid', $status->sid)
+    ->execute();
 }
 
 /**
@@ -28,7 +30,7 @@ function fbss_domain_statuses_delete($status, $meta) {
  */
 function fbss_domain_views_api() {
   return array(
-    'api' => 2,
+    'api' => 3,
     'path' => drupal_get_path('module', 'fbss_domain'),
   );
 }

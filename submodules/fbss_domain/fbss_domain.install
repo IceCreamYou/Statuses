@@ -37,13 +37,6 @@ function fbss_domain_schema() {
 }
 
 /**
- * Implementation of hook_install().
- */
-function fbss_domain_install() {
-  drupal_install_schema('fbss_domain');
-}
-
-/**
  * Implementation of hook_uninstall().
  */
 function fbss_domain_uninstall() {
