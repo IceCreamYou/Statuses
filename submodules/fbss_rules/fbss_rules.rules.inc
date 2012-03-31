@@ -69,7 +69,7 @@ function fbss_rules_rules_condition_info() {
           'type' => 'text',
           'label' => t('Recipient type'),
           'restriction' => 'input',
-          'options list' => 'fbss_can_post_reciptent_types',
+          'options list' => 'fbss_can_post_recipient_types',
           'optional' => TRUE,
           'description' =>  t('The types of recipients allowed for this condition to be true.'),
         ),
@@ -111,7 +111,7 @@ function fbss_rules_rules_condition_info() {
           'type' => 'list<text>',
           'label' => t('Recipient type'),
           'restriction' => 'input',
-          'options list' => 'fbss_reciptent_types',
+          'options list' => 'fbss_recipient_types',
           'optional' => TRUE,
           'description' =>  t('The types of recipients allowed for this condition to be true.'),
         ),
@@ -131,7 +131,7 @@ function fbss_rules_is_self($status) {
 /**
  * Generates the options for the fbss_rules_rules_condition_is_type condition.
  */
-function  fbss_reciptent_types(){
+function  fbss_recipient_types() {
   $contexts = statuses_all_contexts();
   $options = array();
   foreach ($contexts as $key => $context) {
@@ -143,9 +143,9 @@ function  fbss_reciptent_types(){
 /**
  * Generate the options for the fbss_rules_can_post condition
  */
-function fbss_can_post_reciptent_types() {
+function fbss_can_post_recipient_types() {
   $options = array('auto' => t('Automatically determined'));
-  return array_merge($options, fbss_reciptent_types());
+  return array_merge($options, fbss_recipient_types());
 }
 
 /**
@@ -255,7 +255,7 @@ function fbss_rules_rules_action_info() {
           'type' => 'text',
           'label' => t('Recipient type'),
           'restriction' => 'input',
-          'options list' => 'fbss_reciptent_types',
+          'options list' => 'fbss_recipient_types',
           'description' =>  t('Enter the type for the new Status'),
         ),
         'message' => array(
