@@ -12,8 +12,8 @@ function statuses_tags_rules_event_info() {
   return array(
     'statuses_tags_user_was_tagged' => array(
       'label' => t('User was tagged in a status'),
-      'module' => 'Statuses',
-      'arguments' => array(
+      'group' => t('Statuses'),
+      'variables' => array(
         'status' => array(
           'type' => 'statuses',
           'label' => t('The status.'),
@@ -39,9 +39,15 @@ function statuses_tags_rules_condition_info() {
           'type' => 'statuses',
           'label' => t('The status'),
         ),
+        'type' => array(
+          'type' => 'text',
+          'label' => t('Tag type'),
+          'restriction' => 'input',
+          'options list' => 'statuses_tags_types_list',
+          'description' =>  t('The type of tag allowed for this condition to be true.'),
+        ),
       ),
-      'module' => 'Statuses',
-      'eval input' => array('type'),
+      'group' => t('Statuses'),
     ),
     'statuses_tags_has_specific_tag_condition' => array(
       'label' => t('Status has specific tag'),
@@ -50,9 +56,21 @@ function statuses_tags_rules_condition_info() {
           'type' => 'statuses',
           'label' => t('The status'),
         ),
+        'type' => array(
+          'type' => 'text',
+          'label' => t('Tag type'),
+          'restriction' => 'input',
+          'options list' => 'statuses_tags_types_list',
+          'description' =>  t('The type of tag allowed for this condition to be true.'),
+        ),
+        'tag' => array(
+          'type' => 'text',
+          'label' => t('Tag'),
+          'restriction' => 'input',
+          'description' =>  t('Do not include the identifying hash (#) or "at" symbol (@).'),
+        ),
       ),
-      'module' => 'Statuses',
-      'eval input' => array('type', 'tag'),
+      'group' => t('Statuses'),
     ),
   );
 }
@@ -60,54 +78,23 @@ function statuses_tags_rules_condition_info() {
 /**
  * Determines whether a status has tags of a given type.
  */
-function statuses_tags_has_tags_condition($status, $settings) {
-  return (bool) statuses_tags_has_tags($status->sid, $settings['type']);
+function statuses_tags_has_tags_condition($status, $type) {
+  return (bool) statuses_tags_has_tags($status->sid, $type);
 }
 
 /**
- * Builds the form for the "status has tags" condition.
+ * Generate the tag types options
  */
-function statuses_tags_has_tags_condition_form($settings, &$form) {
-  $settings += array('type' => '');
-  $form['settings']['type'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Tag type'),
-    '#default_value' => $settings['type'],
-    '#options' => array(
+function statuses_tags_types_list() {
+  return array(
       'user' => t('User @mention'),
       'term' => t('Term #hashtag'),
-    ),
   );
 }
 
 /**
  * Determines whether a status has a specific tag of a given type.
  */
-function statuses_tags_has_specific_tag_condition($status, $settings) {
-  return (bool) statuses_tags_status_has_tag_by_name($status->sid, $settings['tag'], $settings['type']);
-}
-
-/**
- * Builds the form for the "status has specific tag" condition.
- */
-function statuses_tags_has_specific_tag_condition_form($settings, &$form) {
-  $settings += array(
-    'type' => '',
-    'tag' => '',
-  );
-  $form['settings']['type'] = array(
-    '#type' => 'select',
-    '#title' => t('Tag type'),
-    '#default_value' => $settings['type'],
-    '#options' => array(
-      'user' => t('User @mention'),
-      'term' => t('Term #hashtag'),
-    ),
-  );
-  $form['settings']['tag'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Tag'),
-    '#default_value' => $settings['tag'],
-    '#description' => t('Do not include the identifying hash (#) or "at" symbol (@).'),
-  );
+function statuses_tags_has_specific_tag_condition($status, $type, $tag) {
+  return (bool) statuses_tags_status_has_tag_by_name($status->sid, $type, $tag);
 }
