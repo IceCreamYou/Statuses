@@ -18,7 +18,7 @@ function fbss_privacy_rules_condition_info() {
           'label' => t('The status')
         ),
       ),
-      'module' => 'Statuses',
+      'group' => t('Statuses'),
     ),
   );
 }
