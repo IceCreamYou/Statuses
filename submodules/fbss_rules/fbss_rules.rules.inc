@@ -131,7 +131,7 @@ function fbss_rules_is_self($status) {
 /**
  * Generates the options for the fbss_rules_rules_condition_is_type condition.
  */
-function  fbss_recipient_types() {
+function fbss_recipient_types() {
   $contexts = statuses_all_contexts();
   $options = array();
   foreach ($contexts as $key => $context) {
