@@ -463,7 +463,7 @@ function _statuses_tags_filter($subject, $new = FALSE) {
       $link = '';
       if ($op == '@') {
         $account = user_load_by_name($match);
-        if ($account->uid) {
+        if (isset($account->uid)) {
           $link = $op . theme('username', array('account' => $account));
           $items['@'][] = $account;
         }
