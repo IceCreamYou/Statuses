@@ -189,7 +189,7 @@ function fbss_services_user_timeline_access($args) {
   }
 
   // The ID and name are both not the current user. Use the ID if possible even if the name doesn't match.
-  $id_account = _statuses_user_load($user_id);
+  $id_account = user_load($user_id);
   if (!empty($id_account->uid)) {
     return statuses_user_access('view_stream', $id_account, 'user');
   }
@@ -206,7 +206,7 @@ function fbss_services_user_timeline_access($args) {
  * @see http://drupal.org/node/1354
  */
 function fbss_services_user_timeline($user_id, $screen_name, $since_id, $max_id, $count, $page, $trim_user, $include_entities) {
-  $account = _statuses_user_load($user_id);
+  $account = user_load($user_id);
   if ($account->name != $screen_name && $account->uid == $GLOBALS['user']->uid) {
     $account = array_shift(user_load_multiple(array(), array('name' => $screen_name)));
   }
@@ -253,7 +253,7 @@ function fbss_services_get_rich_data($status, $include_entities = TRUE, $trim_us
     'in_reply_to_status_id' => NULL, // We don't support tracking this.
     'in_reply_to_user_id' => $status->sender == $status->recipient ? NULL : $status->recipient,
     'favorited' => fbss_services_get_flagged($status->sid, 'like'),
-    'in-reply_to_screen_name' => $status->sender == $status->recipient ? NULL : check_plain(_statuses_user_load($status->recipient)->name),
+    'in-reply_to_screen_name' => $status->sender == $status->recipient ? NULL : check_plain(user_load($status->recipient)->name),
     'geo' => NULL, // We don't support tracking this.
     'place' => NULL, // We don't support tracking this.
     'coordinates' => NULL, // We don't support tracking this.
@@ -266,7 +266,7 @@ function fbss_services_get_rich_data($status, $include_entities = TRUE, $trim_us
     );
   }
   else {
-    $account = _statuses_user_load($status->sender);
+    $account = user_load($status->sender);
     $object['user'] = array(
       'id' => $account->uid,
       'name' => isset($account->realname) ? check_plain($account->realname) : check_plain($account->name),

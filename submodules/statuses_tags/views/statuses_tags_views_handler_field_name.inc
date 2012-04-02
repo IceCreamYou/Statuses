@@ -61,7 +61,7 @@ class statuses_tags_views_handler_field_name extends views_handler_field {
         $tags[] = $prefix . l($tag->name, _statuses_tags_resolve($tag));
       }
       elseif ($tag->type == 'user') {
-        $tags[] = $prefix . theme('username', array('account' => _statuses_user_load($tag->tid)));
+        $tags[] = $prefix . theme('username', array('account' => user_load($tag->tid)));
       }
       else {
         $tags[] = check_plain($tag->name);

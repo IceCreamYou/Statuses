@@ -132,7 +132,7 @@ function statuses_load_activity_context($hook, $op, $id) {
   if (!empty($status)) {
     $context = statuses_determine_context($status->type);
     $recipient = $context['handler']->load_recipient($status->recipient);
-    $sender = _statuses_user_load($status->sender);
+    $sender = user_load($status->sender);
 
     // Reduce the amount of recalculation we will need to do later.
     $sender->statuses = $status;

@@ -213,7 +213,7 @@ function theme_fbss_comments_items_email($variables) {
     if (!fbss_comments_can('view', $comment)) {
         continue;
     }
-    $author = _statuses_user_load($comment->uid);
+    $author = user_load($comment->uid);
     $output .= '<tr><td style="'. ($key == 0 ? '' : 'border-top: 1px solid #CCCCCC; ') .'padding: 10px;">';
     if (variable_get('fbss_comments_user_pictures', 0)) {
       $output .= '<table><tbody><tr><td>'. _fbss_comments_user_picture($author) .'</td><td>';
@@ -256,7 +256,7 @@ function theme_fbss_comments_item($variables) {
     return FALSE;
   }
   drupal_add_css(drupal_get_path('module', 'fbss_comments') . '/fbss_comments.css');
-  $author = _statuses_user_load($comment->uid);
+  $author = user_load($comment->uid);
   array_unshift($classes, 'fbss-comments-comment', 'statuses-media', 'statuses-subitem');
   $classes = implode(' ', $classes);
   $output = '<div class="' . $classes . '">';
@@ -1046,7 +1046,7 @@ function fbss_comments_token_values($type, $data = NULL, $options = array()) {
     return;
   }
   $comment = $data;
-  $account = _statuses_user_load($comment->uid);
+  $account = user_load($comment->uid);
   $edit = '';
   $delete = '';
   if (fbss_comments_can('edit', $comment)) {

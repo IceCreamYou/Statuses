@@ -319,7 +319,7 @@ class StatusesRulesDataWrapper extends RulesIdentifiableDataWrapper implements R
     $status = $this->value();
     $context = statuses_determine_context($status->type);
     $recipient = $context['handler']->load_recipient($status->recipient);
-    $sender = _statuses_user_load($status->sender);
+    $sender = user_load($status->sender);
     statuses_save_status($recipient, $status->type, $status->message, $sender);
     return TRUE;
   }

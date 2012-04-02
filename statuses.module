@@ -414,7 +414,7 @@ function statuses_link($type, $status) {
   // If not self update by current user (because if it is a self update by the current user, there is no need for a response)
   if (!module_exists('fbss_comments') && $status->type == 'user' && ($status->recipient != $status->sender || $status->sender != $user->uid)) {
     // If permission to respond
-    if (statuses_user_access('add', _statuses_user_load($status->sender), 'user', $user)) {
+    if (statuses_user_access('add', user_load($status->sender), 'user', $user)) {
       $second_uid = $user->uid;
       // If to current user (not a self update)
       if ($status->type == 'user' && $status->recipient == $user->uid) {
@@ -1063,8 +1063,8 @@ function _statuses_get_status_fast($uid) {
  * A wrapper for user_load().
  *
  * We used this in D6 to provide a static cache around user_load(). It is not
- * necessary in D7 because user_load() has its own static cache.
- * TODO: Remove this, and replace it with user_load() everywhere it's used.
+ * necessary in D7 because user_load() has its own static cache. Kept for
+ * compatibility purposes.
  *
  * @param $uid
  *   A User ID.
@@ -1079,8 +1079,8 @@ function _statuses_user_load($uid) {
  * In D6, a wrapper for user_load(); now pointless.
  *
  * We used this in D6 to provide a static cache around user_load(). It is not
- * necessary in D7 because user_load_by_name() has its own static cache.
- * TODO: Remove this, and replace it with user_load_by_name() everywhere.
+ * necessary in D7 because user_load_by_name() has its own static cache. Kept
+ * for compatibility purposes.
  *
  * @param $name
  *   A username.

@@ -102,7 +102,7 @@ function fbss_userpoints_statuses_save($status, $context, $edit, $options) {
   if ($edit) {
     return;
   }
-  $sender = _statuses_user_load($status->sender);
+  $sender = user_load($status->sender);
   $recipient = $context['handler']->load_recipient($status->recipient);
   $points_query = db_select('userpoints_txn')
     ->condition('uid',  $sender->uid)
@@ -152,7 +152,7 @@ function fbss_userpoints_statuses_delete($status, $meta = array()) {
   if (!empty($options['has attachment'])) {
     return;
   }
-  $sender = _statuses_user_load($status->sender);
+  $sender = user_load($status->sender);
   global $user;
   $result = db_select('userpoints_txn')
     ->fields('userpoints_txn',  array('points'))
@@ -184,7 +184,7 @@ function fbss_userpoints_fbss_comments_after_save($comment, $edit) {
   if ($edit) {
     return;
   }
-  $account = _statuses_user_load($comment->uid);
+  $account = user_load($comment->uid);
   $points_query = db_select('userpoints_txn')
     ->condition('uid',  $comment->uid)
     ->condition('time_stamp',  (REQUEST_TIME - 86400),  '>')
@@ -215,7 +215,7 @@ function fbss_userpoints_fbss_comments_after_save($comment, $edit) {
  */
 function fbss_userpoints_fbss_comments_delete($cid) {
   $comment = fbss_comments_load($cid);
-  $account = _statuses_user_load($comment->uid);
+  $account = user_load($comment->uid);
   $result = db_select('userpoints_txn')
     ->fields('userpoints_txn',  array('points'))
     ->condition('operation',  'fbss_comments add')

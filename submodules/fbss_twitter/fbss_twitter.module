@@ -74,7 +74,7 @@ function fbss_twitter_statuses_box_submit(&$form, &$form_state) {
  * No need to check permissions since the form is already restricted.
  */
 function fbss_twitter_form_twitter_account_list_form_alter(&$form, &$form_state) {
-  $account = _statuses_user_load(arg(1));
+  $account = user_load(arg(1));
   if (!user_access('update and view own stream', $account)) {
     return;
   }
