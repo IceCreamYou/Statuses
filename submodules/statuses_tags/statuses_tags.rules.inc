@@ -96,5 +96,5 @@ function statuses_tags_types_list() {
  * Determines whether a status has a specific tag of a given type.
  */
 function statuses_tags_has_specific_tag_condition($status, $type, $tag) {
-  return (bool) statuses_tags_status_has_tag_by_name($status->sid, $type, $tag);
+  return (bool) statuses_tags_status_has_tag_by_name($status->sid, $tag, $type);
 }
