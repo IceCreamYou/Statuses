@@ -10,6 +10,7 @@
  */
 function fbss_flag_views_default_views() {
   $views = array();
+  $flag = flag_get_flag('follow');
 
   $view = new view;
   $view->name = 'statuses_followed';
@@ -19,7 +20,7 @@ function fbss_flag_views_default_views() {
   $view->base_table = 'statuses';
   $view->is_cacheable = FALSE;
   $view->api_version = 2;
-  $view->disabled = ($flag = flag_get_flag('follow') ? !$flag->status : TRUE); // Line modified from default
+  $view->disabled = (isset($flag->status) ? !$flag->status : TRUE); // Line modified from default
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
     'sid' => array(
@@ -282,7 +283,7 @@ function fbss_flag_views_default_views() {
       'default_argument' => '',
       'validate_type' => 'user',
       'validate_fail' => 'not found',
-      'statuses_flag_type' => ($flag = flag_get_flag('follow') ? $flag->fid : 0), // Line modified from default
+      'statuses_flag_type' => (isset($flag->fid) ? $flag->fid : 0), // Line modified from default
       'id' => 'user-flag-plus-arg',
       'table' => 'statuses',
       'field' => 'user-flag-plus-arg',
@@ -356,6 +357,7 @@ function fbss_flag_views_default_views() {
     'name' => 'navigation',
   ));
   $views[$view->name] = $view;
+  unset($flag);
 
   return $views;
 }
