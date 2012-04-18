@@ -386,12 +386,14 @@ function theme_fbss_comments_items($variables) {
  *   "comment" link will not be used and the comment form will not be initially
  *   hidden.
  * @param $delay_load_comments
- *   If TRUE and there are no comments on the relevant status, a "show all
- *   comments" link will be displayed instead of the full list of comments. When
- *   clicked, the full list of comments will be shown for users with JavaScript
- *   enabled. Users with JavaScript disabled will be redirected to the status
- *   thread page. If FALSE the "comment" link (with the comment form hidden)
- *   will be used instead of just showing the comment form.
+ *   If TRUE and there are too many comments on the relevant status, a "show
+ *   all comments" link will be displayed instead of the full list of comments.
+ *   When clicked, the full list of comments will be shown for users with
+ *   JavaScript enabled. Users with JavaScript disabled will be redirected to
+ *   the status thread page. If FALSE the "comment" link (with the comment form
+ *   hidden) will be used instead of just showing the comment form. The number
+ *   of comments required before this condition will take effect is controlled
+ *   by the fbss_comments_hide_small setting.
  * @return
  *   The themed HTML for the status form, or if the user does not have
  *   permission to post a comment, then the list of comments.
