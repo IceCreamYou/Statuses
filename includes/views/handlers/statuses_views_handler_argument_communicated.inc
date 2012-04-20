@@ -9,7 +9,7 @@
  * Shows only users who have sent status messages to or received status messages from the argument user.
  */
 class statuses_views_handler_argument_communicated extends views_handler_argument {
-  function query() {
+  function query($group_by = FALSE) {
     $this->ensure_my_table();
     $alias = $this->query->ensure_table('users');
     $recipient_sub_query = db_select('statuses')

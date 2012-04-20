@@ -9,7 +9,7 @@
  * Argument handler to select statuses relevant to a user and that user's friends.
  */
 class statuses_views_handler_argument_rels_and_me extends views_handler_argument {
-  function query() {
+  function query($group_by = FALSE) {
     $this->ensure_my_table();
     $alias = $this->query->ensure_table('users');
     $argument = $this->argument;
