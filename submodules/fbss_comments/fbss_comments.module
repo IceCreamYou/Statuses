@@ -69,7 +69,7 @@ function fbss_comments_menu() {
     'type' => MENU_CALLBACK,
   );
   if (module_exists('devel_generate')) {
-    $items['admin/generate/fbss_comments'] = array(
+    $items['admin/config/development/generate/fbss_comments'] = array(
       'title' => 'Generate status comments',
       'description' => 'Generate a given number of status comments. Optionally delete current items.',
       'page callback' => 'drupal_get_form',
