@@ -206,7 +206,7 @@ function theme_fbss_comments_items_email($variables) {
   }
   $output = '<table style="background-color: #EEEEEE; border: 1px solid #CCCCCC; margin-left: 20px;"><tbody>';
   if ($count > 2) {
-    $output .= '<tr><td>'. l(t('View all !count comments', array('!count' => $count)), 'statuses/'. $comments[0]->sid) .'</td></tr>';
+    $output .= '<tr><td>' . l(t('View all !count comments', array('!count' => $count)), 'statuses/' . $comments[0]->sid) . '</td></tr>';
   }
   $rendered = 0;
   foreach ($comments as $key => $comment) {
@@ -214,17 +214,17 @@ function theme_fbss_comments_items_email($variables) {
         continue;
     }
     $author = user_load($comment->uid);
-    $output .= '<tr><td style="'. ($key == 0 ? '' : 'border-top: 1px solid #CCCCCC; ') .'padding: 10px;">';
+    $output .= '<tr><td style="' . ($key == 0 ? '' : 'border-top: 1px solid #CCCCCC; ') . 'padding: 10px;">';
     if (variable_get('fbss_comments_user_pictures', 0)) {
-      $output .= '<table><tbody><tr><td>'. _fbss_comments_user_picture($author) .'</td><td>';
+      $output .= '<table><tbody><tr><td>' . _fbss_comments_user_picture($author) . '</td><td>';
     }
-    $output .= '<div>'. theme('username', $author) .' ';
+    $output .= '<div>' . theme('username', array('account' => $author)) . ' ';
     $comment_text = _statuses_run_filter($comment->comment);
     $comment_text = nl2br($comment_text);
     $output .= $comment_text;
     $output .= '</div><div>';
-    $output .= '<span>'. format_date($comment->created) .'</span>';
-    $output .= l(t('Reply'), $destination) .'</div>';
+    $output .= '<span>' . format_date($comment->created) . '</span>';
+    $output .= l(t('Reply'), $destination) . '</div>';
     if (variable_get('fbss_comments_user_pictures', 0)) {
       $output .= '</td></tr></tbody></table>';
     }
