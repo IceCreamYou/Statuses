@@ -57,12 +57,13 @@ function fbss_notifications_menu() {
 function fbss_notifications_permission() {
   $perms = array(
     'subscribe to a status stream' => array(
-      'title' => t('subscribe to a status stream'),
-      'description' => t('TODO Add a description for \'subscribe to a status stream\''),
+      'title' => t('Subscribe to a status stream'),
     ),
   );
   if (module_exists('fbss_comments')) {
-    $perms[] = 'subscribe to comments on a status';
+    $perms['subscribe to comments on a status'] = array(
+      'title' => t('Subscribe to comments on a status'),
+    );
   }
   return $perms;
 }
