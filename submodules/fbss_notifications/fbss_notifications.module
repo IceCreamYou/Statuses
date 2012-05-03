@@ -73,13 +73,13 @@ function fbss_notifications_permission() {
  */
 function fbss_notifications_statuses_delete($status) {
   db_query("
-    DELETE {notifications}, {notifications_fields}
-    FROM {notifications} n
-    INNER JOIN {notifications_fields} f
-      ON n.sid = f.sid
+    DELETE ns, nf
+    FROM {notifications} ns
+    INNER JOIN {notifications_fields} nf
+      ON ns.sid = nf.sid
     WHERE
-      (n.event_type = 'status' AND f.intval = %d) OR
-      (n.event_type = 'stream' AND f.intval = %d)
+      (ns.event_type = 'status' AND nf.intval = %d) OR
+      (ns.event_type = 'stream' AND nf.intval = %d)
   ", $status->sid, $status->recipient);
 }
 
