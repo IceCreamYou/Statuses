@@ -9,6 +9,7 @@ files[] = fbss_comments.generate.inc
 files[] = fbss_comments.install
 files[] = fbss_comments.module
 files[] = fbss_comments.pages.inc
+files[] = fbss_comments.tokens.inc
 files[] = fbss_comments.views.inc
 files[] = fbss_comments_views_handler_field_cc.inc
 files[] = fbss_comments_views_handler_field_cc2.inc

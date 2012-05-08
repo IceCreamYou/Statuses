@@ -8,6 +8,7 @@ core = 7.x
 files[] = statuses.author-pane.inc
 files[] = statuses.install
 files[] = statuses.module
+files[] = statuses.tokens.inc
 files[] = views-view-row-rss.tpl.php
 files[] = includes/statuses.preprocess.inc
 files[] = includes/ctools/content_types/statuses_stream.inc
