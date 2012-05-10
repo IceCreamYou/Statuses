@@ -75,7 +75,7 @@ abstract class statuses_context {
    * representing the recipient.
    */
   function recipient_name($recipient) {
-    return isset($recipient->title) ? $recipient->title : (isset($recipient->name) ? $recipient->name : '');
+    return isset($recipient->title) ? $recipient->title : (isset($recipient->name) ? format_username($recipient) : '');
   }
 
   /**

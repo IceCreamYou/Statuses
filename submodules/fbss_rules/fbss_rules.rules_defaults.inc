@@ -29,7 +29,7 @@ function statuses_rules_defaults() {
             '#settings' => array(
               'severity' => '6',
               'type' => 'rules',
-              'message' => '<?php echo check_plain($account->name); ?> submitted the status <?php echo $new_status; ?>.',
+              'message' => '<?php echo check_plain(format_username($account)); ?> submitted the status <?php echo $new_status; ?>.',
               'link' => '/user/<?php echo $account->uid; ?>',
               '#eval input' => array(
                 'rules_input_evaluator_php' => array(

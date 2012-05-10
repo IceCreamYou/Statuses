@@ -253,7 +253,7 @@ function fbss_services_get_rich_data($status, $include_entities = TRUE, $trim_us
     'in_reply_to_status_id' => NULL, // We don't support tracking this.
     'in_reply_to_user_id' => $status->sender == $status->recipient ? NULL : $status->recipient,
     'favorited' => fbss_services_get_flagged($status->sid, 'like'),
-    'in-reply_to_screen_name' => $status->sender == $status->recipient ? NULL : check_plain(user_load($status->recipient)->name),
+    'in-reply_to_screen_name' => $status->sender == $status->recipient ? NULL : check_plain(format_username(user_load($status->recipient))),
     'geo' => NULL, // We don't support tracking this.
     'place' => NULL, // We don't support tracking this.
     'coordinates' => NULL, // We don't support tracking this.
@@ -269,7 +269,7 @@ function fbss_services_get_rich_data($status, $include_entities = TRUE, $trim_us
     $account = user_load($status->sender);
     $object['user'] = array(
       'id' => $account->uid,
-      'name' => isset($account->realname) ? check_plain($account->realname) : check_plain($account->name),
+      'name' => format_username($account),
       'screen_name' => check_plain($account->name),
       'location' => NULL, // We don't support tracking this.
       'description' => fbss_services_find_attrs($account, array('about', 'description')),

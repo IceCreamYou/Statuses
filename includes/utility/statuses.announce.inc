@@ -70,9 +70,9 @@ function statuses_announce_generate_status($message, $from, $count, &$context) {
   $to = user_load($uid);
   statuses_save_status($to, 'user', $message, $from);
   $context['message'] = t('Sending message to %user (@current of @total)',
-    array('%user' => $to->name, '@current' => $context['sandbox']['progress'], '@total' => $count));
+    array('%user' => format_username($to), '@current' => $context['sandbox']['progress'], '@total' => $count));
   $context['sandbox']['progress']++;
-  $context['results'][] = check_plain($to->name);
+  $context['results'][] = check_plain(format_username($to));
   $context['finished'] = $context['sandbox']['progress'] / $count;
 }
 

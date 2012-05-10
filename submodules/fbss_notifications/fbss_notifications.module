@@ -36,7 +36,7 @@ function fbss_notifications_menu() {
       'access callback' => FALSE,
       'title' => $info['title'] . ' statuses',
       'page callback' => 'fbss_notifications_page_type',
-      'pàge arguments' => array(1),
+      'page arguments' => array(1),
       'weight' => 30,
       'file' => 'fbss_notifications.pages.inc',
     );
@@ -381,7 +381,7 @@ function fbss_notifications_notifications($op, &$arg0 = NULL, $arg1 = NULL, $arg
       $options = array();
       if (in_array('user', array_values(variable_get('fbss_notifications_link', array('user' => 'user', 'node' => 0, 'og' => 'og'))))) {
         $options[] = array(
-          'name' => t('All status updates by @name', array('@name' => $arg1->name)),
+          'name' => t('All status updates by @name', array('@name' => format_username($arg1))),
           'type' => 'user-stream',
           'fields' => array(
             'recipient' => $arg1->uid,

@@ -36,7 +36,7 @@ function template_preprocess_statuses_item(&$vars) {
     $vars['recipient_picture'] = theme('user_picture', $image_vars);
   }
   $vars['sender'] = user_load($status->sender);
-  $vars['sender_name'] = check_plain($vars['sender']->name);
+  $vars['sender_name'] = check_plain(format_username($vars['sender']));
   $vars['sender_link'] = theme('username', array('account' => $vars['sender']));
   $image_vars['account'] = $vars['sender'];
   $vars['sender_picture'] = theme('user_picture', $image_vars);
@@ -111,7 +111,7 @@ function _statuses_show($status, $options) {
     $title = '';
     $sender = user_load($status->sender);
     if ($status->type == 'user' && $status->sender == $status->recipient) {
-      $title = t('@sender: @message', array('@sender' => $sender->name, '@message' => $message));
+      $title = t('@sender: @message', array('@sender' => format_username($sender), '@message' => $message));
     }
     else {
       $context = statuses_determine_context($status->type);
@@ -119,7 +119,7 @@ function _statuses_show($status, $options) {
       $recipient_name = $context['handler']->recipient_name($recipient);
       // "\xC2\xBB" is the unicode escape sequence for the HTML entity &raquo; (a double right angle bracket)
       $title = t("@sender \xC2\xBB @recipient: @message",
-        array('@sender' => $sender->name, '@recipient' => $recipient_name, '@message' => $message)
+        array('@sender' => format_username($sender), '@recipient' => $recipient_name, '@message' => $message)
       );
     }
     if (drupal_strlen($title) > 80) {
