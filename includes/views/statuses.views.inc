@@ -300,6 +300,11 @@ function statuses_views_data() {
     'filter' => array(
       'handler' => 'views_handler_filter_date',
     ),
+    'argument' => array(
+      'handler' => 'statuses_views_handler_argument_created',
+      'field' => 'created',
+      'title' => t('Created time (YYYYMMDD)'),
+    ),
   );
 
   // Declares the status text column.

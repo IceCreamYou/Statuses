@@ -25,6 +25,7 @@ files[] = includes/views/statuses.views_default.inc
 files[] = includes/views/fbss_user_relationships.views_default.inc
 files[] = includes/views/handlers/statuses_plugin_argument_validate.inc
 files[] = includes/views/handlers/statuses_views_handler_argument_communicated.inc
+files[] = includes/views/handlers/statuses_views_handler_argument_created.inc
 files[] = includes/views/handlers/statuses_views_handler_argument_participant.inc
 files[] = includes/views/handlers/statuses_views_handler_argument_rels_and_me.inc
 files[] = includes/views/handlers/statuses_views_handler_field_classes.inc
