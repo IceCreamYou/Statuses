@@ -9,6 +9,12 @@
         });
         ctxt.find('.fbss-comments-textarea').css('resize', 'none');
       }
+      else {
+        // If Autogrow is missing, make the textarea smaller until we focus on it.
+        ctxt.find('.fbss-comments-textarea').attr('rows', 1).one('focus', function() {
+          $(this).attr('rows', 2);
+        });
+      }
       // Mark the comments wrapper with no-comments class if no comments exist for this entry
       ctxt.find('.statuses-comments').each(function(index, item){
         var $this = $(this);
