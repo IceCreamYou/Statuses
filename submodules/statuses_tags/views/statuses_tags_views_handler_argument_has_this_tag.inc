@@ -36,7 +36,7 @@ class statuses_tags_views_handler_argument_has_this_tag extends views_handler_ar
       '#default_value' => $options['statuses_tags_type'],
     );
   }
-  function query() {
+  function query($group_by = FALSE) {
     $argument = $this->argument;
     if (!empty($this->options['transform_dash'])) {
       $argument = strtr($argument, '-', ' ');

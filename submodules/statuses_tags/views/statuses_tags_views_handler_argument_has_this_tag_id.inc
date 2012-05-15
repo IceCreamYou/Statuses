@@ -36,7 +36,7 @@ class statuses_tags_views_handler_argument_has_this_tag_id extends views_handler
       '#default_value' => $options['statuses_tags_type'],
     );
   }
-  function query() {
+  function query($group_by = FALSE) {
     $this->ensure_my_table();
     if (!empty($this->options['break_phrase'])) {
       views_break_phrase($this->argument, $this);
