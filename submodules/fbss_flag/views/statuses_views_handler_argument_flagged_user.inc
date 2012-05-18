@@ -11,8 +11,9 @@
 class statuses_views_handler_argument_flagged_user extends views_handler_argument {
   function option_definition() {
     $options = parent::option_definition();
-    $content_type = 'statuses';
-    $flag = array_shift(flag_get_flags($content_type));
+    $content_type = 'user';
+    $flags = flag_get_flags($content_type);
+    $flag = array_shift($flags);
     $default = $flag ? $flag->fid : NULL;
     $options['statuses_flag_type'] = array(
       'default' => $default,
@@ -40,7 +41,7 @@ class statuses_views_handler_argument_flagged_user extends views_handler_argumen
       '#required' => TRUE,
     );
   }
-  function query() {
+  function query($group_by = FALSE) {
     $argument = $this->argument;
     $field = "$this->table.$this->real_field";
     $query = db_select('flag_content')

@@ -28,7 +28,7 @@ class fbss_comments_flag extends flag_flag {
     return $comment->cid;
   }
   function get_labels_token_types() {
-    return array('fbss_comment');
+    return array_merge(array('fbss_comment'), parent::get_labels_token_types());
   }
   function get_views_info() {
     return array(
@@ -53,11 +53,11 @@ class fbss_comments_flag extends flag_flag {
       'fbss_comment' => $this->fetch_content($content_id),
     );
   }
-  function replace_tokens($label, $contexts, $content_id) {
+  function replace_tokens($label, $contexts, $options, $content_id) {
     if ($content_id && ($comment = $this->fetch_content($content_id))) {
       $contexts['fbss_comment'] = $comment;
     }
-    return parent::replace_tokens($label, $contexts, $content_id);
+    return parent::replace_tokens($label, $contexts, $options, $content_id);
   }
   function get_flag_action($content_id) {
     $flag_action = parent::get_flag_action($content_id);

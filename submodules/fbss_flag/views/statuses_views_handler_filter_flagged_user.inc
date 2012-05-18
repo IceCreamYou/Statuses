@@ -11,8 +11,9 @@
 class statuses_views_handler_filter_flagged_user extends views_handler_filter {
   function option_definition() {
     $options = parent::option_definition();
-    $content_type = 'statuses';
-    $flag = array_shift(flag_get_flags($content_type));
+    $content_type = 'user';
+    $flags = flag_get_flags($content_type);
+    $flag = array_shift($flags);
     $default = $flag ? $flag->fid : NULL;
     $options['statuses_flag_type'] = array(
       'default' => $default,

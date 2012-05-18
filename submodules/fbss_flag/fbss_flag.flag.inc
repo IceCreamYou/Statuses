@@ -28,7 +28,7 @@ class fbss_flag extends flag_flag {
     return $status->sid;
   }
   function get_labels_token_types() {
-    return array('statuses');
+    return array_merge(array('statuses'), parent::get_labels_token_types());
   }
   function get_views_info() {
     return array(
@@ -52,11 +52,11 @@ class fbss_flag extends flag_flag {
       'statuses' => $this->fetch_content($content_id),
     );
   }
-  function replace_tokens($label, $contexts, $content_id) {
+  function replace_tokens($label, $contexts, $options, $content_id) {
     if ($content_id && ($status = $this->fetch_content($content_id))) {
       $contexts['statuses'] = $status;
     }
-    return parent::replace_tokens($label, $contexts, $content_id);
+    return parent::replace_tokens($label, $contexts, $options, $content_id);
   }
   function get_flag_action($content_id) {
     $flag_action = parent::get_flag_action($content_id);

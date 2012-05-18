@@ -28,7 +28,7 @@ class fbss_privacy_views_handler_argument extends views_handler_argument {
       '#description' => t('If you an option that shows private messages, only private status messages which the user is permitted to see will be shown.'),
     );
   }
-  function query() {
+  function query($group_by = FALSE) {
     global $user;
     $argument = $this->argument;
     $privacy = $this->options['privacy'];
