@@ -22,12 +22,10 @@
 function fbss_privacy_permission() {
   return array(
     'send private status messages' => array(
-      'title' => t('send private status messages'),
-      'description' => t('TODO Add a description for \'send private status messages\''),
+      'title' => t('Send private status messages'),
     ),
     'view all private status messages' => array(
-      'title' => t('view all private status messages'),
-      'description' => t('TODO Add a description for \'view all private status messages\''),
+      'title' => t('View all private status messages'),
     ),
   );
 }

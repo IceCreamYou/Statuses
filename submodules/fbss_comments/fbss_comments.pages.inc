@@ -102,14 +102,10 @@ function fbss_comments_edit($form, $form_state, $comment) {
  * The submit handler for the edit form for status comments.
  */
 function fbss_comments_edit_submit($form, &$form_state) {
-  // TODO Please review the conversion of this statement to the D7 database API syntax.
-  /* db_query("UPDATE {fbss_comments} SET comment = '%s' WHERE cid = %d", $form_state['values']['status-comment-edit'], $form['#cid']) */
   db_update('fbss_comments')
-  ->fields(array(
-    'comment' => $form_state['values']['status-comment-edit'],
-  ))
-  ->condition('cid', $form['#cid'])
-  ->execute();
+    ->fields(array('comment' => $form_state['values']['status-comment-edit']))
+    ->condition('cid', $form['#cid'])
+    ->execute();
   $c = fbss_comments_load($form['#cid']);
   module_invoke_all('fbss_comments_after_save', $c, TRUE);
   if (module_exists('trigger')) {
