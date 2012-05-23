@@ -14,9 +14,6 @@ function statuses_edit($form, &$form_state, $status) {
   $path = drupal_get_path('module', 'statuses') . '/resources';
   drupal_add_js($path . '/statuses.js');
   drupal_add_css($path . '/statuses.css');
-  if (module_exists('modalframe')) {
-    modalframe_child_js();
-  }
   $intro = _statuses_get_edit_intro($status, $context);
   $self = '';
   if ($status->type == 'user' && $status->sender == $status->recipient) {
@@ -77,19 +74,12 @@ function statuses_edit_submit($form, &$form_state) {
   statuses_edit_status(statuses_load($form_state['values']['sid']), $form_state['values']['fbss-status']);
   $form_state['redirect'] = empty($_GET['destination']) ? array('statuses/share') : array($_GET['destination']);
   drupal_set_message(t('Status has been successfully edited.'));
-  // Modal Frame integration.
-  if (module_exists('modalframe')) {
-    modalframe_close_dialog();
-  }
 }
 
 /**
  * The delete status confirmation form.
  */
 function _statuses_delete($form, &$form_state, $status) {
-  if (module_exists('modalframe')) {
-    modalframe_child_js();
-  }
   $form['infotext'] = array('#markup' => '<p>' . t('Are you sure you want to permanently delete the status %status?', array('%status' => $status->message)) . '</p>');
   $form['confirm'] = array(
     '#type' => 'submit',
@@ -121,9 +111,6 @@ function _statuses_delete_confirm($form, &$form_state) {
   else {
     $form_state['redirect'] = ($status->type == 'user' ? 'user' : '<front>');
   }
-  if (module_exists('modalframe')) {
-    modalframe_close_dialog();
-  }
 }
 
 /**
@@ -136,9 +123,6 @@ function _statuses_delete_cancel($form, &$form_state) {
   }
   else {
     $form_state['redirect'] = ($status->type == 'user' ? 'user' : '<front>');
-  }
-  if (module_exists('modalframe')) {
-    modalframe_close_dialog();
   }
 }
 

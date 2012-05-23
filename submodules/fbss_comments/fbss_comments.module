@@ -61,13 +61,6 @@ function fbss_comments_menu() {
     'theme callback' => 'ajax_base_page_theme', 
     'type' => MENU_CALLBACK,
   );
-  $items['fbss_comments/js/modalframe/%'] = array(
-    'title' => 'Refresh a list of comments',
-    'page callback' => 'fbss_comments_modalframe_refresh',
-    'page arguments' => array(3),
-    'access arguments' => array('view own status comments'),
-    'type' => MENU_CALLBACK,
-  );
   if (module_exists('devel_generate')) {
     $items['admin/config/development/generate/fbss_comments'] = array(
       'title' => 'Generate status comments',
@@ -296,9 +289,6 @@ function theme_fbss_comments_item($variables) {
     }
   }
   $output .= '</ul></div></div></div>';
-  if (module_exists('modalframe')) {
-    modalframe_parent_js();
-  }
   return $output;
 }
 
@@ -878,17 +868,6 @@ function fbss_comments_form_statuses_box_alter(&$form) {
    )), 'setting');
    */
   _fbss_comments_use_autogrow();
-}
-
-/**
- * The JS callback for the Modalframe submit callback.
- */
-function fbss_comments_modalframe_refresh($sid) {
-  drupal_add_http_header('Content-Type', 'text/html');
-  drupal_add_http_header('charset', 'utf-8');
-  // $destination eventually gets encoded via l().
-  $destination = empty($_GET['source']) ? '' : $_GET['source'];
-  echo theme('fbss_comments_items', array('comments' => fbss_comments_get_comments($sid, TRUE), 'delay_load' => TRUE, 'destination' => $destination));
 }
 
 /**

@@ -24,9 +24,6 @@ class fbss_comments_views_handler_field_edit extends views_handler_field {
     $comment->created = $values->{$this->aliases['created']};
     $comment->comment = $values->{$this->aliases['comment']};
     if (fbss_comments_can('edit', $comment)) {
-      if (module_exists('modalframe')) {
-        modalframe_parent_js();
-      }
       drupal_add_css(drupal_get_path('module', 'fbss_comments') . '/fbss_comments.css');
       return '<span class="statuses-edit">' . l(t('Edit'), 'statuses/comment/' . $comment->cid . '/edit', array('query' => array('destination' => $_GET['q']))) . '</span>';
     }

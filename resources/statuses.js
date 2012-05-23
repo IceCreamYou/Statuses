@@ -72,13 +72,6 @@ attach: function (context) {
   if (fbss_hidelen > 0) {
     ctxt.find('.statuses-content').each(fbss_truncate);
   }
-  // Modal Frame integration.
-  if (Drupal.modalFrame) {
-    ctxt.find('.statuses-edit a, .statuses-delete a').click(function(event) {
-      event.preventDefault();
-      Drupal.modalFrame.open({url: $(this).attr('href'), onSubmit: fbss_refresh});
-    });
-  }
   // React when a status is submitted.
   ctxt.find('#statuses-box').bind('ajax_complete', function(context) {
     if ($(context.target).html() != $(this).html()) {

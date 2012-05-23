@@ -75,24 +75,6 @@
           }
         }, 10);
       });
-      // Modal Frame integration.
-      if (Drupal.modalFrame) {
-        ctxt.find('.fbss-comments-edit-delete a').click(function(event){
-          event.preventDefault();
-          var sid = $(this).parents('form').attr('id').split('-').pop();
-          var th = $(this), p = th.parents('.fbss-comments').parent();
-          var handle = function(){
-            $.get('index.php?q=fbss_comments/js/modalframe/' + sid + '&source=' + window.location.href, function(data){
-              th.parents('.fbss-comments').replaceWith(data);
-              Drupal.attachBehaviors(p.find('.fbss-comments'));
-            });
-          };
-          Drupal.modalFrame.open({
-            url: $(this).attr('href'),
-            onSubmit: handle
-          });
-        });
-      }
     }
   }
 })(jQuery);

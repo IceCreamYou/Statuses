@@ -22,9 +22,6 @@ class statuses_views_handler_field_delete extends views_handler_field {
     $status->type = $values->{$this->aliases['type']};
     $status->sid = $values->{$this->field_alias};
     if (statuses_user_access('delete', $status)) {
-      if (module_exists('modalframe')) {
-        modalframe_parent_js();
-      }
       drupal_add_css(drupal_get_path('module', 'statuses') . '/resources/statuses.css');
       $q = $_GET['q'];
       if ($q == 'statuses/js') {
