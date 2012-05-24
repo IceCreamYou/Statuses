@@ -345,7 +345,7 @@ function statuses_tags_popular($type = 'term', $count = 5, $time = 'all', $optio
       'week' => 604800,
       'month' => 2592000,
       'year' => 31449600,
-      'all' => 0,
+      'all' => $now,
     );
     $time = $now - $times[$time];
   }
