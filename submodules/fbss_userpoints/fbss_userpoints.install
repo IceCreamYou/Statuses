@@ -6,6 +6,15 @@
  */
 
 /**
+ * Implements hook_update_N().
+ */
+function fbss_userpoints_update_7100(&$sandbox) {
+  db_update('userpoints_txn')
+    ->expression('operation', "REPLACE(operation, 'facebook_status', 'statuses')")
+    ->execute();
+}
+
+/**
  * Implements hook_uninstall().
  */
 function fbss_userpoints_uninstall() {

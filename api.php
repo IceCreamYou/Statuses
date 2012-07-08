@@ -97,7 +97,8 @@ function hook_statuses_delete($status, $meta = array()) {
  *     conditions should be used to determine whether the stream context
  *     applies on this page if the "visibility" flag is set appropriately.
  *     Overrides the is_applicable() function of the context handler.
- *   - weight (optional): The default precedence of the context type.
+ *   - weight (optional): The default precedence of the context type. An
+ *     integer, where lower values float to the top and higher values sink.
  *   - file (optional): A file to load before loading the context handler.
  * @see statuses_all_contexts()
  */
