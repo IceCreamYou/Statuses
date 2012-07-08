@@ -35,3 +35,10 @@ function fbss_domain_schema() {
   );
   return $schema;
 }
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function fbss_domain_uninstall() {
+  drupal_uninstall_schema('fbss_domain');
+}

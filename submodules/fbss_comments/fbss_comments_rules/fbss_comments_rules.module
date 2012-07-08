@@ -6,7 +6,11 @@
  */
 
 /*
- * Implements hook_fbss_comments_after_save().
+ * Implementation of hook_fbss_comments_after_save().
+ */
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
  */
 function fbss_comments_rules_fbss_comments_after_save($comment, $edit) {
   if ($edit) {
@@ -18,7 +22,11 @@ function fbss_comments_rules_fbss_comments_after_save($comment, $edit) {
 }
 
 /*
- * Implements hook_fbss_comments_delete().
+ * Implementation of hook_fbss_comments_delete().
+ */
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
  */
 function fbss_comments_rules_fbss_comments_delete($cid) {
   $comment = fbss_comments_load($cid);

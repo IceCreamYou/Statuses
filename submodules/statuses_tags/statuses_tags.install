@@ -2,7 +2,8 @@
 
 /**
  * @file
- *   (Un)installs the Statuses Tags module.
+ *   Converts @usernames to themed usernames and #hashtags to themed taxonomy
+ *   terms on Statuses.
  */
 
 /**
@@ -56,8 +57,8 @@ function statuses_tags_schema() {
 function statuses_tags_install() {
   if (module_exists('taxonomy')) {
     // Check to see if the vocabulary already existed (i.e. from a previous installation).
-    $already_exists = db_query("SELECT vid, name FROM {taxonomy_vocabulary} WHERE module = 'statuses_tags'")->fetchObject();
-    if (!empty($already_exists) && !empty($already_exists->vid)) {
+    $already_exists = db_query("SELECT vid, name FROM {taxonomy_vocabulary} WHERE module = :module", array(':module' => 'statuses_tags'))->fetchObject();
+    if ($already_exists !== FALSE) {
       variable_set('statuses_tags_vid', $already_exists->vid);
       drupal_set_message(st('The vocabulary "@name" has been configured for use with the Statuses Tags module.', array('@name' => $already_exists->name)));
       return;
@@ -73,7 +74,7 @@ function statuses_tags_install() {
     );
     taxonomy_vocabulary_save($vocabulary);
     $vid = isset($vocabulary->vid) ? $vocabulary->vid :
-      db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name = 'hashtags' AND module = 'statuses_tags'")->fetchField();
+      db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name = :name AND module = :module", array(':name' => 'hashtags', ':module' => 'statuses_tags'))->fetchField();
     variable_set('statuses_tags_vid', $vid);
     drupal_set_message(st('The vocabulary "Hashtags" has been created and configured for use with the Statuses Tags module.'));
   }
@@ -111,39 +112,4 @@ function statuses_tags_uninstall() {
   // table, it's a PITA for site admin to change its value, so it stays in case
   // FBSST is ever installed again.
   //variable_del('statuses_tags_alt_pattern');
-}
-
-/**
- * Implements hook_update_N().
- */
-function statuses_tags_update_7100(&$sandbox) {
-  if (db_table_exists('facebook_status_tags')) {
-    // Rename the database table.
-    db_rename_table('facebook_status_tags', 'statuses_tags');
-
-    // Update the vocabulary.
-    if (variable_get('facebook_status_tags_vid', -1) != -1) {
-      db_update('taxonomy_vocabulary')
-        ->fields(array(
-          'machine_name' => 'hashtags',
-          'description' => t('Contains #hashtags used in Statuses.'),
-          'module' => 'statuses_tags',
-        ))
-        ->condition('module', 'facebook_status_tags')
-        ->condition('vid', variable_get('facebook_status_tags_vid', -1))
-        ->execute();
-    }
-
-    // Convert old settings.
-    variable_set('statuses_tags_url', variable_get('facebook_status_tags_url', 'statuses/term'));
-    variable_set('statuses_tags_vid', variable_get('facebook_status_tags_vid', -1));
-    variable_set('statuses_tags_time', variable_get('facebook_status_tags_time', 'all'));
-    variable_set('statuses_tags_count', variable_get('facebook_status_tags_count', 5));
-    variable_del('facebook_status_tags_url');
-    variable_del('facebook_status_tags_vid');
-    variable_del('facebook_status_tags_time');
-    variable_del('facebook_status_tags_count');
-
-    return t('The Statuses Tags module for Drupal 7 was upgraded from Facebook-style Statuses Tags module for Drupal 6.');
-  }
 }
