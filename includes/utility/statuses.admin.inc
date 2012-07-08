@@ -237,19 +237,27 @@ function statuses_admin_contexts($form, &$form_state) {
       '#type' => 'hidden',
       '#value' => $type,
     );
+    $form['components'][$type]['selectors'] = array(
+      '#type' => 'value',
+      '#value' => isset($values['selectors']) ? $values['selectors'] : '',
+    );
+    $form['components'][$type]['pages'] = array(
+      '#type' => 'value',
+      '#value' => isset($values['pages']) ? $values['pages'] : '',
+    );
     $form['components'][$type]['already_saved'] = array(
       '#type' => 'hidden',
       '#value' => isset($values['in_db']) ? $values['in_db'] : FALSE,
     );
   }
   // The user context has 2 views.
-  $self = $options[isset($data['user']['view']) ? $data['user']['view'] : ''];
+  $self = isset($data['user']['view']) ? $data['user']['view'] : '';
   $other = variable_get('statuses_user_other_view', 'statuses_stream');
   if ($self != $other) {
     $form['components']['user']['view'] = array(
       '#markup' => t('%self and %other - view configuration to change', array(
-        '%self' => $self,
-        '%other' => $other,
+        '%self' => $options[$self],
+        '%other' => $options[$other],
       )),
     );
   }
@@ -284,6 +292,8 @@ function statuses_admin_contexts_submit($form, &$form_state) {
       'type' => $item['type'],
       'weight' => intval($item['weight']),
       'view' => $item['view'],
+      'selectors' => $item['selectors'],
+      'pages' => $item['pages']
     );
     if ($item['already_saved']) {
       drupal_write_record('statuses_contexts', $record, 'type');
