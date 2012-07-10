@@ -57,7 +57,9 @@ function fbss_privacy_form_statuses_box_alter(&$form, &$form_state) {
  * Implements hook_statuses_form_ahah_alter().
  */
 function fbss_privacy_statuses_form_ahah_alter(&$new_form, $old_form) {
-  $new_form['private'] = $old_form['private'];
+  if (isset($old_form['private'])) {
+    $new_form['private'] = $old_form['private'];
+  }
 }
 
 /**
