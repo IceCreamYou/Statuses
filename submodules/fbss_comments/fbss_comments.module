@@ -693,8 +693,6 @@ function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_
   $path = drupal_get_path('module', 'fbss_comments');
   drupal_add_css($path . '/fbss_comments.css');
   drupal_add_js($path . '/fbss_comments.js');
-  // Defer execution so that it runs after ajax_view.js
-  //drupal_add_js($path . '/fbss_comments_views_ahah.js', array('defer' => TRUE));
   if (variable_get('fbss_comments_enter', 0)) {
     drupal_add_js($path . '/fbss_comments_enter.js');
   }
@@ -826,8 +824,6 @@ function fbss_comments_form_statuses_box_alter(&$form) {
   $path = drupal_get_path('module', 'fbss_comments');
   drupal_add_css($path . '/fbss_comments.css');
   drupal_add_js($path . '/fbss_comments.js');
-  // Defer execution so that it runs after ajax_view.js
-  drupal_add_js($path . '/fbss_comments_views_ahah.js', array('defer' => TRUE));
   if (variable_get('fbss_comments_enter', 0)) {
     drupal_add_js($path . '/fbss_comments_enter.js');
   }
