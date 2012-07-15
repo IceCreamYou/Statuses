@@ -825,16 +825,6 @@ function statuses_delete_status($status, $meta = array()) {
   if (!is_object($status)) {
     $status = statuses_load($status);
   }
-  // Trigger integration.
-  // Don't call if there is an attachment (from the FBSMP module) because there is a separate trigger for that.
-  if (module_exists('trigger') && empty($options['has attachment'])) {
-    module_invoke_all('statuses', 'fbss_deleted', $status);
-    $type = $status->type;
-    if ($type == 'user') {
-      $type .= ($status->sender == $status->recipient ? '_self' : '_other');
-    }
-    module_invoke_all('statuses', 'fbss_deleted_' . $type, $status);
-  }
   module_invoke_all('statuses_delete', $status, $meta);
   db_delete('statuses')
     ->condition('sid', $status->sid)
@@ -917,17 +907,6 @@ function statuses_save_status($recipient, $type, $message, $sender = NULL, $opti
     }
     // Invokes hook_statuses_save($status, $context, $edit, $options).
     module_invoke_all('statuses_save', $object, $context, $edit, $options);
-    // Trigger integration.
-    // Don't call if the status is blank because usually nothing interesting is happening.
-    // Also don't call if there is an attachment (from the FBSMP module) because there is a separate trigger for that.
-    if (module_exists('trigger') && !empty($message) && empty($options['has attachment'])) {
-      $op = 'fbss_submitted_' . $type;
-      if ($type == 'user') {
-        $op .= ($recipient_id == $sender->uid ? '_self' : '_other');
-      }
-      module_invoke_all('statuses', $op, $object, $context);
-      module_invoke_all('statuses', 'fbss_submitted', $object, $context);
-    }
   }
   elseif ($message == $status->message) {
     $object->sid = $status->sid;
@@ -993,17 +972,6 @@ function statuses_edit_status($status, $new_message, $options = array()) {
     $status->message = $new_message;
     // Invokes hook_statuses_save($status, $context, $edit, $options).
     module_invoke_all('statuses_save', $status, $context, TRUE, $options);
-  }
-  // Trigger integration.
-  // Don't call if the status is blank because usually nothing interesting is happening.
-  // Also don't call if there is an attachment (from the FBSMP module) because there is a separate trigger for that.
-  if (module_exists('trigger') && !empty($new_message) && empty($options['has attachment'])) {
-    $op = 'fbss_edited_' . $status->type;
-    if ($status->type == 'user') {
-      $op .= ($status->recipient == $status->sender ? '_self' : '_other');
-    }
-    module_invoke_all('statuses', $op, $status, $context);
-    module_invoke_all('statuses', 'fbss_edited', $status, $context);
   }
   return $status;
 }
@@ -1196,91 +1164,6 @@ function statuses_statuses_context_info() {
       'file' => $path,
     ),
   );
-}
-
-//======================
-// TRIGGER INTEGRATION.
-//======================
-
-/**
- * Implements hook_trigger_info().
- */
-function statuses_trigger_info() {
-  $info = array(
-    'statuses' => array(
-      'statuses_fbss_deleted' => array(
-        'label' => t('A status has been deleted'),
-      ),
-      'statuses_fbss_deleted_user_self' => array(
-        'label' => t('A user has deleted their status'),
-      ),
-      'statuses_fbss_deleted_user_other' => array(
-        'label' => t('A user has deleted a status message to another user'),
-      ),
-      'statuses_fbss_edited' => array(
-        'label' => t('A status has been edited'),
-      ),
-      'statuses_fbss_edited_user_self' => array(
-        'label' => t('A user has edited their own status'),
-      ),
-      'statuses_fbss_edited_user_other' => array(
-        'label' => t('A user has edited a status message to another user'),
-      ),
-      'statuses_fbss_submitted' => array(
-        'label' => t('A status has been submitted'),
-      ),
-      'statuses_fbss_submitted_user_self' => array(
-        'label' => t('A user has updated their own status'),
-      ),
-      'statuses_fbss_submitted_user_other' => array(
-        'label' => t('A user has posted a status message to another user'),
-      ),
-    ),
-  );
-  foreach (statuses_all_contexts() as $type => $details) {
-    if ($type != 'user') {
-      $info['statuses']['fbss_deleted_' . $type] = array(
-        'runs when' => t('A user has deleted a status message to a stream of type %type', array('%type' => $type)),
-      );
-      $info['statuses']['fbss_edited_' . $type] = array(
-        'runs when' => t('A user has edited a status message to a stream of type %type', array('%type' => $type)),
-      );
-      $info['statuses']['fbss_submitted_' . $type] = array(
-        'runs when' => t('A user has posted a new status to a stream of type %type', array('%type' => $type)),
-      );
-    }
-  }
-  return $info;
-}
-
-/**
- * Implements hook_statuses().
- * or
- * Implements hook_trigger_name().
- */
-function statuses_statuses($op, $status, $context = NULL) {
-  if (strpos($op, 'fbss_deleted') !== 0 && strpos($op, 'fbss_submitted') !== 0 && strpos($op, 'fbss_edited') !== 0) {
-    return;
-  }
-  $aids = trigger_get_assigned_actions('statuses');
-  $context = statuses_determine_context($status->type);
-  $recipient = $context['handler']->load_recipient($status->recipient);
-  $sender = user_load($status->sender);
-
-  // Reduce the amount of recalculation we will need to do later.
-  $sender->statuses = $status;
-  $sender->context = $context;
-
-  $activity_context = array(
-    'hook' => 'statuses',
-    'op' => $op,
-    'sender' => $sender,
-    'recipient' => $recipient,
-    'type' => $status->type,
-    'statuses' => $status,
-    'context' => $context,
-  );
-  actions_do(array_keys($aids), $sender, $activity_context);
 }
 
 //====================

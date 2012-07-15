@@ -3,19 +3,6 @@
 /**
  * @file
  *   Allows comments on Statuses.
- * @todo
- *   - Integrations:
- *       + activity (trigger/actions, token)
- *       + flag
- *       + rules
- *       + userpoints
- *       + devel generate
- *       + popups api
- *       + sms framework
- *       + views bulk operations
- *       + notifications
- *   - Turn the comment theme functions into templates.
- *   - Make Views integration good enough that we can use it for comment lists.
  */
 
 //===============
@@ -483,9 +470,6 @@ function fbss_comments_save_comment($sid, $comment, $uid = NULL) {
   );
   drupal_write_record('fbss_comments', $c);
   module_invoke_all('fbss_comments_after_save', $c, FALSE);
-  if (module_exists('trigger')) {
-    module_invoke_all('fbss_comments', 'fbss_comments_saved', $c);
-  }
   return $c;
 }
 
@@ -497,9 +481,6 @@ function fbss_comments_save_comment($sid, $comment, $uid = NULL) {
  */
 function fbss_comments_delete_comment($cid) {
   module_invoke_all('fbss_comments_delete', $cid);
-  if (module_exists('trigger')) {
-    module_invoke_all('fbss_comments', 'fbss_comments_deleted', fbss_comments_load($cid));
-  }
   db_delete('fbss_comments')
     ->condition('cid', $cid)
     ->execute();
@@ -826,17 +807,6 @@ function fbss_comments_statuses_delete($status) {
   db_delete('fbss_comments')
     ->condition('sid', $status->sid)
     ->execute();
-
-  if (module_exists('activity')) {
-    $result = db_query("SELECT aid FROM {activity} WHERE type = :type AND eid IN (SELECT sid FROM {fbss_comments} WHERE cid = :cid)", array(':type' => 'fbss_comments', ':cid' => $status->sid));
-    $records = array();
-    while ($record = db_fetch_object($result)) {
-      $records[] = $record->aid;
-    }
-    if (!empty($records)) {
-      activity_delete($records);
-    }
-  }
 }
 
 /**
@@ -944,140 +914,4 @@ function fbss_comments_views_default_views_alter(&$views) {
       $view->display['default']->display_options['fields']['nothing']['alter']['text'] = $t;
     }
   }
-}
-
-//======================
-// TRIGGER INTEGRATION.
-//======================
-
-/**
- * Implements hook_trigger_info().
- */
-function fbss_comments_trigger_info() {
-  return array(
-    'fbss_comments' => array(
-      'fbss_comments_fbss_comments_deleted' => array(
-        'label' => t('A status comment has been deleted'),
-      ),
-      'fbss_comments_fbss_comments_edited' => array(
-        'label' => t('A user has edited a status comment'),
-      ),
-      'fbss_comments_fbss_comments_saved' => array(
-        'label' => t('A user has saved a new status comment'),
-      ),
-    ),
-  );
-}
-
-/**
- * Implements hook_statuses().
- * or
- * Implements hook_trigger_name().
- */
-function fbss_comments_fbss_comments($op, $comment, $account = NULL) {
-  if (strpos($op, 'fbss_comments_') !== 0) {
-    return;
-  }
-  $aids = trigger_get_assigned_actions('fbss_comments', $op);
-  $account = empty($account) ? $GLOBALS['user'] : $account;
-  $context = array(
-    'hook' => 'fbss_comments',
-    'op' => $op,
-    'fbss_comment' => $comment,
-    'account' => $account,
-  );
-  actions_do(array_keys($aids), $account, $context);
-}
-
-//=======================
-// ACTIVITY INTEGRATION.
-//=======================
-
-/**
- * Implements hook_fbss_comments_delete().
- */
-function fbss_comments_fbss_comments_delete($cid) {
-  if (module_exists('activity')) {
-    $result = db_query("SELECT aid FROM {activity} WHERE type = :type AND op <> :op AND eid = :eid", array(':type' => 'fbss_comments', ':op' => 'fbss_comments_deleted', ':eid' => $cid));
-    $records = array();
-    while ($record = db_fetch_object($result)) {
-      $records[] = $record->aid;
-    }
-    if (!empty($records)) {
-      activity_delete($records);
-    }
-  }
-}
-
-/**
- * Implements hook_activity_info().
- */
-function fbss_comments_activity_info() {
-  $info = new stdClass();
-  $info->api = 2;
-  $info->name = 'fbss_comments';
-  $info->object_type = 'fbss_comment';
-  $info->eid_field = 'cid';
-  $info->objects = array('Comment author' => 'fbss_comment');
-  $info->hooks = array('fbss_comments' => array('fbss_comments_deleted', 'fbss_comments_edited', 'fbss_comments_saved'));
-  $info->realms = array('fbss_comments_author' => 'Comment author');
-  return $info;
-}
-
-/**
- * Implements hook_activity_grants().
- */
-function fbss_comments_activity_grants($activity) {
-  $realms = array();
-  if ($activity->type == 'fbss_comments') {
-    $realms['fbss_comments_author'] = array($activity->uid);
-  }
-  return $realms;
-}
-
-/**
- * Implements hook_activity_access_grants().
- */
-function fbss_comments_activity_access_grants($account) {
-  return array(
-    'statuses_sender' => array($account->uid),
-  );
-}
-
-/**
- * Implements hook_list_activity_actions().
- */
-function fbss_comments_list_activity_actions($hook, $op, $max_age) {
-  $actions = array();
-  if (!empty($max_age)) {
-    $min_time = REQUEST_TIME - $max_age;
-  }
-  else {
-    $min_time = 0;
-  }
-
-  $result = db_query("SELECT cid as id, created, uid as actor FROM {fbss_comments} WHERE created > :created", array(':created' => $min_time));
-  while ($row = db_fetch_array($result)) {
-    $actions[] = $row;
-  }
-
-  return $actions;
-}
-
-/**
- * Implements hook_load_activity_context().
- */
-function fbss_comments_load_activity_context($hook, $op, $id) {
-  $comment = fbss_comments_load($id);
-  $activity_context = array();
-
-  if (!empty($comment)) {
-    $activity_context = array(
-      'hook' => 'fbss_comments',
-      'op' => $op,
-      'comment' => $comment,
-    );
-  }
-
-  return $activity_context;
 }

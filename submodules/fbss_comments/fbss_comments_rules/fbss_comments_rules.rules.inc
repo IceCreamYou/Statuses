@@ -207,9 +207,6 @@ function fbss_comments_rules_edit_action($cid, $message) {
   ->execute();
   $c = fbss_comments_load($cid);
   module_invoke_all('fbss_comments_after_save', $c, TRUE);
-  if (module_exists('trigger')) {
-    module_invoke_all('fbss_comments', 'fbss_comments_edited', $c);
-  }
 }
 
 /**
