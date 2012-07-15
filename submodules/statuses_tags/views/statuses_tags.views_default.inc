@@ -333,7 +333,17 @@ function statuses_tags_views_default_views() {
       'breadcrumb' => '',
       'default_argument_type' => 'fixed',
       'default_argument' => '',
-      'validate_type' => 'taxonomy_term',
+      'specify_validation' => 1,
+      'validate' => array(
+        'type' => 'taxonomy_term',
+      ),
+      'validate_options' => array(
+        'vocabularies' => array(
+          'hashtags' => 'hashtags'
+        ),
+        'type' => 'name',
+        'transform' => 0,
+      ),
       'validate_fail' => 'not found',
       'glossary' => 0,
       'limit' => '0',
