@@ -186,6 +186,11 @@ function statuses_generate_status($time, $types, $tags, &$context) {
     'discard blank statuses' => FALSE,
   );
   statuses_save_status($recipient, $type, $text, user_load($uid), $options);
+  // Set the num variable in the context if its not available,
+  // to keep the count of the generated statuses.
+  if (!isset($context['results']['num'])) {
+    $context['results'] = array('num' => 0);
+  }
   $context['results']['num']++;
 }
 
