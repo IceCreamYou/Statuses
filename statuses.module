@@ -1074,10 +1074,8 @@ function _statuses_context_applies($context) {
   if ($context['visibility'] == -1) {
     return $context['handler']->is_applicable();
   }
+  // Backwards-compatibility (used to be for context module integration).
   elseif ($context['visibility'] == 3) {
-    if (module_exists('context')) {
-      return in_array($context['context'], array_keys(context_active_contexts()));
-    }
     return $context['handler']->is_applicable();
   }
   // Match path if necessary. This behavior adapted from block_block_list_alter().
