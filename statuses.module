@@ -1227,24 +1227,6 @@ function statuses_sms_incoming($op, $number, $message, $options = NULL) {
   }
 }
 
-//====================================
-// VIEWS BULK OPERATIONS INTEGRATION.
-//====================================
-
-/**
- * Implements hook_views_bulk_operations_object_info().
- */
-function statuses_views_bulk_operations_object_info() {
-  return array(
-    'statuses' => array(
-      'type' => 'statuses',
-      'base_table' => 'statuses',
-      'load' => 'statuses_load',
-      'title' => 'message',
-    ),
-  );
-}
-
 //=====================
 // CTOOLS INTEGRATION.
 //=====================
