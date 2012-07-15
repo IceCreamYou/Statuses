@@ -1226,16 +1226,3 @@ function statuses_sms_incoming($op, $number, $message, $options = NULL) {
     statuses_save_status($user, 'user', $message);
   }
 }
-
-//=====================
-// CTOOLS INTEGRATION.
-//=====================
-
-/**
- * Implements hook_ctools_plugin_directory().
- */
-function statuses_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'ctools') {
-    return 'includes/ctools/' . $plugin;
-  }
-}
