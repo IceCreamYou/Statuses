@@ -6,6 +6,23 @@
  */
 
 /**
+ * Implements hook_userpoints_info().
+ */
+function fbss_userpoints_userpoints_info() {
+  return array(
+    'statuses add own' => array(
+      'description' => t('User posted a new status update.'),
+    ),
+    'statuses add other' => array(
+      'description' => t('User wrote a message to another recipient.'),
+    ),
+    'fbss_comments add' => array(
+      'description' => t('User posted a new status comment.'),
+    ),
+  );
+}
+
+/**
  * Implements hook_userpoints().
  */
 function fbss_userpoints_userpoints($op, $params = array()) {
