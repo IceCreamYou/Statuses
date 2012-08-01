@@ -60,15 +60,6 @@ function statuses_schema() {
     ),
     'primary key' => array('sid'),
   );
-  $schema += _statuses_contexts_schema();
-  return $schema;
-}
-
-/**
- * Specifies the schema for the contexts table.
- */
-function _statuses_contexts_schema() {
-  $schema = array();
   $schema['statuses_contexts'] = array(
     'description' => 'Stores stream context configurations.',
     'fields' => array(
@@ -125,6 +116,98 @@ function _statuses_contexts_schema() {
     'primary key' => array('type'),
   );
   return $schema;
+}
+
+/**
+ * Implements hook_install().
+ *
+ * When upgrading from facebook_status a normal update hook won't register
+ * because we are installing the "statuses" module for the first time. To get
+ * around this, we force the update hook to run during installation.
+ */
+function statuses_install() {
+  $sandbox = array();
+  $result = _statuses_update_7100($sandbox);
+  if ($result) {
+    drupal_set_message($result);
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function _statuses_update_7100(&$sandbox) {
+  if (db_table_exists('facebook_status')) {
+    // Transfer data.
+    // This might take a long time, but it should be manageable.
+    // See https://drupal.org/node/1501978 for discussion of alternatives.
+    db_query("
+      INSERT INTO {statuses} (sid, sender, recipient, type, created, message)
+      SELECT f.sid, f.sender, f.recipient, f.type, f.created, f.message
+      FROM {facebook_status} f
+      ORDER BY f.sid ASC
+    ");
+    db_query("
+      INSERT INTO {statuses_contexts} (type, weight, view, selectors, visibility, pages, context)
+      SELECT f.type, f.weight, f.view, f.selectors, f.visibility, f.pages, f.context
+      FROM {facebook_status_contexts} f
+      ORDER BY f.weight ASC, f.type ASC
+    ");
+
+    // Delete old tables.
+    db_drop_table('facebook_status');
+    db_drop_table('facebook_status_contexts');
+
+    // Convert old settings.
+    variable_set('statuses_default_text_other', variable_get('facebook_status_default_text_other', ''));
+    variable_set('statuses_imagecache_preset', variable_get('facebook_status_imagecache_preset', ''));
+    variable_set('statuses_user_other_view', variable_get('facebook_status_user_other_view', 'statuses_stream'));
+    variable_set('statuses_default_text', variable_get('facebook_status_default_text', ''));
+    variable_set('statuses_hide_length', variable_get('facebook_status_hide_length', 0));
+    variable_set('statuses_block_view', variable_get('facebook_status_block_view', 1));
+    variable_set('statuses_reply_type', variable_get('facebook_status_reply_type', 'at'));
+    variable_set('statuses_share_view', variable_get('facebook_status_share_view', 'statuses_stream'));
+    variable_set('statuses_box_rows', variable_get('facebook_status_box_rows', 2));
+    variable_set('statuses_profile', variable_get('facebook_status_profile', 1));
+    variable_set('statuses_refresh', variable_get('facebook_status_refresh', 0));
+    variable_set('statuses_filter', variable_get('facebook_status_filter', 'none'));
+    variable_set('statuses_length', variable_get('facebook_status_length', 140));
+    variable_set('statuses_repost', variable_get('facebook_status_repost', 'Re: @name @message '));
+    variable_set('statuses_enter', variable_get('facebook_status_enter', 0));
+    variable_set('statuses_nl2br', variable_get('facebook_status_nl2br', 0));
+    variable_set('statuses_ahah', variable_get('facebook_status_ahah', 1));
+    variable_del('facebook_status_default_text_other');
+    variable_del('facebook_status_imagecache_preset');
+    variable_del('facebook_status_user_other_view');
+    variable_del('facebook_status_default_text');
+    variable_del('facebook_status_hide_length');
+    variable_del('facebook_status_block_view');
+    variable_del('facebook_status_reply_type');
+    variable_del('facebook_status_share_view');
+    variable_del('facebook_status_box_rows');
+    variable_del('facebook_status_profile');
+    variable_del('facebook_status_refresh');
+    variable_del('facebook_status_filter');
+    variable_del('facebook_status_length');
+    variable_del('facebook_status_repost');
+    variable_del('facebook_status_enter');
+    variable_del('facebook_status_nl2br');
+    variable_del('facebook_status_ahah');
+
+    // Convert block position. This also fixes Tags blocks.
+    db_update('block')
+      ->expression('module', "REPLACE(module, 'facebook_status', 'statuses')")
+      ->expression('delta', "REPLACE(delta, 'facebook_status', 'statuses')")
+      ->condition('module', 'facebook_status%', 'LIKE')
+      ->execute();
+    db_update('block_role')
+      ->expression('module', "REPLACE(module, 'facebook_status', 'statuses')")
+      ->expression('delta', "REPLACE(delta, 'facebook_status', 'statuses')")
+      ->condition('module', 'facebook_status%', 'LIKE')
+      ->execute();
+
+    return t('The Statuses module for Drupal 7 was upgraded from the Facebook-style Statuses module for Drupal 6.');
+  }
 }
 
 /**
