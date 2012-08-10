@@ -3,5 +3,7 @@ description = "Integrates Activity with Statuses. (No longer supported)"
 package = Statuses
 dependencies[] = statuses
 dependencies[] = activity
-core = 6.x
+hidden = TRUE
+core = 7.x
+
 files[] = fbss_activity.module

@@ -4,6 +4,7 @@ package = Statuses
 dependencies[] = statuses
 dependencies[] = notifications
 dependencies[] = messaging
+hidden = TRUE
 
 files[] = fbss_notifications.install
 files[] = fbss_notifications.module
