@@ -109,6 +109,13 @@ function statuses_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'enabled' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+        'size' => 'tiny',
+        'description' => 'Whether this context is active or not.',
+      ),
     ),
     'indexes' => array(
       'weight' => array('weight'),
@@ -208,6 +215,23 @@ function _statuses_update_7100(&$sandbox) {
 
     return t('The Statuses module for Drupal 7 was upgraded from the Facebook-style Statuses module for Drupal 6.');
   }
+}
+
+/**
+ * Add a column to mark a context as enabled or disabled.
+ */
+function statuses_update_7101() {
+  // Note to self: D7 implementations of hook_update_N() use the docblock as
+  // the description of an update so it should not be the usual
+  // "Implements hook_update_N()."
+  $new_field = array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 1,
+    'size' => 'tiny',
+    'description' => 'Whether this context is active or not.',
+  );
+  db_add_field('statuses_contexts', 'enabled', $new_field);
 }
 
 /**

@@ -716,9 +716,10 @@ function statuses_context_load($type) {
  *     Overrides the is_applicable() function of the context handler.
  *   - weight (optional): The default precedence of the context type.
  *   - file (optional): A file to load before loading the context handler.
+ * @see statuses_all_contexts()
  */
 function statuses_determine_context($type = NULL) {
-  $contexts = statuses_all_contexts();
+  $contexts = statuses_all_contexts(!empty($type));
   if (empty($type)) {
     $context = array();
     // The user context is our base case, so we never end up with no context.
@@ -771,18 +772,25 @@ function statuses_determine_context($type = NULL) {
     'file' => '',
     'parent' => '',
     'dependencies' => array(),
+    'enabled' => TRUE,
   );
   return $context;
 }
 
 /**
  * Gets a list of all contexts.
+ *
+ * @param $include_disabled
+ *   If TRUE, includes disabled contexts; otherwise, excludes them. Contexts
+ *   with unmet dependencies are never included.
+ * @return
+ *   An array of context arrays.
  * @see statuses_determine_context()
  */
-function statuses_all_contexts() {
-  static $contexts;
+function statuses_all_contexts($include_disabled = TRUE) {
+  static $contexts, $contexts_including_disabled;
   if (isset($contexts)) {
-    return $contexts;
+    return $include_disabled ? $contexts_including_disabled : $contexts;
   }
   $result = db_query("SELECT * FROM {statuses_contexts}", array(), array('fetch' => PDO::FETCH_ASSOC));
   $contexts = module_invoke_all('statuses_context_info');
@@ -794,19 +802,32 @@ function statuses_all_contexts() {
     $contexts[$c['type']]['visibility'] = $c['visibility'];
     $contexts[$c['type']]['pages'] = $c['pages'];
     $contexts[$c['type']]['context'] = $c['context'];
+    $contexts[$c['type']]['enabled'] = $c['enabled'];
   }
   uasort($contexts, '_statuses_element_sort');
+  $contexts_including_disabled = array();
   foreach ($contexts as $type => $context) {
     if (isset($context['dependencies'])) {
       foreach ($context['dependencies'] as $dependency) {
         if (!module_exists($dependency)) {
           unset($contexts[$type]);
+          $context = NULL;
           break;
         }
       }
+      if (!isset($context)) {
+        continue;
+      }
     }
+    if (!isset($context['enabled'])) {
+      $contexts[$type]['enabled'] = TRUE;
+    }
+    else if (!$context['enabled']) {
+      unset($contexts[$type]);
+    }
+    $contexts_including_disabled[$type] = $context;
   }
-  return $contexts;
+  return $include_disabled ? $contexts_including_disabled : $contexts;
 }
 
 /**
@@ -1069,8 +1090,12 @@ function _statuses_user_load_by_name($name) {
  */
 function _statuses_context_applies($context) {
   $context += array(
+    'enabled' => TRUE,
     'visibility' => -1,
   );
+  if (!$context['enabled']) {
+    return FALSE;
+  }
   if ($context['visibility'] == -1) {
     return $context['handler']->is_applicable();
   }
@@ -1119,8 +1144,8 @@ function statuses_statuses_context_info() {
   return array(
     'user' => array(
       'title' => t('User profiles'),
-      'description' => t('If a profile is currently being viewed, then the stream belongs to the owner of that profile.') . ' ' .
-        t('Otherwise, the stream belongs to the current user.'),
+      'description' => t('The default stream for users to update their own status and send status messages to other users.') . ' ' .
+        t('Applies on all pages by default unless overridden by a higher-weight context or configured differently in the context advanced settings.'),
       'handler' => 'statuses_user_context',
       'view' => module_exists('activity_log') ? 'activity_log_stream' : (module_exists('user_relationship_views') ? 'fbss_ur_stream' : 'statuses_stream'),
       'weight' => 999,
@@ -1150,16 +1175,18 @@ function statuses_statuses_context_info() {
       'handler' => 'statuses_term_context',
       'dependencies' => array('taxonomy'),
       'view' => 'statuses_stream',
-      'weight' => 1000, // heavier than the user context, therefore disabled by default
+      'weight' => 100,
       'file' => $path,
+      'enabled' => FALSE,
     ),
     'domain' => array(
       'title' => module_exists('fbss_domain') ? t('Domains') : t('General - the site itself'),
       'description' => t('The stream belongs to the site itself. Allows using FBSS like a guestbook.'),
       'handler' => 'statuses_domain_context',
       'view' => 'statuses_stream',
-      'weight' => 1337, // heavier than the user context, therefore disabled by default
+      'weight' => 1000,
       'file' => $path,
+      'enabled' => FALSE,
     ),
   );
 }

@@ -211,6 +211,11 @@ function statuses_admin_contexts($form, &$form_state) {
     }
   }
   foreach ($data as $type => $values) {
+    $form['components'][$type]['enabled'] = array(
+      '#type' => 'checkbox',
+      '#default_value' => isset($values['enabled']) ? $values['enabled'] : TRUE,
+      '#disabled' => $type == 'user' ? TRUE : FALSE,
+    );
     $form['components'][$type]['title'] = array(
       '#prefix' => '<div title="' . (isset($values['description']) ? $values['description'] : '') . '">',
       '#markup' => $values['title'],
@@ -293,7 +298,8 @@ function statuses_admin_contexts_submit($form, &$form_state) {
       'weight' => intval($item['weight']),
       'view' => $item['view'],
       'selectors' => $item['selectors'],
-      'pages' => $item['pages']
+      'pages' => $item['pages'],
+      'enabled' => $item['enabled'],
     );
     if ($item['already_saved']) {
       drupal_write_record('statuses_contexts', $record, 'type');
@@ -310,10 +316,11 @@ function statuses_admin_contexts_submit($form, &$form_state) {
 function theme_statuses_admin_contexts($variables) {
   $form = $variables['form'];
   drupal_add_tabledrag('statuses-admin-contexts-table', 'order', 'sibling', 'weight-group');
-  $header = array(t('Title'), t('View'), t('Actions'), t('Weight'), '', '');
+  $header = array(t('Enabled'), t('Title'), t('View'), t('Actions'), t('Weight'), '', '');
   $rows = array();
   foreach (element_children($form['components']) as $key) {
     $element = &$form['components'][$key];
+    $element['enabled']['#attributes']['class']       = array('enabled-group');
     $element['title']['#attributes']['class']         = array('title-group');
     $element['view']['#attributes']['class']          = array('view-group');
     $element['link']['#attributes']['class']          = array('link-group');
@@ -321,6 +328,7 @@ function theme_statuses_admin_contexts($variables) {
     $element['type']['#attributes']['class']          = array('type');
     $element['already_saved']['#attributes']['class'] = array('already-saved');
     $row = array();
+    $row[] = drupal_render($element['enabled']);
     $row[] = drupal_render($element['title']);
     $row[] = drupal_render($element['view']);
     $row[] = drupal_render($element['link']);
@@ -332,7 +340,10 @@ function theme_statuses_admin_contexts($variables) {
       'class' => array('draggable'),
     );
   }
-  $output = '<p>' . t('The view assigned to the "User profiles" context does not affect the view shown on conversation pages.') . '</p>';
+  $output = '<p>' . t('Contexts are used to automatically determine the recipient of a status message.') . ' ' .
+    t('For example, if the "Nodes" context is active on a node page, then status updates on that page will be assigned to the current node.') . ' ' .
+    t('Contexts higher in the list below take precedence over ones lower in the list.') . '</p><p>' .
+    t('Note: the view assigned to the "User profiles" context does not affect the view shown on conversation pages.') . '</p>';
   $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'statuses-admin-contexts-table')));
   $output .= drupal_render_children($form);
   return $output;
@@ -349,6 +360,17 @@ function statuses_admin_context_settings($form, $form_state, $context) {
   if ($type == 'user') {
     $form['notice'] = array(
       '#markup' => '<p>' . t('The view assigned to the "User profiles" context does not affect the view shown on conversation pages.') . '</p>',
+    );
+  }
+  
+  if (!isset($context['enabled']) || $context['enabled']) {
+    $form['enabled'] = array(
+      '#markup' => '<p>' . t('This context is <strong>enabled</strong>.') . '</p>',
+    );
+  }
+  else {
+    $form['enabled'] = array(
+      '#markup' => '<p>' . t('This context is <strong>disabled</strong>.') . '</p>',
     );
   }
 

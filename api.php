@@ -99,6 +99,8 @@ function hook_statuses_delete($status, $meta = array()) {
  *     Overrides the is_applicable() function of the context handler.
  *   - weight (optional): The default precedence of the context type. An
  *     integer, where lower values float to the top and higher values sink.
+ *   - enabled (optional): Whether the context is enabled or disabled by
+ *     default (defaults to TRUE).
  *   - file (optional): A file to load before loading the context handler.
  * @see statuses_all_contexts()
  */
