@@ -30,7 +30,7 @@ abstract class statuses_context {
     if (empty($obj) && is_numeric(arg(1)) && function_exists($this->type() .'_load')) {
       $obj = call_user_func($this->type() .'_load', arg(1));
     }
-    return $this->is_applicable() ? $obj : new stdClass();
+    return $obj;
   }
 
   /**
@@ -220,7 +220,7 @@ class statuses_og_context extends statuses_node_context {
     if (empty($obj) && is_numeric(arg(1))) {
       $obj = node_load(arg(1));
     }
-    return $this->is_applicable() ? $obj : new stdClass();
+    return $obj;
   }
   function load_recipient($id) {
     return node_load($id);
@@ -274,7 +274,7 @@ class statuses_term_context extends statuses_context {
     return arg(0) == 'taxonomy' && arg(1) == 'term' && is_numeric(arg(2));
   }
   function find_recipient() {
-    return $this->is_applicable() ? taxonomy_term_load(arg(2)) : new stdClass();
+    return taxonomy_term_load(arg(2));
   }
   function load_recipient($id) {
     return taxonomy_term_load($id);
