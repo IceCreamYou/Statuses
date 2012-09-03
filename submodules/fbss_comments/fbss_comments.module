@@ -583,10 +583,19 @@ function _fbss_comments_can_view($comment, $account) {
  */
 function _fbss_comments_can_post($status, $account = NULL) {
   if (module_exists('og') && $status->type == 'og') {
-    $group_ids = og_get_group_ids('node', array($status->recipient));
-    if (!empty($group_ids)) {
-      return user_access('post status comment', $account) &&
-        og_is_member(current($group_ids), 'user', empty($account) ? $GLOBALS['user'] : $account);
+    // Only group members can add content of any kind.
+    if (function_exists('og_get_group_ids')) { // OG 7.x-1.x
+      $group_ids = og_get_group_ids('node', array($status->recipient));
+      if (!empty($group_ids)) {
+        return user_access('post status comment', $account) &&
+          og_is_member(current($group_ids), 'user', empty($account) ? $GLOBALS['user'] : $account);
+      }
+    }
+    else { // OG 7.x-2.x
+      if (og_is_group('node', $status->recipient)) {
+        return user_access('post status comment', $account) &&
+          og_is_member('node', $status->recipient, 'user', empty($account) ? $GLOBALS['user'] : $account);
+      }
     }
   }
   return user_access('post status comment', $account);
