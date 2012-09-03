@@ -20,8 +20,8 @@ Drupal.behaviors.statuses_enter = {
         e.preventDefault();
         var $form = $(this).parents('form');
         var $element = $form.find('.statuses-submit');
-        if (Drupal.settings.ahah && Drupal.settings.ahah[$element[0].id]) {
-          $element.trigger(Drupal.settings.ahah[$element[0].id].event);
+        if (Drupal.settings.ajax && Drupal.settings.ajax[$element[0].id]) {
+          $element.trigger(Drupal.settings.ajax[$element[0].id].event);
         }
         else {
           $form.submit();
