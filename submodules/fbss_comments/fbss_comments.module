@@ -783,11 +783,13 @@ function fbss_comments_box_submit($form, &$form_state) {
 function fbss_comments_save_js($form, $form_state) {
   $new_form = array();
   // Get HTML for the replacement form. Only these elements will be AHAH-refreshed.
+  $new_form['before']                    = $form['before'];
   $new_form['comment-entry-wrapper']     = $form['comment-entry-wrapper'];
   $new_form['comments']                  = $form['comments'];
   $new_form['end-comment-entry-wrapper'] = $form['end-comment-entry-wrapper'];
   $new_form['status-comment']            = $form['status-comment'];
   $new_form['status-comment']['#value']  =  '';
+  $new_form['after']                     = $form['after'];
   return $new_form;
 }
 
