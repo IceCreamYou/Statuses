@@ -292,6 +292,9 @@ function statuses_box_submit($form, &$form_state) {
     $form_state['redirect'] = array($_GET['q']);
     $form_state['rebuild'] = FALSE;
   }
+  // Clear the input values - Mainly for Shift + Enter submit,
+  // For more information see https://drupal.org/node/1719876.
+  $form_state['input'] = array();
 }
 
 /**
