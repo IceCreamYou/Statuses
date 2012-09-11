@@ -38,6 +38,7 @@ function fbss_twitter_form_statuses_box_alter(&$form, &$form_state) {
   if (is_string($data)) {
     $data = unserialize($data);
   }
+  $data['fbss_twitter_account'] = isset($data['fbss_twitter_account']) ? $data['fbss_twitter_account'] : 0;
   if ($data['fbss_twitter_account'] && variable_get('fbss_twitter_default', 'off') != 'disallow') {
     $form['twitter'] = array(
       '#type' => 'checkbox',
@@ -78,13 +79,19 @@ function fbss_twitter_form_twitter_account_list_form_alter(&$form, &$form_state)
   if (!user_access('update and view own stream', $account)) {
     return;
   }
-  $result = db_query("SELECT screen_name FROM {twitter_account} WHERE uid = :uid", array(':uid' => arg(1)));
+  $result = db_select('twitter_account')
+    ->fields('twitter_account', array('screen_name'))
+    ->condition('uid', arg(1))
+    ->execute()
+    ->fetchAll();
   $options = array(0 => t('None'));
-  while ($option = db_fetch_array($result)) {
-    $options[$option['screen_name']] = $option['screen_name'];
+  foreach ($result as $option) {
+    $options[$option->screen_name] = $option->screen_name;
   }
-  $data = unserialize($account->data);
-
+  $data = $account->data;
+  if (is_string($data)) {
+    $data = unserialize($data);
+  }
   $default_setting = variable_get('fbss_twitter_default', 'off');
   if (count($options) > 1 && $default_setting != 'disallow') {
     if ($default_setting == 'on-user' || $default_setting == 'off-user') {
@@ -107,7 +114,7 @@ function fbss_twitter_form_twitter_account_list_form_alter(&$form, &$form_state)
       '#type' => 'select',
       '#title' => t('Choose an account to which status updates can be posted'),
       '#description' => t('If you choose a Twitter account here, you will be given the option to post your status updates to Twitter on the status update form.'),
-      '#default_value' => $data['fbss_twitter_account'],
+      '#default_value' => isset($data['fbss_twitter_account']) ? $data['fbss_twitter_account'] : 0,
       '#options' => $options,
       '#weight' => -1,
     );
@@ -124,10 +131,14 @@ function fbss_twitter_twitter_submit($form, &$form_state) {
     $twitter_account = $form_state['values']['fbss_twitter_account'];
     // If we just added the first Twitter account, set it as the one to use with FBSS.
     if ($twitter_account == 0 && $form_state['#options_count'] === 1 && variable_get('fbss_twitter_select_account', 0)) {
-      $result = db_query("SELECT screen_name FROM {twitter_account} WHERE uid = :uid", array(':uid' => arg(1)));
+      $result = db_select('twitter_account')
+        ->fields('twitter_account', array('screen_name'))
+        ->condition('uid', arg(1))
+        ->execute()
+        ->fetchAll();
       $options = array();
-      while ($option = db_fetch_array($result)) {
-        $options[$option['screen_name']] = $option['screen_name'];
+      foreach ($result as $option) {
+        $options[$option->screen_name] = $option->screen_name;
       }
       if (count($options) === 1) {
         $twitter_account = array_pop($options);
@@ -138,6 +149,14 @@ function fbss_twitter_twitter_submit($form, &$form_state) {
       'fbss_twitter_default' => $form_state['values']['fbss_twitter_default'],
     ), 'twitter');
   }
+}
+
+/**
+ * Implements hook_user_presave().
+ */
+function fbss_twitter_user_presave(&$edit, $account, $category) {
+  $edit['data']['fbss_twitter_account'] = isset($edit['fbss_twitter_account']) ? $edit['fbss_twitter_account'] : 0;
+  $edit['data']['fbss_twitter_default'] = isset($edit['fbss_twitter_default']) ? $edit['fbss_twitter_default'] : 0;
 }
 
 /**
@@ -186,8 +205,11 @@ function fbss_twitter_post_to_twitter($account, $message, $options = array()) {
     }
   }
   module_load_include('inc', 'twitter');
-  $twitter_accounts = twitter_get_user_accounts($account->uid);
-  $data = unserialize($account->data);
+  $twitter_accounts = twitter_twitter_accounts($account);
+  $data = $account->data;
+  if (is_string($data)) {
+    $data = unserialize($data);
+  }
   foreach ($twitter_accounts as $twitter_account_available) {
     if ($twitter_account_available->screen_name == $data['fbss_twitter_account']) {
       twitter_set_status($twitter_account_available, $message);
@@ -206,7 +228,10 @@ function fbss_twitter_post_to_twitter($account, $message, $options = array()) {
  *   The default value for the checkbox (1 or 0).
  */
 function _fbss_twitter_get_default($account) {
-  $data = unserialize($account->data);
+  $data = $account->data;
+  if (is_string($data)) {
+    $data = unserialize($data);
+  }
   $default_setting = variable_get('fbss_twitter_default', 'off');
   $return = 0;
   if ($default_setting == 'on-user' || $default_setting == 'on') {

@@ -41,17 +41,17 @@ function fbss_twitter_admin($form, &$form_state) {
  * Validate function for the Statuses settings form alter.
  */
 function fbss_twitter_admin_validate(&$form, &$form_state) {
-  $len = $form_state['values']['statuses_length'];
-  if (($len > 140 || $len == 0) && variable_get('fbss_twitter_default', 'off') != 'disallow') {
-    $message = t('These settings could allow users to attempt to post messages to Twitter which are too long for Twitter to handle.') . ' ' .
-      t('In this situation, Statuses will attempt to truncate the tweet and include a link to view the full message on your site.') . ' ' .
-      t('Occasionally it is not possible to get a link to the status message, in which case the tweet will simply be shortened to 140 characters by Twitter.');
+  $len = variable_get('statuses_length', 140);
+  if (($len > 140 || $len == 0) && $form_state['values']['fbss_twitter_default'] != 'disallow') {
     if ($len > 140) {
-      $message = t('The maximum number of characters allowed in a status is set to a number above 140, and users can post status updates to Twitter.') . ' ' . $message;
+      $message = t('The maximum number of characters allowed in a status is set to a number above 140, and users can post status updates to Twitter.') . ' ';
     }
     else {
-      $message = t('The maximum number of characters allowed in a status is set to 0 (unlimited), and users can post status updates to Twitter.') . ' ' . $message;
+      $message = t('The maximum number of characters allowed in a status is set to 0 (unlimited), and users can post status updates to Twitter.') . ' ';
     }
+    $message .= t('These settings could allow users to attempt to post messages to Twitter which are too long for Twitter to handle.') . ' ' .
+      t('In this situation, Statuses will attempt to truncate the tweet and include a link to view the full message on your site.') . ' ' .
+      t('Occasionally it is not possible to get a link to the status message, in which case the tweet will simply be shortened to 140 characters by Twitter.');
     drupal_set_message($message, 'warning');
   }
 }
