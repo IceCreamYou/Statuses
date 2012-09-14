@@ -382,6 +382,23 @@ function statuses_views_data() {
     );
   }
 
+  if (module_exists('og_views')) {
+    // Include statuses from a user's groups.
+    $data['statuses']['og_statuses'] = array(
+      'title' => t('Show group statuses'),
+      'filter' => array(
+        'field' => 'type',
+        'handler' => 'statuses_views_handler_filter_og',
+        'help' => t("Limits statuses to those in the current user's stream and in the current user's groups' streams."),
+      ),
+      'argument' => array(
+        'field' => 'sender',
+        'handler' => 'statuses_views_handler_argument_og',
+        'help' => t("Limits statuses to those in the argument user's stream and in the argument user's groups' streams."),
+      ),
+    );
+  }
+
   return $data;
 }
 
