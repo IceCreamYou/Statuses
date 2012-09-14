@@ -334,7 +334,7 @@ function statuses_user_delete($account) {
  * Implements hook_user_view().
  */
 function statuses_user_view($account, $view_mode) {
-  if (variable_get('statuses_profile', 1)) {
+  if (variable_get('statuses_profile', 1) && $view_mode == 'full') {
     $value = theme('statuses_form_display', array('recipient' => $account, 'type' => 'user'));
     // Don't show this section if there's nothing there or the user doesn't have permission to see it.
     if (empty($value)) {
