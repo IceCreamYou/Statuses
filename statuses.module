@@ -385,9 +385,9 @@ function statuses_init() {
 }
 
 /**
- * Implements hook_link().
+ * Implements hook_statuses_link().
  */
-function statuses_link($type, $status) {
+function statuses_statuses_link($type, $status) {
   if ($type != 'statuses') {
     return;
   }

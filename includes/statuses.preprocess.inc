@@ -102,7 +102,7 @@ function _statuses_show($status, $options) {
     'extras' => TRUE,
   );
   if ($options['links']) {
-    $status->links = module_invoke_all('link', 'statuses', $status);
+    $status->links = module_invoke_all('statuses_link', 'statuses', $status);
     drupal_alter('statuses_link', $status->links, $status);
     uasort($status->links, '_statuses_links_sort');
   }
