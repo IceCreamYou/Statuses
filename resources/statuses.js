@@ -51,27 +51,14 @@ attach: function (context) {
   // Truncate long status messages.
   function fbss_truncate(i, val) {
     var th = $(val);
-    var oldMsgText = th.html();
-    var oldMsgLen = oldMsgText.length;
-    if (oldMsgLen > fbss_hidelen) {
-      var newMsgText =
-        oldMsgText.substring(0, fbss_hidelen - 1) +
-        '<span class="statuses-hellip">&hellip;&nbsp;</span><a class="statuses-readmore-toggle active">' +
-        Drupal.t('Read more') +
-        '</a><span class="statuses-readmore">' +
-        oldMsgText.substring(fbss_hidelen - 1) +
-        '</span>';
-      th.html(newMsgText);
-      th.find('.statuses-readmore').hide();
-      th.find('.statuses-readmore-toggle').click(function(e) {
-        e.preventDefault();
-        th.html(oldMsgText);
-      });
-    }
+    th.find('.statuses-full-text').hide();
+    th.find('.statuses-read-more').click(function(e) {
+      e.preventDefault();
+      th.find('.statuses-truncated-text').hide();
+      th.find('.statuses-full-text').show();
+    });
   }
-  if (fbss_hidelen > 0) {
-    ctxt.find('.statuses-content').each(fbss_truncate);
-  }
+  ctxt.find('.statuses-content').each(fbss_truncate);
   // React when a status is submitted.
   ctxt.find('#statuses-box').bind('ajax_complete', function(context) {
     if ($(context.target).html() != $(this).html()) {

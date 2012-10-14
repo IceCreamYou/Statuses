@@ -1015,10 +1015,18 @@ function _statuses_element_sort($a, $b) {
  * Helper function that runs filters on statuses.
  */
 function _statuses_run_filter($status) {
-  if (variable_get('statuses_filter', 'none') != 'none') {
-    return check_markup($status, variable_get('statuses_filter', 'none'));
+  $filter = variable_get('statuses_filter', 'none');
+  $text = $filter == 'none' ? check_plain($status) : check_markup($status, $filter);
+  $hidelen = variable_get('statuses_hide_length', 0);
+  if ($hidelen > 0) {
+    $truncated_text = text_summary($text, $filter, $hidelen);
   }
-  return check_plain($status);
+  if (isset($truncated_text) && $text != $truncated_text) {
+    $text = '<span class="statuses-truncated-text">' . $truncated_text . '&hellip;&nbsp;' .
+      l(t('Read more'), $_GET['q'], array('attributes' => array('class' => array('statuses-read-more')))) .
+      '</span><span class="statuses-full-text">' . $text . '</span>';
+  }
+  return $text;
 }
 
 /**
