@@ -70,13 +70,6 @@ function statuses_schema() {
         'default' => '',
         'description' => 'The stream context type.',
       ),
-      'weight' => array(
-        'type' => 'int',
-        'unsigned' => FALSE,
-        'not null' => TRUE,
-        'default' => 0,
-        'description' => 'The weight of the component.',
-      ),
       'view' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -117,9 +110,6 @@ function statuses_schema() {
         'description' => 'Whether this context is active or not.',
       ),
     ),
-    'indexes' => array(
-      'weight' => array('weight'),
-    ),
     'primary key' => array('type'),
   );
   return $schema;
@@ -155,10 +145,10 @@ function _statuses_update_7100(&$sandbox) {
       ORDER BY f.sid ASC
     ");
     db_query("
-      INSERT INTO {statuses_contexts} (type, weight, view, selectors, visibility, pages, context)
-      SELECT f.type, f.weight, f.view, f.selectors, f.visibility, f.pages, f.context
+      INSERT INTO {statuses_contexts} (type, view, selectors, visibility, pages, context)
+      SELECT f.type, f.view, f.selectors, f.visibility, f.pages, f.context
       FROM {facebook_status_contexts} f
-      ORDER BY f.weight ASC, f.type ASC
+      ORDER BY f.type ASC
     ");
 
     // Delete old tables.
@@ -232,6 +222,13 @@ function statuses_update_7101() {
     'description' => 'Whether this context is active or not.',
   );
   db_add_field('statuses_contexts', 'enabled', $new_field);
+}
+
+/**
+ * Drop the 'weight' field from the contexts table.
+ */
+function statuses_update_7102() {
+  db_drop_field('statuses_contexts', 'weight');
 }
 
 /**

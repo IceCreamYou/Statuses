@@ -796,7 +796,6 @@ function statuses_all_contexts($include_disabled = TRUE) {
   $contexts = module_invoke_all('statuses_context_info');
   foreach ($result as $c) {
     $contexts[$c['type']]['in_db'] = TRUE;
-    $contexts[$c['type']]['weight'] = $c['weight'];
     $contexts[$c['type']]['view'] = $c['view'];
     $contexts[$c['type']]['selectors'] = $c['selectors'];
     $contexts[$c['type']]['visibility'] = $c['visibility'];
@@ -1145,7 +1144,7 @@ function statuses_statuses_context_info() {
     'user' => array(
       'title' => t('User profiles'),
       'description' => t('The default stream for users to update their own status and send status messages to other users.') . ' ' .
-        t('Applies on all pages by default unless overridden by a higher-weight context or configured differently in the context advanced settings.'),
+        t('Applies on all pages by default.'),
       'handler' => 'statuses_user_context',
       'view' => module_exists('activity_log') ? 'activity_log_stream' : (module_exists('user_relationship_views') ? 'fbss_ur_stream' : 'statuses_stream'),
       'weight' => 999,
@@ -1181,7 +1180,8 @@ function statuses_statuses_context_info() {
     ),
     'domain' => array(
       'title' => module_exists('fbss_domain') ? t('Domains') : t('General - the site itself'),
-      'description' => t('The stream belongs to the site itself. Allows using FBSS like a guestbook.'),
+      'description' => t('The stream belongs to the site itself. Allows using FBSS like a guestbook.') . ' ' .
+        t('You must manually specify where this context will apply in the advanced settings.'),
       'handler' => 'statuses_domain_context',
       'view' => 'statuses_stream',
       'weight' => 1000,
