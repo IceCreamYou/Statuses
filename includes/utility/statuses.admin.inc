@@ -443,11 +443,7 @@ function statuses_admin_context_settings($form, $form_state, $context) {
       '#type' => 'radios',
       '#title' => t('Apply context on specific pages'),
       '#options' => $options,
-      '#default_value' => isset($context['visibility']) ? ($context['visibility'] == 3 && !module_exists('context') ? -1 : $context['visibility']) : -1,
-    );
-    $form['page_vis_settings']['context'] = array(
-      '#type' => 'value',
-      '#value' => isset($context['context']) ? $context['context'] : '',
+      '#default_value' => isset($context['visibility']) ? ($context['visibility'] == 3 ? -1 : $context['visibility']) : -1, // The check for '3' is for backwards-compatibility (used to be for Context module integration)
     );
     $form['page_vis_settings']['pages'] = array(
       '#type' => 'textarea',
@@ -488,7 +484,6 @@ function statuses_admin_context_settings_submit($form, &$form_state) {
     'selectors' => $v['selectors'],
     'visibility' => intval($v['visibility']),
     'pages' => $v['pages'],
-    'context' => $v['context'],
   );
   if ($v['already_saved']) {
     drupal_write_record('statuses_contexts', $record, 'type');

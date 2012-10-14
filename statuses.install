@@ -95,13 +95,6 @@ function statuses_schema() {
         'not null' => TRUE,
         'description' => 'Contains either a list of paths on which to include/exclude the context or PHP code, depending on "visibility" setting.',
       ),
-      'context' => array(
-        'description' => 'The primary identifier for a context.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-      ),
       'enabled' => array(
         'type' => 'int',
         'not null' => TRUE,
@@ -145,8 +138,8 @@ function _statuses_update_7100(&$sandbox) {
       ORDER BY f.sid ASC
     ");
     db_query("
-      INSERT INTO {statuses_contexts} (type, view, selectors, visibility, pages, context)
-      SELECT f.type, f.view, f.selectors, f.visibility, f.pages, f.context
+      INSERT INTO {statuses_contexts} (type, view, selectors, visibility, pages)
+      SELECT f.type, f.view, f.selectors, f.visibility, f.pages
       FROM {facebook_status_contexts} f
       ORDER BY f.type ASC
     ");
@@ -229,6 +222,13 @@ function statuses_update_7101() {
  */
 function statuses_update_7102() {
   db_drop_field('statuses_contexts', 'weight');
+}
+
+/**
+ * Drop the 'context' field from the contexts table.
+ */
+function statuses_update_7103() {
+  db_drop_field('statuses_contexts', 'context');
 }
 
 /**

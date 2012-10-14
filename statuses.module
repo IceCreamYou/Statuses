@@ -767,7 +767,6 @@ function statuses_determine_context($type = NULL) {
     'selectors' => '',
     'visibility' => -1,
     'pages' => '',
-    'context' => '',
     'weight' => 0,
     'file' => '',
     'parent' => '',
@@ -800,7 +799,6 @@ function statuses_all_contexts($include_disabled = TRUE) {
     $contexts[$c['type']]['selectors'] = $c['selectors'];
     $contexts[$c['type']]['visibility'] = $c['visibility'];
     $contexts[$c['type']]['pages'] = $c['pages'];
-    $contexts[$c['type']]['context'] = $c['context'];
     $contexts[$c['type']]['enabled'] = $c['enabled'];
   }
   uasort($contexts, '_statuses_element_sort');
