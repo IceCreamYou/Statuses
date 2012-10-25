@@ -119,9 +119,6 @@ function fbss_allowRefresh() {
 }
 // Refresh parts of the page.
 function fbss_refresh() {
-  if (Drupal.heartbeat) {
-    Drupal.heartbeat.pollMessages();
-  }
   // Refresh elements by re-loading the current page and replacing the old version with the updated version.
   var loaded = {};
   if (fbss_refreshIDs && fbss_refreshIDs != undefined) {
