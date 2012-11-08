@@ -366,7 +366,9 @@ function statuses_init() {
   $undefault = isset($_GET['status-text']);
   if (isset($_GET['sid']) && is_numeric($_GET['sid'])) {
     $rs = statuses_load($_GET['sid']);
-    $undefault = $undefault || ($rs->sender != $GLOBALS['user']->uid && $rs->message);
+    if (!empty($rs)) {
+      $undefault = $undefault || ($rs->sender != $GLOBALS['user']->uid && $rs->message);
+    }
   }
   drupal_add_js(array('statuses' => array(
     'autofocus' => (
