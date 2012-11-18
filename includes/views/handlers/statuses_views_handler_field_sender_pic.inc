@@ -40,7 +40,7 @@ class statuses_views_handler_field_sender_pic extends views_handler_field {
     }
     $picture = statuses_display_user_picture($account, $preset);
     if (!empty($picture)) {
-      return '<div class="facebook-status-sender-picture user-picture">'. $picture .'</div>';
+      return '<div class="statuses-sender-picture user-picture">'. $picture .'</div>';
     }
     return '';
   }

@@ -23,6 +23,6 @@ class statuses_views_handler_field_classes extends views_handler_field {
     $type = $values->{$this->aliases['type']};
     $self = $recipient_id == $sender_uid && $type == 'user';
     $private = isset($this->aliases['private']) ? $values->{$this->aliases['private']} : 0;
-    return 'facebook-status-item facebook-status-media facebook-status-type-'. $type . ($self ? ' facebook-status-self-update' : '') . ($private ? ' facebook-status-private' : '');
+    return 'statuses-item statuses-media statuses-type-'. $type . ($self ? ' statuses-self-update' : '') . ($private ? ' statuses-private' : '');
   }
 }
