@@ -298,7 +298,7 @@ class statuses_og_context extends statuses_node_context {
         return parent::access_stream($recipient, $account) &&
           (og_is_member('node', $recipient->nid, 'user', $account) || $public_group);
       }
-      return parent::access_stream($status, $account);
+      return parent::access_stream($recipient, $account);
     }
   }
 }
