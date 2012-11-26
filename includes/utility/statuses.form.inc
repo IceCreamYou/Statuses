@@ -302,16 +302,22 @@ function statuses_box_submit($form, &$form_state) {
  */
 function statuses_save_js($form, $form_state) {
   $new_form = array();
-  // Get HTML for the replacement form. Only these elements will be AHAH-refreshed.
-  $new_form['opendiv']     = $form['opendiv'];
-  if (!empty($form['intro'])) {
-    $new_form['intro']       = $form['intro'];
+  // Define elements to be AHAH-refreshed.
+  $elements = array(
+    'opendiv',
+    'intro',
+    'chars',
+    'fbss-status',
+    'fbss-submit',
+    'sdefault',
+    'closediv',
+  );
+  // Copy existing values from old form to new form.
+  foreach ($elements as $element) {
+    if (isset($form[$element])) {
+      $new_form[$element] = $form[$element];
+    }
   }
-  $new_form['fbss-status'] = $form['fbss-status'];
-  $new_form['chars']       = $form['chars'];
-  $new_form['fbss-submit'] = $form['fbss-submit'];
-  $new_form['sdefault']    = $form['sdefault'];
-  $new_form['closediv']    = $form['closediv'];
   $new_form['fbss-status']['#value'] = ''; // Clear the old value. See https://drupal.org/node/1265048
   // Calls hook_statuses_form_ahah_alter(&$new_form, $form).
   drupal_alter('statuses_form_ahah', $new_form, $form);
