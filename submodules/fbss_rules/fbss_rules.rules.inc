@@ -190,7 +190,7 @@ function fbss_rules_rules_action_info() {
   return array(
     'fbss_rules_load_action' => array(
       'label' => t('Load a status'),
-      'new variables' => array(
+      'provides' => array(
         'status_loaded' => array(
           'type' => 'statuses',
           'label' => t('Loaded status'),
@@ -299,14 +299,43 @@ function fbss_rules_add_action($sender, $recipient, $recipient_type, $message) {
 }
 
 /**
- * Implements hook_rules_data_type_info().
+ * Implements hook_rules_data_info().
  */
-function fbss_rules_rules_data_type_info() {
+function fbss_rules_rules_data_info() {
   return array(
     'statuses' => array(
       'label' => t('Statuses'),
       'wrapper class' => 'StatusesRulesDataWrapper',
       'wrap' => TRUE,
+      'property info' => _rules_statuses_info(),
+    ),
+  );
+}
+
+/**
+ * Defines property info for statuses.
+ */
+function _rules_statuses_info() {
+  return array(
+    'sid' => array(
+      'type' => 'integer',
+      'label' => t('The Status ID.'),
+    ),
+    'message' => array(
+      'type' => 'text',
+      'label' => ('The status message.'),
+    ),
+    'sender' => array(
+      'type' => 'integer',
+      'label' => t('The User ID of the user who created the status message.'),
+    ),
+    'recipient' => array(
+      'type' => 'integer',
+      'label' => t('The ID of the entity that received the status message.'),
+    ),
+    'type' => array(
+      'type' => 'text',
+      'label' => t('The stream context type.'),
     ),
   );
 }
