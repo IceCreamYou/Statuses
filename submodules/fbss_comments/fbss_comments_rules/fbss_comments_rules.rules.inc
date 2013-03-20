@@ -224,14 +224,40 @@ function fbss_comments_rules_add_action($sid, $message, $uid) {
 }
 
 /**
- * Implements hook_rules_data_type_info().
+ * Implements hook_rules_data_info().
  */
-function fbss_comments_rules_rules_data_type_info() {
+function fbss_comments_rules_rules_data_info() {
   return array(
     'fbss_comment' => array(
       'label' => t('Statuses Comment'),
       'wrapper class' => 'FBSSCommentRulesDataWrapper',
       'wrap' => TRUE,
+      'parent' => 'statuses',
+      'property info' => _rules_fbss_comment_info(),
+    ),
+  );
+}
+
+/**
+ * Defines property info for fbss_comment.
+ */
+function _rules_fbss_comment_info() {
+  return array(
+    'cid' => array(
+      'type' => 'integer',
+      'label' => t('The Comment ID.'),
+    ),
+    'comment' => array(
+      'type' => 'text',
+      'label' => ('The comment text.'),
+    ),
+    'uid' => array(
+      'type' => 'integer',
+      'label' => t('User who posted the status comment.'),
+    ),
+    'sid' => array(
+      'type' => 'integer',
+      'label' => t('Statuses ID'),
     ),
   );
 }
