@@ -8,23 +8,22 @@
 /**
  * Returns the status update form.
  *
- * @param $context
- *   One of the following:
- *   - A fully qualified context array
- *   - NULL, to have the context automatically determined
- *   - An object representing the owner of the status stream, i.e. the entity
- *     to which status messages will be posted using this form.
- * @param $type
- *   The context stream type. Only applicable if a recipient object is
- *   specified for $context, but it is required in that case.
- * @param $view
- *   The machine name of the view to display with the form. Overrides the one
- *   requested by the context.
- * @param $display
- *   The machine name of the view display. This is not used internally but
- *   provided in case any external applications need it. There is no error
- *   checking on this parameter; it is the caller's responsibility to ensure
- *   that the specified display is valid and belongs to the relevant view.
+ * @param $variables
+ *   An associative array with any of the following keys (all optional):
+ *   - recipient: One of the following:
+ *     - A fully qualified context array
+ *     - NULL, to have the context automatically determined
+ *     - An object representing the owner of the status stream, i.e. the entity
+ *       to which status messages will be posted using this form.
+ *   - type: The context stream type. Only applicable if a recipient object is
+ *     specified for the "recipient" key, but it is required in that case.
+ *   - view: The machine name of the view to display with the form. Overrides
+ *     the one requested by the context.
+ *   - display: The machine name of the view display. This is not used
+ *     internally but provided in case any external applications need it. There
+ *     is no error checking on this parameter; it is the caller's
+ *     responsibility to ensure that the specified display is valid and belongs
+ *     to the relevant view.
  * @return
  *   HTML to display the status update form, or FALSE if:
  *   - The current user has no access to both the form and the associated
