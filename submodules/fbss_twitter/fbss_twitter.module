@@ -247,5 +247,7 @@ function _fbss_twitter_get_default($account) {
  * Implements hook_statuses_form_ahah_alter().
  */
 function fbss_twitter_statuses_form_ahah_alter(&$new_form, $form) {
-  $new_form['twitter'] = $form['twitter'];
+  if (isset($form['twitter'])) {
+    $new_form['twitter'] = $form['twitter'];
+  }
 }
