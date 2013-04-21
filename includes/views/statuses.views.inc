@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_views_data().
+ * Implements hook_views_data().
  */
 function statuses_views_data() {
   // Basic table information.
@@ -403,7 +403,7 @@ function statuses_views_data() {
 }
 
 /**
- * Implementation of hook_views_plugins().
+ * Implements hook_views_plugins().
  */
 function statuses_views_plugins() {
   return array(

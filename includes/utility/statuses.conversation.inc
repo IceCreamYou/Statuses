@@ -31,8 +31,9 @@ function _statuses_conversation_title() {
 }
 
 /**
- * Builds a page with a conversation view. A form to post a message to the other
- * user's profile may be at the top.
+ * Builds a page with a conversation view.
+ *
+ * A form to post a message to the other user's profile may be at the top.
  */
 function _statuses_conversation() {
   drupal_set_title(_statuses_conversation_title());
@@ -50,7 +51,7 @@ function _statuses_conversation() {
     $arg = implode(',', $args);
     return views_embed_view('statuses_conversation', 'default', $args[0], $args[1]);
   }
-  $key = $key ? 0 : 1; //The recipient is not the current user.
+  $key = $key ? 0 : 1; // The recipient is not the current user.
   $recipient = user_load($args[$key]);
   if (statuses_user_access('converse') && !empty($recipient->uid)) {
     return theme('statuses_form_display', array('recipient' => $recipient, 'type' => 'user'));

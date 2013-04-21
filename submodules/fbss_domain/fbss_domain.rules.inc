@@ -15,7 +15,7 @@ function fbss_domain_rules_condition_info() {
       'arguments' => array(
         'status' => array(
           'type' => 'statuses',
-          'label' => t('The status')
+          'label' => t('The status'),
         ),
         'domain_id' => array(
           'type' => 'list<integer>',
@@ -29,9 +29,9 @@ function fbss_domain_rules_condition_info() {
 }
 
 /**
- * Generate the options for uses_domain condition
+ * Generate the options for uses_domain condition.
  */
-function fbss_domain_get_domain_options(){
+function fbss_domain_get_domain_options() {
   $options = array();
   foreach (domain_domains() as $data) {
     // Cannot pass zero in checkboxes.

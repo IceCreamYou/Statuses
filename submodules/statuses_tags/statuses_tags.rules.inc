@@ -44,7 +44,7 @@ function statuses_tags_rules_condition_info() {
           'label' => t('Tag type'),
           'restriction' => 'input',
           'options list' => 'statuses_tags_types_list',
-          'description' =>  t('The type of tag allowed for this condition to be true.'),
+          'description' => t('The type of tag allowed for this condition to be true.'),
         ),
       ),
       'group' => t('Statuses'),
@@ -61,13 +61,13 @@ function statuses_tags_rules_condition_info() {
           'label' => t('Tag type'),
           'restriction' => 'input',
           'options list' => 'statuses_tags_types_list',
-          'description' =>  t('The type of tag allowed for this condition to be true.'),
+          'description' => t('The type of tag allowed for this condition to be true.'),
         ),
         'tag' => array(
           'type' => 'text',
           'label' => t('Tag'),
           'restriction' => 'input',
-          'description' =>  t('Do not include the identifying hash (#) or "at" symbol (@).'),
+          'description' => t('Do not include the identifying hash (#) or "at" symbol (@).'),
         ),
       ),
       'group' => t('Statuses'),
@@ -83,7 +83,7 @@ function statuses_tags_has_tags_condition($status, $type) {
 }
 
 /**
- * Generate the tag types options
+ * Generate the tag types options.
  */
 function statuses_tags_types_list() {
   return array(

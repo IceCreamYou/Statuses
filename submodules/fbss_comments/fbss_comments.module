@@ -41,11 +41,11 @@ function fbss_comments_menu() {
     'file' => 'fbss_comments.pages.inc',
   );
   $items['fbss_comments/js/refresh'] = array(
-    'title' => 'AHAH callback', 
-    'page callback' => 'fbss_comments_ajax_form_callback', 
-    'delivery callback' => 'ajax_deliver', 
-    'access callback' => TRUE, 
-    'theme callback' => 'ajax_base_page_theme', 
+    'title' => 'AHAH callback',
+    'page callback' => 'fbss_comments_ajax_form_callback',
+    'delivery callback' => 'ajax_deliver',
+    'access callback' => TRUE,
+    'theme callback' => 'ajax_base_page_theme',
     'type' => MENU_CALLBACK,
   );
   if (module_exists('devel_generate')) {
@@ -164,11 +164,12 @@ function fbss_comments_theme($existing, $type, $theme, $path) {
 /**
  * Displays a status comment thread with inline styles suitable for email.
  *
- * @param $comments
- *   An array of comment objects to display.
- * @param $destination
- *   The destination query string for edit and delete links. Usually the current
- *   page unless this function is called from a JavaScript callback page.
+ * @param $variables
+ *   An associative array with the following values:
+ *   - comments: An array of comment objects to display.
+ *   - destination: The destination query string for edit and delete links.
+ *     Usually the current page unless this function is called from a
+ *     JavaScript callback page.
  * @return
  *   Themed HTML for the status comments.
  */
@@ -217,13 +218,14 @@ function theme_fbss_comments_items_email($variables) {
 /**
  * Formats a comment.
  *
- * @param $comment
- *   The comment object.
- * @param $classes
- *   An array of extra classes to include in the comment status wrapper div.
- * @param $destination
- *   The destination query string for edit and delete links. Usually the current
- *   page unless this function is called from a JavaScript callback page.
+ * @param $variables
+ *   An associative array containing the following values:
+ *   - comment: The comment object.
+ *   - classes: An array of extra classes to include in the comment status
+ *     wrapper div.
+ *   - destination: The destination query string for edit and delete links.
+ *     Usually the current page unless this function is called from a
+ *     JavaScript callback page.
  * @return
  *   The fully themed status comment or FALSE if the current user does not have
  *   permission to view the comment.
@@ -261,18 +263,18 @@ function theme_fbss_comments_item($variables) {
   // is not supported by theme_links, we have to build the output structure by hand at the moment.
   $output .= '<ul class="links inline fbss-comments-links">';
   if (fbss_comments_can('edit', $comment)) {
-    $output .= '<li class="fbss-comments-edit-delete fbss-comments-edit-link">'.
-      l(t('Edit'), 'statuses/comment/'. $comment->cid .'/edit', array('query' => array('destination' => $q)))
-      .'</li>';
+    $output .= '<li class="fbss-comments-edit-delete fbss-comments-edit-link">' .
+      l(t('Edit'), 'statuses/comment/' . $comment->cid . '/edit', array('query' => array('destination' => $q)))
+      . '</li>';
   }
   if (fbss_comments_can('delete', $comment)) {
-    $output .= '<li class="fbss-comments-edit-delete fbss-comments-delete-link">'.
-      l(t('Delete'), 'statuses/comment/'. $comment->cid .'/delete', array('query' => array('destination' => $q)))
-      .'</li>';
+    $output .= '<li class="fbss-comments-edit-delete fbss-comments-delete-link">' .
+      l(t('Delete'), 'statuses/comment/' . $comment->cid . '/delete', array('query' => array('destination' => $q)))
+      . '</li>';
   }
   if (module_exists('fbss_comments_flag')) {
     foreach (flag_get_flags('fbss_comment') as $name => $info) {
-      $output .= '<li class="fbss-comments-flag-'. check_plain($name) .'-link">' . flag_create_link($name, $comment->cid) . '</li>';
+      $output .= '<li class="fbss-comments-flag-' . check_plain($name) . '-link">' . flag_create_link($name, $comment->cid) . '</li>';
     }
   }
   $output .= '</ul></div></div></div>';
@@ -282,18 +284,19 @@ function theme_fbss_comments_item($variables) {
 /**
  * Displays a status comment thread.
  *
- * @param $comments
- *   An array of comment objects to display.
- * @param $delay_load
- *   If TRUE and there are no comments on the relevant status, a "show all
- *   comments" link will be displayed instead of the full list of comments. When
- *   clicked, the full list of comments will be shown for users with JavaScript
- *   enabled. Users with JavaScript disabled will be redirected to the status
- *   thread page. If FALSE the "comment" link (with the comment form hidden)
- *   will be used instead of just showing the comment form.
- * @param $destination
- *   The destination query string for edit and delete links. Usually the current
- *   page unless this function is called from a JavaScript callback page.
+ * @param $variables
+ *   An associative array containing the following values:
+ *   - comments: An array of comment objects to display.
+ *   - delay_load: If TRUE and there are no comments on the relevant status, a
+ *     "show all comments" link will be displayed instead of the full list of
+ *     comments. When clicked, the full list of comments will be shown for
+ *     users with JavaScript enabled. Users with JavaScript disabled will be
+ *     redirected to the status thread page. If FALSE the "comment" link (with
+ *     the comment form hidden) will be used instead of just showing the
+ *     comment form.
+ *   - destination: The destination query string for edit and delete links.
+ *     Usually the current page unless this function is called from a
+ *     JavaScript callback page.
  * @return
  *   Themed HTML for the status comments.
  */
@@ -309,9 +312,9 @@ function theme_fbss_comments_items($variables) {
   $output = '<div class="fbss-comments">';
   if ($count > variable_get('fbss_comments_hide_small', 3) && $delay_load) {
     $options = array('attributes' => array(
-        'class' => array('fbss-comments-show-comments-link', 'fbss-comments-show-comments'),
-        'id' => 'fbss-comments-toggle-' . $comments[0]->sid,
-      ));
+      'class' => array('fbss-comments-show-comments-link', 'fbss-comments-show-comments'),
+      'id' => 'fbss-comments-toggle-' . $comments[0]->sid,
+    ));
     if ($count >= variable_get('fbss_comments_show_all', 10)) {
       $options['attributes']['class'] = array('fbss-comments-show-comments-link');
     }
@@ -337,7 +340,11 @@ function theme_fbss_comments_items($variables) {
       $classes[] = 'fbss-comments-hide';
     }
     if (!$delay_load || $count < variable_get('fbss_comments_show_all', 10) || $key > $count - variable_get('fbss_comments_hide_small', 3)) {
-      $result = theme('fbss_comments_item', array('comment' => $comment, 'classes' => $classes, 'destination' => $destination));
+      $result = theme('fbss_comments_item', array(
+        'comment' => $comment,
+        'classes' => $classes,
+        'destination' => $destination,
+      ));
       if (!empty($result)) {
         $output .= $result;
         $rendered++;
@@ -353,24 +360,24 @@ function theme_fbss_comments_items($variables) {
 /**
  * Displays the status comment form.
  *
- * @param $sid
- *   The Status ID of the comment thread.
- * @param $delay_load_form
- *   If TRUE and there are no comments on the relevant status, a "comment" link
- *   will be displayed instead of the comment form. When clicked, the form will
- *   be revealed for users with JavaScript enabled. Users with JavaScript
- *   disabled will be redirected to the status thread page. If FALSE the
- *   "comment" link will not be used and the comment form will not be initially
- *   hidden.
- * @param $delay_load_comments
- *   If TRUE and there are too many comments on the relevant status, a "show
- *   all comments" link will be displayed instead of the full list of comments.
- *   When clicked, the full list of comments will be shown for users with
- *   JavaScript enabled. Users with JavaScript disabled will be redirected to
- *   the status thread page. If FALSE the "comment" link (with the comment form
- *   hidden) will be used instead of just showing the comment form. The number
- *   of comments required before this condition will take effect is controlled
- *   by the fbss_comments_hide_small setting.
+ * @param $variables
+ *   An associative array with the following values:
+ *   - sid: The Status ID of the comment thread.
+ *   - delay_load_form: If TRUE and there are no comments on the relevant
+ *     status, a "comment" link will be displayed instead of the comment form.
+ *     When clicked, the form will be revealed for users with JavaScript
+ *     enabled. Users with JavaScript disabled will be redirected to the status
+ *     thread page. If FALSE the "comment" link will not be used and the
+ *     comment form will not be initially hidden.
+ *   - delay_load_comments: If TRUE and there are too many comments on the
+ *     relevant status, a "show all comments" link will be displayed instead of
+ *     the full list of comments. When clicked, the full list of comments will
+ *     be shown for users with JavaScript enabled. Users with JavaScript
+ *     disabled will be redirected to the status thread page. If FALSE the
+ *     "comment" link (with the comment form hidden) will be used instead of
+ *     just showing the comment form. The number of comments required before
+ *     this condition will take effect is controlled by the
+ *     fbss_comments_hide_small setting.
  * @return
  *   The themed HTML for the status form, or if the user does not have
  *   permission to post a comment, then the list of comments.
@@ -391,8 +398,12 @@ function theme_fbss_comments_form_display($variables) {
     $form = drupal_get_form('fbss_comments_box_' . $sid, $sid, $delay_load_comments, $delay_load_form);
     return '<div class="fbss-comments-form">' . drupal_render($form) . '</div>';
   }
-  else if (user_access('view all status comments')) {
-    return theme('fbss_comments_items', array('comments' => fbss_comments_get_comments($sid, TRUE), 'delay_load' => $delay_load_comments, 'destination' => $_GET['q']));
+  elseif (user_access('view all status comments')) {
+    return theme('fbss_comments_items', array(
+      'comments' => fbss_comments_get_comments($sid, TRUE),
+      'delay_load' => $delay_load_comments,
+      'destination' => $_GET['q'],
+    ));
   }
 }
 
@@ -663,7 +674,7 @@ function _fbss_comments_use_autogrow() {
 function _fbss_comments_user_picture($account) {
   $preset = variable_get('fbss_comments_user_pictures', 0);
   $picture = statuses_display_user_picture($account, $preset);
-  return empty($picture) ? '' : '<div class="fbss-comments-picture user-picture">'. $picture .'</div>';
+  return empty($picture) ? '' : '<div class="fbss-comments-picture user-picture">' . $picture . '</div>';
 }
 
 //=================
@@ -721,9 +732,19 @@ function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_
     //$form['#action'] = url($_GET['view_path']);
   }
   $comments = fbss_comments_get_comments($sid, TRUE);
-  $form['before'] = array('#markup' => '<div id="fbss-comments-replace-' . $sid . '" class="fbss-comments-replace">');
-  $form['comments'] = array('#markup' => theme('fbss_comments_items', array('comments' => $comments, 'delay_load' => $delay_load, 'destination' => $form['#qu'])));
-  $form['comment-entry-wrapper'] = array('#markup' => '<div class="statuses-subitem">',);
+  $form['before'] = array(
+    '#markup' => '<div id="fbss-comments-replace-' . $sid . '" class="fbss-comments-replace">',
+  );
+  $form['comments'] = array(
+    '#markup' => theme('fbss_comments_items', array(
+      'comments' => $comments,
+      'delay_load' => $delay_load,
+      'destination' => $form['#qu'],
+    )),
+  );
+  $form['comment-entry-wrapper'] = array(
+    '#markup' => '<div class="statuses-subitem">',
+  );
   $form['status-comment'] = array(
     '#type' => 'textarea',
     '#rows' => $autogrow ? 1 : 2,
@@ -732,7 +753,7 @@ function fbss_comments_box($form, &$form_state, $sid, $delay_load = TRUE, $hide_
     '#attributes' => array('class' => array('fbss-comments-textarea')),
     '#resizable' => FALSE,
   );
-  $form['end-comment-entry-wrapper'] = array('#markup' => '</div>',);
+  $form['end-comment-entry-wrapper'] = array('#markup' => '</div>');
   $form['after'] = array('#markup' => '</div>');
   $form['save-' . $sid] = array(
     '#type' => 'submit',
@@ -788,7 +809,7 @@ function fbss_comments_save_js($form, $form_state) {
   $new_form['comments']                  = $form['comments'];
   $new_form['end-comment-entry-wrapper'] = $form['end-comment-entry-wrapper'];
   $new_form['status-comment']            = $form['status-comment'];
-  $new_form['status-comment']['#value']  =  '';
+  $new_form['status-comment']['#value']  = '';
   $new_form['after']                     = $form['after'];
   return $new_form;
 }
@@ -823,7 +844,11 @@ function fbss_comments_statuses_delete($status) {
  */
 function fbss_comments_preprocess_statuses_item(&$vars) {
   if ($vars['options']['extras']) {
-    $vars['comments'] = theme('fbss_comments_form_display', array('sid' => $vars['status']->sid, 'delay_load_form' => !$vars['options']['page'], 'delay_load_comments' => !$vars['options']['page']));
+    $vars['comments'] = theme('fbss_comments_form_display', array(
+      'sid' => $vars['status']->sid,
+      'delay_load_form' => !$vars['options']['page'],
+      'delay_load_comments' => !$vars['options']['page'],
+    ));
   }
 }
 
@@ -839,11 +864,11 @@ function fbss_comments_form_statuses_box_alter(&$form) {
     drupal_add_js($path . '/fbss_comments_enter.js');
   }
   /*
-   // Don't add settings twice (it merges recursively, so we'll end up with an array, which messes things up).
-   drupal_add_js(array('fbss_comments' => array(
-   'ahah_enabled' => (bool) variable_get('fbss_comments_ahah', 1)
-   )), 'setting');
-   */
+  // Don't add settings twice (it merges recursively, so we'll end up with an array, which messes things up).
+  drupal_add_js(array('fbss_comments' => array(
+  'ahah_enabled' => (bool) variable_get('fbss_comments_ahah', 1)
+  )), 'setting');
+  */
   _fbss_comments_use_autogrow();
 }
 

@@ -86,7 +86,7 @@ function fbss_privacy_preprocess_statuses_item(&$vars) {
 }
 
 /**
- * Implementation of hook_statuses_link_alter().
+ * Implements hook_statuses_link_alter().
  */
 function fbss_privacy_statuses_link_alter(&$links, $status) {
   if (isset($links['respond']) && !empty($status->private)) {

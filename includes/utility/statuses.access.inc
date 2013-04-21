@@ -47,10 +47,10 @@ function statuses_user_access_converse() {
     $uids[1] = $user->uid;
   }
   elseif (count($uids) === 1) {
-    return FALSE; //Can't have a conversation with yourself
+    return FALSE; // Can't have a conversation with yourself
   }
   elseif ($uids[0] == $uids[1]) {
-    return FALSE; //Can't have a conversation with yourself
+    return FALSE; // Can't have a conversation with yourself
   }
   return user_access('view all statuses');
 }

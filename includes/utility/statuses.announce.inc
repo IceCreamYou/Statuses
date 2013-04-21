@@ -69,8 +69,11 @@ function statuses_announce_generate_status($message, $from, $count, &$context) {
   $uid = db_query_range("SELECT uid FROM {users} WHERE status = 1", $context['sandbox']['progress'], 1)->fetchField();
   $to = user_load($uid);
   statuses_save_status($to, 'user', $message, $from);
-  $context['message'] = t('Sending message to %user (@current of @total)',
-    array('%user' => format_username($to), '@current' => $context['sandbox']['progress'], '@total' => $count));
+  $context['message'] = t('Sending message to %user (@current of @total)', array(
+    '%user' => format_username($to),
+    '@current' => $context['sandbox']['progress'],
+    '@total' => $count,
+  ));
   $context['sandbox']['progress']++;
   $context['results'][] = check_plain(format_username($to));
   $context['finished'] = $context['sandbox']['progress'] / $count;

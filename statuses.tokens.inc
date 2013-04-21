@@ -144,7 +144,7 @@ function statuses_tokens($type, $tokens, array $data = array(), array $options =
         $replacements[$original] = $status->sid;
         break;
       case 'status-url':
-        $url = url('statuses/'. $status->sid, array('absolute' => TRUE));
+        $url = url('statuses/' . $status->sid, array('absolute' => TRUE));
         $replacements[$original] = $url;
         break;
       case 'status-edit':
@@ -164,12 +164,12 @@ function statuses_tokens($type, $tokens, array $data = array(), array $options =
       // Default value for the chained token.
       case 'sender':
         $name = format_username($sender);
-        $replacements[$original] = $sanitize ? check_plain($name) : name;
+        $replacements[$original] = $sanitize ? check_plain($name) : $name;
         break;
       case 'created':
         $replacements[$original] = format_date($status->created, 'short');
         break;
-      // Tokens related to status comment
+      // Tokens related to status comment.
       case 'status-comment-count':
         $replacements[$original] = module_exists('fbss_comments') ? fbss_comments_count_comments($status->sid) : 0;
         break;

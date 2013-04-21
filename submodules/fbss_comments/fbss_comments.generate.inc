@@ -33,7 +33,7 @@ function fbss_comments_generate_form($form, $form_state) {
  */
 function fbss_comments_generate_form_validate($form, &$form_state) {
   $n = $form_state['values']['num'];
-  //A user might want to "generate" 0 status comments if they really just want to delete everything.
+  // A user might want to "generate" 0 status comments if they really just want to delete everything.
   if (!is_numeric($n) || $n < 0 || $n != round($n)) {
     form_set_error('num', t('You must generate at least 0 status comments.'));
   }
@@ -74,9 +74,8 @@ function fbss_comments_generate_form_submit($form, &$form_state) {
  *
  * @param $count
  *   The number of status comments to create.
- * @param $time
- *   The number of seconds ago that corresponds to the created time of the
- *   oldest status we could create.
+ * @param $context
+ *   An associative array for tracking results across batches.
  */
 function fbss_comments_generate_status_comment_bulk($count, &$context) {
   for ($i = 0; $i < $count; $i++) {
@@ -87,15 +86,14 @@ function fbss_comments_generate_status_comment_bulk($count, &$context) {
 /**
  * Generates a status.
  *
- * @param $time
- *   The number of seconds ago that corresponds to the created time of the
- *   oldest status we could create.
+ * @param $context
+ *   An associative array for tracking results across batches.
  */
 function fbss_comments_generate_status_comment(&$context) {
   module_load_include('inc', 'devel_generate', 'devel_generate');
 
   $sid = db_select('statuses')
-    ->fields('statuses',  array('sid'))
+    ->fields('statuses', array('sid'))
     ->orderBy('RAND()')
     ->execute()
     ->fetchField();
@@ -118,7 +116,7 @@ function fbss_comments_generate_status_comment(&$context) {
  */
 function fbss_comments_generate_killswitch(&$context) {
   $result = db_select('fbss_comments')
-    ->fields('fbss_comments',  array('cid'))
+    ->fields('fbss_comments', array('cid'))
     ->execute()
     ->fetchAll();
   foreach ($result as $comment) {

@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_rules_condition_info().
+ * Implements hook_rules_condition_info().
  */
 function fbss_privacy_rules_condition_info() {
   return array(
@@ -15,7 +15,7 @@ function fbss_privacy_rules_condition_info() {
       'arguments' => array(
         'status' => array(
           'type' => 'statuses',
-          'label' => t('The status')
+          'label' => t('The status'),
         ),
       ),
       'group' => t('Statuses'),

@@ -51,7 +51,7 @@ function statuses_tags_admin($form, $form_state) {
     drupal_set_message(
       t('You have the Statuses Tags module enabled.') . ' ' .
       t('However, you will not be able to use #hashtags unless you <a href="!enable">enable the core Taxonomy module</a>.',
-        array('!enable' => url('admin/modules'))) .' '.
+        array('!enable' => url('admin/modules'))) . ' ' .
       t('Return here after enabling the Taxonomy module to configure it to accept #hashtags.')
     );
   }
@@ -63,7 +63,7 @@ function statuses_tags_admin($form, $form_state) {
  */
 function statuses_tags_admin_validate($form, $form_state) {
   if (strpos($form_state['values']['statuses_tags_url'], '%') === 0) {
-    form_set_error('statuses_tags_url', t('You cannot start the #Hashtag URL path with the term name.') .' '.
+    form_set_error('statuses_tags_url', t('You cannot start the #Hashtag URL path with the term name.') . ' ' .
       t('Doing so could allow malicious users to override system-critical paths.')
     );
   }

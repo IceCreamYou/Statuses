@@ -122,12 +122,12 @@ function fbss_userpoints_statuses_save($status, $context, $edit, $options) {
   $sender = user_load($status->sender);
   $recipient = $context['handler']->load_recipient($status->recipient);
   $points_query = db_select('userpoints_txn')
-    ->condition('uid',  $sender->uid)
-    ->condition('time_stamp',  (REQUEST_TIME - 86400),  '>')
-    ->condition(db_or()->condition('operation',  'statuses add own')->condition('operation',  'statuses add other'))
-    ->condition('expired',  0)
-    ->condition('status',  0);
-  $points_query->addExpression('SUM(points)',  'points');
+    ->condition('uid', $sender->uid)
+    ->condition('time_stamp', (REQUEST_TIME - 86400),  '>')
+    ->condition(db_or()->condition('operation', 'statuses add own')->condition('operation', 'statuses add other'))
+    ->condition('expired', 0)
+    ->condition('status', 0);
+  $points_query->addExpression('SUM(points)', 'points');
   $points_today = $points_query->execute()
     ->fetchField();
   if (variable_get('statuses_userpoints_max', 0) && $points_today >= variable_get('statuses_userpoints_max', 0)) {
@@ -146,14 +146,18 @@ function fbss_userpoints_statuses_save($status, $context, $edit, $options) {
     $params['operation'] = 'statuses add own';
   }
   elseif ($status->type == 'user') {
-    $params['description'] = t('!sender wrote a message to !recipient',
-      array('!sender' => theme('username', array('account' => $sender)), '!recipient' => $context['handler']->recipient_link($recipient)));
+    $params['description'] = t('!sender wrote a message to !recipient', array(
+      '!sender' => theme('username', array('account' => $sender)),
+      '!recipient' => $context['handler']->recipient_link($recipient),
+    ));
     $params['points'] = variable_get('statuses_userpoints_other', 0);
     $params['operation'] = 'statuses add other';
   }
   else {
-    $params['description'] = t('!sender wrote a message at !recipient',
-      array('!sender' => theme('username', array('account' => $sender)), '!recipient' => $context['handler']->recipient_link($recipient)));
+    $params['description'] = t('!sender wrote a message at !recipient', array(
+      '!sender' => theme('username', array('account' => $sender)),
+      '!recipient' => $context['handler']->recipient_link($recipient),
+    ));
     $params['points'] = variable_get('statuses_userpoints_other', 0);
     $params['operation'] = 'statuses add other';
   }
@@ -172,10 +176,10 @@ function fbss_userpoints_statuses_delete($status, $meta = array()) {
   $sender = user_load($status->sender);
   global $user;
   $result = db_select('userpoints_txn')
-    ->fields('userpoints_txn',  array('points'))
-    ->condition('operation',  'statuses add%%',  'LIKE')
-    ->condition('reference',  $status->sid)
-    ->condition('uid',  $sender->uid)
+    ->fields('userpoints_txn', array('points'))
+    ->condition('operation', 'statuses add%%', 'LIKE')
+    ->condition('reference', $status->sid)
+    ->condition('uid', $sender->uid)
     ->execute()
     ->fetchField();
   $params = array(
@@ -184,11 +188,15 @@ function fbss_userpoints_statuses_delete($status, $meta = array()) {
     'operation' => 'statuses delete',
   );
   if ($user->uid == $sender->uid) {
-    $params['description'] = t('!user deleted a status message.', array('!user' => theme('username', array('account' => $user))));
+    $params['description'] = t('!user deleted a status message.', array(
+      '!user' => theme('username', array('account' => $user)),
+    ));
   }
   else {
-    $params['description'] = t('!user deleted a message by !sender',
-      array('!user' => theme('username', array('account' => $user)), '!sender' => theme('username', array('account' => $sender))));
+    $params['description'] = t('!user deleted a message by !sender', array(
+      '!user' => theme('username', array('account' => $user)),
+      '!sender' => theme('username', array('account' => $sender)),
+    ));
   }
   userpoints_userpointsapi($params);
 }
@@ -203,12 +211,12 @@ function fbss_userpoints_fbss_comments_after_save($comment, $edit) {
   }
   $account = user_load($comment->uid);
   $points_query = db_select('userpoints_txn')
-    ->condition('uid',  $comment->uid)
-    ->condition('time_stamp',  (REQUEST_TIME - 86400),  '>')
-    ->condition('operation',  'fbss_comments add')
-    ->condition('expired',  0)
-    ->condition('status',  0);
-  $points_query->addExpression('SUM(points)',  'points');
+    ->condition('uid', $comment->uid)
+    ->condition('time_stamp', (REQUEST_TIME - 86400), '>')
+    ->condition('operation', 'fbss_comments add')
+    ->condition('expired', 0)
+    ->condition('status', 0);
+  $points_query->addExpression('SUM(points)', 'points');
   $points_today = $points_query->execute()
     ->fetchField();
   if (variable_get('fbss_comments_userpoints_max', 0) && $points_today >= variable_get('fbss_comments_userpoints_max', 0)) {
@@ -234,10 +242,10 @@ function fbss_userpoints_fbss_comments_delete($cid) {
   $comment = fbss_comments_load($cid);
   $account = user_load($comment->uid);
   $result = db_select('userpoints_txn')
-    ->fields('userpoints_txn',  array('points'))
-    ->condition('operation',  'fbss_comments add')
-    ->condition('reference',  $cid)
-    ->condition('uid',  $comment->uid)
+    ->fields('userpoints_txn', array('points'))
+    ->condition('operation', 'fbss_comments add')
+    ->condition('reference', $cid)
+    ->condition('uid', $comment->uid)
     ->execute()
     ->fetchField();
   $params = array(

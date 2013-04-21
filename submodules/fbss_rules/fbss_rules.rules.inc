@@ -71,7 +71,7 @@ function fbss_rules_rules_condition_info() {
           'restriction' => 'input',
           'options list' => 'fbss_can_post_recipient_types',
           'optional' => TRUE,
-          'description' =>  t('The types of recipients allowed for this condition to be true.'),
+          'description' => t('The types of recipients allowed for this condition to be true.'),
         ),
         'sender' => array(
           'type' => 'user',
@@ -113,7 +113,7 @@ function fbss_rules_rules_condition_info() {
           'restriction' => 'input',
           'options list' => 'fbss_recipient_types',
           'optional' => TRUE,
-          'description' =>  t('The types of recipients allowed for this condition to be true.'),
+          'description' => t('The types of recipients allowed for this condition to be true.'),
         ),
       ),
       'group' => 'Statuses',
@@ -137,11 +137,11 @@ function fbss_recipient_types() {
   foreach ($contexts as $key => $context) {
     $options[$key] = $context['title'];
   }
-  return  $options;
+  return $options;
 }
 
 /**
- * Generate the options for the fbss_rules_can_post condition
+ * Generate the options for the fbss_rules_can_post condition.
  */
 function fbss_can_post_recipient_types() {
   $options = array('auto' => t('Automatically determined'));
@@ -256,7 +256,7 @@ function fbss_rules_rules_action_info() {
           'label' => t('Recipient type'),
           'restriction' => 'input',
           'options list' => 'fbss_recipient_types',
-          'description' =>  t('Enter the type for the new Status'),
+          'description' => t('Enter the type for the new Status'),
         ),
         'message' => array(
           'type' => 'text',

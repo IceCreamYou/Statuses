@@ -29,6 +29,6 @@ Drupal.behaviors.statuses_enter = {
       }
     });
   }
-}
+};
 
 })(jQuery);

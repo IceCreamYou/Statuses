@@ -153,7 +153,7 @@ function hook_statuses_refresh_selectors($recipient, $type) {
  *
  * @param $type
  *   The type of link being processed.
- * @param $status
+ * @param $object
  *   The status object.
  * @return
  *   A structured array which will be run through drupal_render() to produce
@@ -166,7 +166,7 @@ function hook_statuses_link($type, $object, $teaser = FALSE) {
   if ($type == 'statuses') {
     $status = $object;
     $links['permalink'] = array(
-      'href' => 'statuses/'. $status->sid,
+      'href' => 'statuses/' . $status->sid,
       'title' => t('Permalink'),
     );
   }
@@ -273,7 +273,7 @@ function hook_statuses_form_ahah_alter(&$new_form, $old_form) {
  * @param $recipient
  *   The entity which would receive a status message if one were posted on the
  *   current page.
- * @param
+ * @param $type
  *   The type of recipient.
  * @see theme_statuses_form_display()
  * @see hook_statuses_refresh_selectors()

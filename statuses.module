@@ -134,11 +134,11 @@ function statuses_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['statuses/ajax'] = array(
-    'title' => 'AHAH callback', 
-    'page callback' => 'statuses_ajax_form_callback', 
-    'delivery callback' => 'ajax_deliver', 
-    'access callback' => TRUE, 
-    'theme callback' => 'ajax_base_page_theme', 
+    'title' => 'AHAH callback',
+    'page callback' => 'statuses_ajax_form_callback',
+    'delivery callback' => 'ajax_deliver',
+    'access callback' => TRUE,
+    'theme callback' => 'ajax_base_page_theme',
     'type' => MENU_CALLBACK,
     'file' => 'includes/utility/statuses.form.inc',
   );
@@ -161,7 +161,11 @@ function statuses_menu() {
  */
 function statuses_share_page() {
   $view = variable_get('statuses_share_view', 'statuses');
-  return theme('statuses_form_display', array('recipient' => $GLOBALS['user'], 'type' => 'user', 'view' => $view));
+  return theme('statuses_form_display', array(
+    'recipient' => $GLOBALS['user'],
+    'type' => 'user',
+    'view' => $view,
+  ));
 }
 
 /**
@@ -516,8 +520,9 @@ function statuses_show($status, $options = array()) {
 /**
  * Returns a formatted string showing the time the status was submitted.
  *
- * @param $time
- *   The Unix timestamp for when the relevant status was updated.
+ * @param $variables
+ *   An associative array containing the following values:
+ *   - time: The Unix timestamp for when the relevant status was updated.
  * @return
  *   If the status was submitted within the last 3 days, returns a "time ago"
  *   date. If not, returns a normal (small) date. If zero, returns FALSE.
@@ -645,9 +650,16 @@ function statuses_has_status($recipient_id = NULL, $type = 'user', $sender_id = 
   global $user;
   $recipient_id = (empty($recipient_id) ? $user->uid : $recipient_id);
   if (!empty($sender_id)) {
-    return db_query("SELECT COUNT(sid) FROM {statuses} WHERE type = :type AND recipient = :recipient AND sender = :sender", array(':type' => $type, ':recipient' => $recipient_id, ':sender' => $sender_id))->fetchField();
+    return db_query("SELECT COUNT(sid) FROM {statuses} WHERE type = :type AND recipient = :recipient AND sender = :sender", array(
+      ':type' => $type,
+      ':recipient' => $recipient_id,
+      ':sender' => $sender_id,
+    ))->fetchField();
   }
-  return db_query("SELECT COUNT(sid) FROM {statuses} WHERE type = :type AND recipient = :recipient", array(':type' => $type, ':recipient' => $recipient_id))->fetchField();
+  return db_query("SELECT COUNT(sid) FROM {statuses} WHERE type = :type AND recipient = :recipient", array(
+    ':type' => $type,
+    ':recipient' => $recipient_id,
+  ))->fetchField();
 }
 
 /**
@@ -821,7 +833,7 @@ function statuses_all_contexts($include_disabled = TRUE) {
     if (!isset($context['enabled'])) {
       $contexts[$type]['enabled'] = TRUE;
     }
-    else if (!$context['enabled']) {
+    elseif (!$context['enabled']) {
       unset($contexts[$type]);
     }
     $contexts_including_disabled[$type] = $context;
@@ -1051,7 +1063,7 @@ function _statuses_get_status_fast($uid) {
   ", array(
     ':sender' => $uid,
     ':recipient' => $uid,
-    ':type' => 'user'
+    ':type' => 'user',
   ))->fetchObject();
 }
 
@@ -1253,7 +1265,7 @@ function statuses_sms_incoming($op, $number, $message, $options = NULL) {
     $maxlen = variable_get('statuses_length', 140);
     $message = drupal_substr($message, 3);
     if (drupal_strlen($message) > $maxlen && $maxlen > 0) {
-      //"\xE2\x80\xA6" is the unicode escape sequence for the HTML entity &hellip; (an ellipsis)
+      // "\xE2\x80\xA6" is the unicode escape sequence for the HTML entity &hellip; (an ellipsis)
       $message = drupal_substr($message, 0, $maxlen - 1) . "\xE2\x80\xA6";
     }
     statuses_save_status($user, 'user', $message);

@@ -54,6 +54,7 @@ function statuses_tags_schema() {
  * Implements hook_install().
  */
 function statuses_tags_install() {
+  $t = get_t();
   /**
    * When upgrading from facebook_status a normal update hook won't register
    * because we are installing the "statuses" module for the first time. To get
@@ -69,14 +70,14 @@ function statuses_tags_install() {
     $already_exists = db_query("SELECT vid, name FROM {taxonomy_vocabulary} WHERE module = 'statuses_tags'")->fetchObject();
     if (!empty($already_exists) && !empty($already_exists->vid)) {
       variable_set('statuses_tags_vid', $already_exists->vid);
-      drupal_set_message(st('The vocabulary "@name" has been configured for use with the Statuses Tags module.', array('@name' => $already_exists->name)));
+      drupal_set_message($t('The vocabulary "@name" has been configured for use with the Statuses Tags module.', array('@name' => $already_exists->name)));
       return;
     }
     // Create a default vocabulary for use with hashtags.
     $vocabulary = (object) array(
-      'name' => st('Hashtags'),
+      'name' => $t('Hashtags'),
       'machine_name' => 'hashtags',
-      'description' => st('Contains #hashtags used in Statuses.'),
+      'description' => $t('Contains #hashtags used in Statuses.'),
       'hierarchy' => 0,
       'module' => 'statuses_tags',
       'weight' => 0,
@@ -85,10 +86,10 @@ function statuses_tags_install() {
     $vid = isset($vocabulary->vid) ? $vocabulary->vid :
     db_query("SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name = 'hashtags' AND module = 'statuses_tags'")->fetchField();
     variable_set('statuses_tags_vid', $vid);
-    drupal_set_message(st('The vocabulary "Hashtags" has been created and configured for use with the Statuses Tags module.'));
+    drupal_set_message($t('The vocabulary "Hashtags" has been created and configured for use with the Statuses Tags module.'));
   }
   else {
-    drupal_set_message(st('Statuses Tags only allows using #hashtags when the Taxonomy module is installed.'));
+    drupal_set_message($t('Statuses Tags only allows using #hashtags when the Taxonomy module is installed.'));
   }
 }
 

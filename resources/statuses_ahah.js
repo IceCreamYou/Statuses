@@ -38,5 +38,5 @@ Drupal.ajax.prototype.success = function (response, status) {
 };
 
     }
-  }
+  };
 })(jQuery);

@@ -9,19 +9,19 @@
  * Implements hook_statuses_delete().
  */
 function fbss_comments_flag_statuses_delete($status) {
-  $subSelect = db_select('fbss_comments')
+  $sub_select = db_select('fbss_comments')
     ->fields('fbss_comments',  array('cid'))
     ->condition('sid', $status->sid);
 
   /* db_query("DELETE FROM {flag_content} WHERE content_type = 'fbss_comment' AND content_id IN (SELECT cid FROM {fbss_comments} WHERE sid = %d)", $status->sid) */
   db_delete('flag_content')
     ->condition('content_type', 'fbss_comment')
-    ->condition('content_id', $subSelect, 'IN')
+    ->condition('content_id', $sub_select, 'IN')
     ->execute();
   /* db_query("DELETE FROM {flag_counts} WHERE content_type = 'fbss_comment' AND content_id IN (SELECT cid FROM {fbss_comments} WHERE sid = %d)", $status->sid) */
   db_delete('flag_counts')
     ->condition('content_type', 'fbss_comment')
-    ->condition('content_id', $subSelect, 'IN')
+    ->condition('content_id', $sub_select, 'IN')
     ->execute();
 }
 
@@ -84,5 +84,5 @@ function fbss_comments_flag_flag_default_flags() {
   return $flags;
 }
 
-//This is here because the Flag module does not support magic include files.
+// This is here because the Flag module does not support magic include files.
 module_load_include('inc', 'fbss_comments_flag', 'fbss_comments_flag.flag');

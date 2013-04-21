@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_views_default_views_alter().
+ * Implements hook_views_default_views_alter().
  */
 function statuses_tags_views_default_views_alter(&$views) {
   // We can't assume that $views always contains the full set of Views;

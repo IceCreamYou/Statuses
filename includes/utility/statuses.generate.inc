@@ -199,7 +199,7 @@ function statuses_generate_status($time, $types, $tags, &$context) {
  */
 function statuses_generate_killswitch(&$context) {
   $result = db_select('statuses')
-    ->fields('statuses',  array('sid'))
+    ->fields('statuses', array('sid'))
     ->execute()
     ->fetchAll();
   foreach ($result as $status) {

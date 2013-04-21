@@ -4,6 +4,10 @@
  * @file
  *   Preprocess functions for the Statuses theme templates.
  */
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function template_preprocess_statuses_item(&$vars) {
   $status = $vars['status'];
   $options = $vars['options'];
@@ -57,8 +61,8 @@ function template_preprocess_statuses_item(&$vars) {
       $vars['links'] = !empty($status->links) ? theme('links', array('links' => $status->links, 'attributes' => array('class' => array('links', 'inline')))) : '';
     }
   }
-  $vars['status_url'] = url('statuses/'. $status->sid, array('absolute' => TRUE));
-  
+  $vars['status_url'] = url('statuses/' . $status->sid, array('absolute' => TRUE));
+
   // Try to determine if the recipient should be obvious based on the context.
   if ($vars['self']) {
     $vars['in_context'] = TRUE;
@@ -118,9 +122,11 @@ function _statuses_show($status, $options) {
       $recipient = $context['handler']->load_recipient($status->recipient);
       $recipient_name = $context['handler']->recipient_name($recipient);
       // "\xC2\xBB" is the unicode escape sequence for the HTML entity &raquo; (a double right angle bracket)
-      $title = t("@sender \xC2\xBB @recipient: @message",
-        array('@sender' => format_username($sender), '@recipient' => $recipient_name, '@message' => $message)
-      );
+      $title = t("@sender \xC2\xBB @recipient: @message", array(
+        '@sender' => format_username($sender),
+        '@recipient' => $recipient_name,
+        '@message' => $message,
+      ));
     }
     if (drupal_strlen($title) > 80) {
       // "\xE2\x80\xA6" is the unicode escape sequence for the HTML entity &hellip; (an ellipsis)

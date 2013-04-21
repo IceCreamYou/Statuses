@@ -9,7 +9,7 @@
  * Implements hook_schema_alter().
  */
 function fbss_privacy_schema_alter(&$schema) {
-  $schema['statuses']['fields']['private'] = array( 
+  $schema['statuses']['fields']['private'] = array(
     'type' => 'int',
     'size' => 'tiny',
     'unsigned' => TRUE,

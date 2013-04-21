@@ -249,7 +249,7 @@ function fbss_services_get_rich_data($status, $include_entities = TRUE, $trim_us
     'id' => $status->sid,
     'text' => check_plain($status->message),
     'source' => 'web', // We don't support tracking alternate sources.
-    'truncated' => false, // Because we don't support tracking alternate sources, statuses can't be submitted if they are too long.
+    'truncated' => FALSE, // Because we don't support tracking alternate sources, statuses can't be submitted if they are too long.
     'in_reply_to_status_id' => NULL, // We don't support tracking this.
     'in_reply_to_user_id' => $status->sender == $status->recipient ? NULL : $status->recipient,
     'favorited' => fbss_services_get_flagged($status->sid, 'like'),

@@ -16,7 +16,7 @@ attach: function (context) {
   var statuses_original_value = $statuses_field.val();
   var fbss_maxlen = Drupal.settings.statuses.maxlength;
   var fbss_hidelen = parseInt(Drupal.settings.statuses.hideLength, 10);
-  if (fbss_refreshIDs == undefined) {
+  if (typeof fbss_refreshIDs === 'undefined') {
     fbss_refreshIDs = Drupal.settings.statuses.refreshIDs;
   }
   if ($.fn.autogrow && $statuses_field) {
@@ -28,7 +28,7 @@ attach: function (context) {
     $statuses_field.focus();
   }
   if (Drupal.settings.statuses.noautoclear || Drupal.settings.statuses.autofocus) {
-    if ($statuses_field.val() && $statuses_field.val().length != 0 && fbss_maxlen != 0) {
+    if ($statuses_field.val() && $statuses_field.val().length !== 0 && fbss_maxlen !== 0) {
       fbss_print_remaining(fbss_maxlen - statuses_original_value.length, $statuses_field.parents('.statuses-update').find('.statuses-chars'));
     }
   }
@@ -41,7 +41,7 @@ attach: function (context) {
       var th = $(this);
       if (th.val() == statuses_original_value) {
         th.val('');
-        if (fbss_maxlen != 0) {
+        if (fbss_maxlen !== 0) {
           fbss_print_remaining(fbss_maxlen, th.parents('.statuses-update').find('.statuses-chars'));
         }
       }
@@ -70,14 +70,12 @@ attach: function (context) {
   if (initialLoad && fbss_refreshIDs && Drupal.settings.statuses.refreshLink) {
     var loaded = {};
     $.each(fbss_refreshIDs, function(i, val) {
-      if (val && val != undefined) {
-        if ($.trim(val) && loaded[val] !== true) {
-          loaded[val] = true;
-          var element = $(val);
-          element.wrap('<div></div>');
-          var rlink = '<a href="'+ window.location.href +'">'+ Drupal.t('Refresh') +'</a>';
-          element.parent().after('<div class="statuses-refresh-link">'+ rlink +'</div>');
-        }
+      if (val && $.trim(val) && loaded[val] !== true) {
+        loaded[val] = true;
+        var element = $(val);
+        element.wrap('<div></div>');
+        var rlink = '<a href="' + window.location.href + '">' + Drupal.t('Refresh') + '</a>';
+        element.parent().after('<div class="statuses-refresh-link">' + rlink + '</div>');
       }
     });
   }
@@ -95,14 +93,14 @@ attach: function (context) {
   ctxt.find('.statuses-intro').click(function() {
     var th = $(this);
     var te = th.parents('.statuses-update').find('.statuses-text');
-    if (te.val() == '') {
+    if (te.val() === '') {
       te.val(statuses_original_value);
-      if (fbss_maxlen != 0) {
+      if (fbss_maxlen !== 0) {
         fbss_print_remaining(fbss_maxlen - statuses_original_value.length, th.parents('.statuses-update').find('.statuses-chars'));
       }
     }
   });
-  if (fbss_maxlen != 0) {
+  if (fbss_maxlen !== 0) {
     // Count remaining characters.
     ctxt.find('.statuses-text').bind('keydown keyup', function(fbss_key) {
       var th = $(this);
@@ -112,7 +110,7 @@ attach: function (context) {
     });
   }
 }
-}
+};
 // Disallow refreshing too often or double-clicking the Refresh link.
 function fbss_allowRefresh() {
   fbss_allowClickRefresh = !fbss_allowClickRefresh;
@@ -121,25 +119,23 @@ function fbss_allowRefresh() {
 function fbss_refresh() {
   // Refresh elements by re-loading the current page and replacing the old version with the updated version.
   var loaded = {};
-  if (fbss_refreshIDs && fbss_refreshIDs != undefined) {
+  if (fbss_refreshIDs) {
     var loaded2 = {};
     $.each(fbss_refreshIDs, function(i, val) {
-      if (val && val != undefined) {
-        if ($.trim(val) && loaded2[val] !== true) {
-          loaded2[val] = true;
-          var element = $(val);
-          element.before('<div class="fbss-remove-me ahah-progress ahah-progress-throbber" style="display: block; clear: both; float: none;"><div class="throbber">&nbsp;</div></div>');
-        }
+      if (val && $.trim(val) && loaded2[val] !== true) {
+        loaded2[val] = true;
+        var element = $(val);
+        element.before('<div class="fbss-remove-me ahah-progress ahah-progress-throbber" style="display: block; clear: both; float: none;"><div class="throbber">&nbsp;</div></div>');
       }
     });
-    var location = window.location.pathname +'?';
+    var location = window.location.pathname + '?';
     // Build the relative URL with query parameters.
     var query = window.location.search.substring(1);
-    if ($.trim(query) != "") {
-      location += query +'&';
+    if ($.trim(query) !== '') {
+      location += query + '&';
     }
     // IE will cache the result unless we add an identifier (in this case, the time).
-    $.get(location +"ts="+ (new Date()).getTime(), function(data, textStatus) {
+    $.get(location + 'ts=' + (new Date()).getTime(), function(data, textStatus) {
       // From load() in jQuery source. We already have the scripts we need.
       var new_data = data.replace(/<script(.|\s)*?\/script>/g, "");
       // Apparently Safari crashes with just $().
@@ -147,25 +143,23 @@ function fbss_refresh() {
       if (textStatus != 'error' && new_content) {
         // Replace relevant content in the viewport with the updated version.
         $.each(fbss_refreshIDs, function(i, val) {
-          if (val && val != undefined) {
-            if ($.trim(val) != '' && loaded[val] !== true) {
-              var element = $(val);
-              var insert = new_content.find(val);
-              // If a refreshID is found multiple times on the same page, replace each one sequentially.
-              if (insert.length && insert.length > 0 && element.length && element.length >= insert.length) {
-                $.each(insert, function(j, v) {
-                  v = $(v);
-                  var el = $(element[j]);
-                  // Don't bother replacing anything if the replacement region hasn't changed.
-                  if (v.get() != el.get()) {
-                    Drupal.detachBehaviors(element[j]);
-                    el.replaceWith(v);
-                    Drupal.attachBehaviors(v);
-                  }
-                });
-              }
-              loaded[val] = true;
+          if (val && $.trim(val) !== '' && loaded[val] !== true) {
+            var element = $(val);
+            var insert = new_content.find(val);
+            // If a refreshID is found multiple times on the same page, replace each one sequentially.
+            if (insert.length && insert.length > 0 && element.length && element.length >= insert.length) {
+              $.each(insert, function(j, v) {
+                v = $(v);
+                var el = $(element[j]);
+                // Don't bother replacing anything if the replacement region hasn't changed.
+                if (v.get() != el.get()) {
+                  Drupal.detachBehaviors(element[j]);
+                  el.replaceWith(v);
+                  Drupal.attachBehaviors(v);
+                }
+              });
             }
+            loaded[val] = true;
           }
         });
       }
@@ -187,8 +181,8 @@ function fbss_print_remaining(fbss_remaining, where) {
       statuses_submit_disabled = false;
     }
   }
-  else if (Drupal.settings.statuses.maxlength != 0) {
-    where.html('<span class="statuses-negative">'+ Drupal.formatPlural(Math.abs(fbss_remaining), '-1 character left', '-@count characters left', {}) +'</span>');
+  else if (Drupal.settings.statuses.maxlength !== 0) {
+    where.html('<span class="statuses-negative">' + Drupal.formatPlural(Math.abs(fbss_remaining), '-1 character left', '-@count characters left', {}) + '</span>');
     if (!statuses_submit_disabled) {
       jQuery('.statuses-submit').attr('disabled', true);
       statuses_submit_disabled = true;

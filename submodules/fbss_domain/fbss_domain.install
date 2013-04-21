@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_schema().
+ * Implements hook_schema().
  */
 function fbss_domain_schema() {
   $schema = array();

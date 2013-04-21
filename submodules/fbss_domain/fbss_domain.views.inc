@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementats hook_views_data().
+ * Implements hook_views_data().
  */
 function fbss_domain_views_data() {
   // Basic table information.

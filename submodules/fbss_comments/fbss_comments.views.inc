@@ -43,7 +43,6 @@ function fbss_comments_views_data() {
     ),
   );
 
-
   // Declares the Comment ID column.
   $data['fbss_comments']['cid'] = array(
     'title' => t('Status Comment ID'),

@@ -334,7 +334,11 @@ function theme_statuses_admin_contexts($variables) {
   $output = '<p>' . t('Contexts are used to automatically determine the recipient of a status message.') . ' ' .
     t('For example, if the "Nodes" context is active on a node page, then status updates on that page will be assigned to the current node.') . '</p><p>' .
     t('Note: the view assigned to the "User profiles" context does not affect the view shown on conversation pages.') . '</p>';
-  $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'statuses-admin-contexts-table')));
+  $output .= theme('table', array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array('id' => 'statuses-admin-contexts-table'),
+  ));
   $output .= drupal_render_children($form);
   return $output;
 }
@@ -352,7 +356,7 @@ function statuses_admin_context_settings($form, $form_state, $context) {
       '#markup' => '<p>' . t('The view assigned to the "User profiles" context does not affect the view shown on conversation pages.') . '</p>',
     );
   }
-  
+
   if (!isset($context['enabled']) || $context['enabled']) {
     $form['enabled'] = array(
       '#markup' => '<p>' . t('This context is <strong>enabled</strong>.') . '</p>',
@@ -403,7 +407,7 @@ function statuses_admin_context_settings($form, $form_state, $context) {
       '</p>',
   );
 
-  // adapted from block_admin_configure()
+  // Adapted from block_admin_configure()
   $form['page_vis_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Advanced: change where this context applies'),

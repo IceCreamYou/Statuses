@@ -176,7 +176,7 @@ function statuses_box($form, &$form_state, $recipient, $type = 'user') {
   $path = drupal_get_path('module', 'statuses') . '/resources';
   drupal_add_js($path . '/statuses.js');
   if (variable_get('statuses_enter', 0)) {
-    drupal_add_js($path .'/statuses_enter.js');
+    drupal_add_js($path . '/statuses_enter.js');
   }
   drupal_add_js($path . '/statuses_ahah.js', array('scope' => 'footer', 'defer' => TRUE));
   drupal_add_css($path . '/statuses.css');

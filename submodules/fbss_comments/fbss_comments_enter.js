@@ -1,3 +1,5 @@
+(function($) {
+
 Drupal.behaviors.fbss_comments_enter = function(context) {
   var ctxt = $(context);
   var shift = false;
@@ -24,4 +26,6 @@ Drupal.behaviors.fbss_comments_enter = function(context) {
       }
     }
   });
-}
+};
+
+})(jQuery);

@@ -1,7 +1,7 @@
 <?php
 
 /**
- @file
+ * @file
  *   Extends the Flag module for Statuses Comments.
  */
 

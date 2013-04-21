@@ -156,16 +156,16 @@ function fbss_flag_flag_default_flags() {
     'unflag_short' => t('Un-like'),
     'unflag_long' => '',
     'unflag_message' => '',
-    'unflag_denied_text'  =>  '',
-    'link_type' =>  'toggle',
-    'roles' => array('flag' =>  array('2'), 'unflag'  =>  array('2')),
+    'unflag_denied_text' => '',
+    'link_type' => 'toggle',
+    'roles' => array('flag' => array('2'), 'unflag' => array('2')),
     'show_on_page' => FALSE,
     'show_on_teaser' => FALSE,
     'show_on_form' => FALSE,
     'status' => TRUE,
-    'locked' => array('name'  =>  'name', 'global'  =>  'global', 'types' =>  'types', 'show_on_teaser' =>  'show_on_teaser', 'show_on_form'  =>  'show_on_form', 'status'  =>  'status'),
-    'module'  =>  'fbss_flag',
-    'api_version' =>  2,
+    'locked' => array('name' => 'name', 'global' => 'global', 'types' => 'types', 'show_on_teaser' => 'show_on_teaser', 'show_on_form' => 'show_on_form', 'status' => 'status'),
+    'module' => 'fbss_flag',
+    'api_version' => 2,
   );
   $flags['follow'] = array(
     'content_type' => 'user',
@@ -178,21 +178,21 @@ function fbss_flag_flag_default_flags() {
     'unflag_short' => t('Unfollow'),
     'unflag_long' => '',
     'unflag_message' => '',
-    'unflag_denied_text'  =>  '',
-    'link_type' =>  'toggle',
-    'roles' => array('flag' =>  array('2'), 'unflag'  =>  array('2')),
-    'show_on_profile' =>  'true',
-    'access_uid'  =>  '',
+    'unflag_denied_text' => '',
+    'link_type' => 'toggle',
+    'roles' => array('flag' => array('2'), 'unflag' => array('2')),
+    'show_on_profile' => 'true',
+    'access_uid' => '',
     'show_on_page' => TRUE,
     'show_on_teaser' => FALSE,
     'show_on_form' => FALSE,
     'status' => TRUE,
-    'locked' => array('name'  =>  'name', 'global'  =>  'global', 'types' =>  'types', 'show_on_teaser' =>  'show_on_teaser', 'show_on_form'  =>  'show_on_form', 'status'  =>  'status'),
-    'module'  =>  'fbss_flag',
-    'api_version' =>  2,
+    'locked' => array('name' => 'name', 'global' => 'global', 'types' => 'types', 'show_on_teaser' => 'show_on_teaser', 'show_on_form' => 'show_on_form', 'status' => 'status'),
+    'module' => 'fbss_flag',
+    'api_version' => 2,
   );
   return $flags;
 }
 
-//This is here because the Flag module does not support magic include files.
+// This is here because the Flag module does not support magic include files.
 module_load_include('inc', 'fbss_flag', 'fbss_flag.flag');
