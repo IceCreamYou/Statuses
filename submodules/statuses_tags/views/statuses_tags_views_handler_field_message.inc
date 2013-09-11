@@ -14,6 +14,6 @@ class statuses_tags_views_handler_field_message extends views_handler_field {
     if (variable_get('statuses_nl2br', 0)) {
       $message = nl2br($message);
     }
-    return '<span class="statuses-content">' . statuses_tags_process_message($message) . '</span>';
+    return '<span class="statuses-content">' . statuses_tags_add_links($message) . '</span>';
   }
 }

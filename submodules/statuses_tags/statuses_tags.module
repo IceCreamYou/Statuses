@@ -415,7 +415,7 @@ function statuses_tags_popular($type = 'term', $count = 5, $time = 'all', $optio
  * @return
  *   The message text with @mentions and #hashtags replaced.
  */
-function statuses_tags_process_message($message) {
+function statuses_tags_add_links($message) {
   // $status_text comes in pre-encoded. Temporarily replace the single-quote
   // character encoding so it doesn't get unintentionally linkified.
   $message = str_replace("'", '&#039;', _statuses_tags_filter(str_replace('&#039;', "'", $message)));
