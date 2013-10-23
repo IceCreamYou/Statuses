@@ -24,5 +24,16 @@ function fbss_domain_views_data() {
       'type' => 'INNER',
     ),
   );
+  $data['fbss_domain']['domain_id'] = array(
+    'relationship' => array(
+      'handler' => 'views_handler_relationship',
+      'base' => 'domain',
+      'base field' => 'domain_id',
+      'group' => t('Statuses'),
+      'title' => t('Statuses Domain'),
+      'label' => t('Domain from status'),
+      'help' => t('Get the domain a status is associated with.'),
+    ),
+  );
   return $data;
 }
