@@ -384,8 +384,8 @@ function statuses_init() {
       $undefault ||
       (arg(0) == 'statuses' && is_numeric(arg(1)) && arg(2) == 'edit')
     ),
-    'maxlength' => variable_get('statuses_length', 140),
-    'hideLength' => variable_get('statuses_hide_length', 0),
+    'maxlength' => (int) variable_get('statuses_length', 140),
+    'hideLength' => (int) variable_get('statuses_hide_length', 0),
     'refreshLink' => (bool) variable_get('statuses_refresh', 0),
   )), array('type' => 'setting', 'scope' => JS_DEFAULT));
 }
