@@ -317,7 +317,11 @@ function statuses_save_js($form, $form_state) {
       $new_form[$element] = $form[$element];
     }
   }
-  $new_form['fbss-status']['#value'] = ''; // Clear the old value. See https://drupal.org/node/1265048
+  // Clear the old value. See https://drupal.org/node/1265048
+  if (!form_get_errors()) {
+  	$new_form['fbss-status']['#value'] = '';
+  }
+
   // Calls hook_statuses_form_ahah_alter(&$new_form, $form).
   drupal_alter('statuses_form_ahah', $new_form, $form);
   return $new_form;
