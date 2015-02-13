@@ -68,13 +68,13 @@
         var th = $(this);
         setTimeout(function(){
           if (th.val().length > 0) {
-            th.parents('form').find('input').attr('disabled', false);
+            th.parents('form').find('.fbss-comments-submit').attr('disabled', false);
           }
           else {
-            th.parents('form').find('input').attr('disabled', true);
+            th.parents('form').find('.fbss-comments-submit').attr('disabled', true);
           }
         }, 10);
       });
     }
-  }
+  };
 })(jQuery);
