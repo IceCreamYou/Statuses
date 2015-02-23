@@ -1271,3 +1271,29 @@ function statuses_sms_incoming($op, $number, $message, $options = NULL) {
     statuses_save_status($user, 'user', $message);
   }
 }
+
+//=======================
+// FEATURES INTEGRATION.
+//=======================
+
+// This is here because the Features module does not support magic include files.
+if (module_exists('features')) {
+  module_load_include('inc', 'statuses', 'statuses.features');
+}
+
+/**
+ * Implements hook_features_api().
+ *
+ * Define the components that we want to make exportable (in this case, the
+ * status context settings).
+ */
+function statuses_features_api() {
+  return array(
+    'statuses_config' => array(
+      'name'           => 'Statuses contexts',
+      'file'           => drupal_get_path('module', 'statuses') . '/statuses.features.inc',
+      'default_hook'   => 'statuses_config_features_default_settings',
+      'feature_source' => TRUE,
+    ),
+  );
+}
