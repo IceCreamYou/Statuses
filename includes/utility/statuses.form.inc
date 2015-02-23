@@ -146,15 +146,18 @@ function statuses_box($form, &$form_state, $recipient, $type = 'user') {
   // TODO: Replace with a "true" re-posting system.
   if (isset($_GET['sid']) && is_numeric($_GET['sid'])) {
     $rs = statuses_load($_GET['sid']);
-    $sender = user_load($rs->sender);
-    if ($sender->uid != $user->uid && $rs->message) {
-      $name = '@' . $sender->name;
-      // Properly reference tags with word-break characters in them.
-      if (preg_match('/.+\b.+/', $sender->name)) {
-        $name = '[' . $name . ']';
+    // Sanity check in case someone puts in an invalid status ID
+    if (!empty($rs->sid)) {
+      $sender = user_load($rs->sender);
+      if ($sender->uid != $user->uid && $rs->message) {
+        $name = '@' . $sender->name;
+        // Properly reference tags with word-break characters in them.
+        if (preg_match('/.+\b.+/', $sender->name)) {
+          $name = '[' . $name . ']';
+        }
+        $default = str_replace(array('@name', '@message'), array($name, $rs->message), variable_get('statuses_repost', 'Re: @name @message '));
+        $intro = '';
       }
-      $default = str_replace(array('@name', '@message'), array($name, $rs->message), variable_get('statuses_repost', 'Re: @name @message '));
-      $intro = '';
     }
   }
   elseif (isset($_GET['rsid']) && is_numeric($_GET['rsid'])) {
