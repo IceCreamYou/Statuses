@@ -200,6 +200,9 @@ function statuses_box($form, &$form_state, $recipient, $type = 'user') {
   $form['fbss-status'] = array(
     '#type' => 'textarea',
     '#rows' => variable_get('statuses_box_rows', 2),
+    // 508 compliance: add a label, but visually hide it
+    '#title' => t('Status'),
+    '#title_display' => 'invisible',
     '#default_value' => $default,
     '#attributes' => array('class' => array('statuses-text', 'statuses-text-main')),
     '#resizable' => FALSE,
