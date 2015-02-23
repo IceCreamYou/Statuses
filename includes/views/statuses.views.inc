@@ -385,7 +385,7 @@ function statuses_views_data() {
     );
   }
 
-  if (module_exists('og_views')) {
+  if (module_exists('og')) {
     // Include statuses from a user's groups.
     $data['statuses']['og_statuses'] = array(
       'title' => t('Show group statuses'),
