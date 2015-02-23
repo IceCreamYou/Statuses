@@ -102,12 +102,12 @@ attach: function (context) {
   });
   if (fbss_maxlen !== 0) {
     // Count remaining characters.
-    ctxt.find('.statuses-text').bind('keydown keyup', function(fbss_key) {
+    ctxt.find('.statuses-text').bind('keydown.statuses keyup.statuses', function(fbss_key) {
       var th = $(this);
       var thCC = th.parents('.statuses-update').find('.statuses-chars');
       var fbss_remaining = fbss_maxlen - th.val().length;
       fbss_print_remaining(fbss_remaining, thCC);
-    });
+    }).trigger('keydown.statuses');
   }
 }
 };
