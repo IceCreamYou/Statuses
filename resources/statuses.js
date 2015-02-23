@@ -159,6 +159,9 @@ function fbss_refresh() {
                 }
               });
             }
+            else if (!element.length) {
+              window.location.reload();
+            }
             loaded[val] = true;
           }
         });
