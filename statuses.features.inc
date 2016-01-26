@@ -74,8 +74,8 @@ function statuses_config_features_export_render($module_name, $data, $export = N
     $new_data = array_merge($new_data, _statuses_config_get_data($sys_name));
   }
 
-  $code = '  $statuses_contexts = ' . features_var_export($new_data, '  ') .
-    ";\n  return $statuses_contexts;";
+  $code = '  $statuses_contexts = ' . features_var_export($new_data, '  ') . ";\n" .
+    '  return $statuses_contexts;';
 
   return array('statuses_config_features_default_settings' => $code);
 }
